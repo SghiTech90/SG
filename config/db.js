@@ -2,70 +2,119 @@ const sql = require("mssql");
 
 // Database configuration
 const config1 = {
-  server: "LAPTOP-1J77NBSS",
+    // server: "LAPTOP-1J77NBSS",
+  // database: "P_W_Division_Buldhane",
+  // user: "sa",
+  // password: "12345678",
+  // options: {
+  //   trustServerCertificate: true,
+  //   encrypt: true
+  // }
+  server: "103.123.74.117",
   database: "P_W_Division_Akola",
-  user: "sa",
-  password: "12345678",
+  user: "P_W_Division_Akola120",
+  password: "tAa7Jm8cir^86Tjbw",
   options: {
     trustServerCertificate: true,
-    encrypt: false
+    encrypt: true
   }
 };
 
 const config2 = {
-  server: "LAPTOP-1J77NBSS",
-  database: "P_W_Division_Washim",
-  user: "sa",
-  password: "12345678",
+  // server: "LAPTOP-1J77NBSS",
+  // database: "P_W_Division_Washim",
+  // user: "sa",
+  // password: "12345678",
+  // options: {
+  //   trustServerCertificate: true,
+  //   encrypt: true
+  // }
+  server: "103.123.74.117",
+  database: "P_W_Division_Akola",
+  user: "P_W_Division_Akola120",
+  password: "tAa7Jm8cir^86Tjbw",
   options: {
     trustServerCertificate: true,
-    encrypt: false
+    encrypt: true
   }
 };
 
 const config3 = {
-  server: "LAPTOP-1J77NBSS",
-  database: "P_W_Division_Buldhane",
-  user: "sa",
-  password: "12345678",
+  // server: "LAPTOP-1J77NBSS",
+  // database: "P_W_Division_Buldhane",
+  // user: "sa",
+  // password: "12345678",
+  // options: {
+  //   trustServerCertificate: true,
+  //   encrypt: true
+  // }
+  server: "103.123.74.117",
+  database: "P_W_Division_Akola",
+  user: "P_W_Division_Akola120",
+  password: "tAa7Jm8cir^86Tjbw",
   options: {
     trustServerCertificate: true,
-    encrypt: false
+    encrypt: true
   }
 };
 
 const config4 = {
-  server: "LAPTOP-1J77NBSS",
-  database: "P_W_Division_Khamgaon",
-  user: "sa",
-  password: "12345678",
+  // server: "LAPTOP-1J77NBSS",
+  // database: "P_W_Division_Khamgaon",
+  // user: "sa",
+  // password: "12345678",
+  // options: {
+  //   trustServerCertificate: true,
+  //   encrypt: true
+  // }
+  server: "103.123.74.117",
+  database: "P_W_Division_Akola",
+  user: "P_W_Division_Akola120",
+  password: "tAa7Jm8cir^86Tjbw",
   options: {
     trustServerCertificate: true,
-    encrypt: false
+    encrypt: true
   }
 };
 
 const config5 = {
-  server: "LAPTOP-1J77NBSS",
-  database: "P_W_Division_WBAkola",
-  user: "sa",
-  password: "12345678",
+  // server: "LAPTOP-1J77NBSS",
+  // database: "P_W_Division_WBAkola",
+  // user: "sa",
+  // password: "12345678",
+  // options: {
+  //   trustServerCertificate: true,
+  //   encrypt: true
+  // }
+  server: "103.123.74.117",
+  database: "P_W_Division_Akola",
+  user: "P_W_Division_Akola120",
+  password: "tAa7Jm8cir^86Tjbw",
   options: {
     trustServerCertificate: true,
-    encrypt: false
+    encrypt: true
   }
 };
 
 const config6 = {
-  server: "LAPTOP-1J77NBSS",
-  database: "P_W_Circle_Akola",
-  user: "sa",
-  password: "12345678",
+  // server: "LAPTOP-1J77NBSS",
+  // database: "P_W_Circle_Akola",
+  // user: "sa",
+  // password: "12345678",
+  // options: {
+  //   trustServerCertificate: true,
+  //   encrypt: true
+  // }
+  server: "103.123.74.117",
+  database: "P_W_Division_Akola",
+  user: "P_W_Division_Akola120",
+  password: "tAa7Jm8cir^86Tjbw",
   options: {
     trustServerCertificate: true,
-    encrypt: false
+    encrypt: true
   }
 };
+
 
 
 // Create connection pool
