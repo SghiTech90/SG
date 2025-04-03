@@ -6,6 +6,7 @@ const budgetRoutes = require('./routes/budgetRoutes');
 const notificationRoutes = require('./routes/notificationRoutes');
 const { pool1, pool2, pool3, pool4, pool5, pool6 } = require('./config/db');
 
+
 const app = express();
 
 // Middleware
@@ -81,8 +82,9 @@ app.use((err, req, res, next) => {
     });
 });
 
+module.exports = app;
 // Start server
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-}); 
+// const PORT = process.env.PORT || 5000;
+// app.listen(PORT, () => {
+//     console.log(`Server is running on port ${PORT}`);
+// }); 
