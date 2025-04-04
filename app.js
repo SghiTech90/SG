@@ -70,6 +70,7 @@ app.use('/api/notifications', notificationRoutes);
 app.get('/', (req,res)=>{
     res.status(200).send("Welcome to SGHITECH -Swapnil")
 });
+//
 
 // Error handling middleware
 app.use((err, req, res, next) => {
