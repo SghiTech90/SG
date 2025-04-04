@@ -68,7 +68,7 @@ app.use('/api/budget', budgetRoutes);
 app.use('/api/notifications', notificationRoutes);
 
 app.get('/', (req,res)=>{
-    res.status(200).send("Raj Patil")
+    res.status(200).send("Welcome to SGHITECH -Swapnil")
 });
 
 // Error handling middleware
