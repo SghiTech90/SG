@@ -1,10 +1,12 @@
-
 const express = require('express');
 const cors = require('cors');
 const http = require('http');
 const axios = require('axios');
 require('dotenv').config();
-const { pool1, pool2, pool3, pool4, pool5, pool6, sql, poolConnect1, poolConnect2, poolConnect3, poolConnect4, poolConnect5, poolConnect6 } = require('./config/db');
+const {
+  pool1, pool2, pool3, pool4, pool5, pool6,
+  sql, poolConnect1, poolConnect2, poolConnect3, poolConnect4, poolConnect5, poolConnect6
+} = require('./config/db');
 
 const app = express();
 app.use(cors());
@@ -27,7 +29,6 @@ const sendSMS = async (mobileNo, message) => {
     const phoneNumber = mobileNo.startsWith('91') ? mobileNo : '91' + mobileNo;
     const encodedMessage = encodeURIComponent(message);
     let apiUrl = `https://login.wishbysms.com/api/sendhttp.php?authkey=${process.env.WISHBY_API_KEY}&mobiles=${phoneNumber}&message=${encodedMessage}&sender=${process.env.WISHBY_SENDER_ID}&route=4&country=91`;
-
     if (process.env.DLT_TE_ID) apiUrl += `&DLT_TE_ID=${process.env.DLT_TE_ID}`;
     const response = await axios.get(apiUrl);
     return { success: true, response: response.data };
@@ -108,7 +109,6 @@ const verifyOTP = async (req, res) => {
     if (otpData.otp !== otp)
       return res.status(401).json({ message: 'Invalid OTP', success: false });
 
-    const userData = { ...otpData };
     delete otpStore[userId];
     res.json({ message: 'Login successful', userId, post: otpData.post, success: true });
   } catch (error) {
@@ -179,82 +179,16 @@ const profile = async (req, res) => {
 
 app.post('/api/data', (req, res) => {
   const { name, email } = req.body;
-
-  // Basic validation
   if (!name || !email) {
     return res.status(400).json({ error: 'Name and Email are required' });
   }
-
-  // Simulate saving data and return response
   res.status(201).json({
     message: 'Data received successfully',
-    data: {
-      name,
-      email
-    }
+    data: { name, email }
   });
 });
 
-app.post('/api/data', (req, res) => {
-  const { name, email } = req.body;
-
-  // Basic validation
-  if (!name || !email) {
-    return res.status(400).json({ error: 'Name and Email are required' });
-  }
-
-  // Simulate saving data and return response
-  res.status(201).json({
-    message: 'Data received successfully',
-    data: {
-      name,
-      email
-    }
-  });
-});
-
-app.post('/api/user/login', async (req, res) => {
-    const { userId, password, office } = req.body;
-    if (!userId || !password || !office)
-      return res.status(400).json({ message: 'User ID, password, and office are required' });
-  
-    try {
-      const pool = await getPool(office);
-      const result = await pool.request()
-        .input('userId', sql.VarChar, userId)
-        .query('SELECT Name, UserId, Password, Post, MobileNo FROM SCreateAdmin WHERE UserId = @userId');
-  
-      if (result.recordset.length === 0)
-        return res.status(404).json({ message: `Invalid credentials - Please Verify your office ${office}`, success: false });
-  
-      const user = result.recordset[0];
-      if (user.Password !== password)
-        return res.status(401).json({ message: 'Invalid password', success: false });
-  
-      const otp = generateOTP();
-      otpStore[userId] = {
-        otp,
-        mobileNo: user.MobileNo,
-        Name: user.Name,
-        post: user.Post,
-        expiry: Date.now() + 2 * 60 * 1000
-      };
-  
-      await sendSMS(user.MobileNo, `Your one time password login (OTP) is ${otp} Please use it to verify your mobile number with -Swapsoft`);
-      res.json({
-        message: 'OTP sent successfully',
-        success: true,
-        Name: user.Name,
-        userId,
-        post: user.Post,
-        mobileNo: user.MobileNo.replace(/\d(?=\d{4})/g, '*')
-      });
-    } catch (error) {
-      console.error('Login error:', error);
-      res.status(500).json({ message: 'Server error', error: error.message });
-    }
-  });
-  
+app.post('/api/user/login', login);
 app.post('/api/user/verify-otp', verifyOTP);
 app.post('/api/user/resend-otp', resendOTP);
 app.get('/api/user/profile', profile);
@@ -278,11 +212,6 @@ app.use((err, req, res, next) => {
 
 const PORT = process.env.PORT || 3000;
 const server = http.createServer(app);
-
 server.listen(PORT, () => {
   console.log(`Server is running on :${PORT}`);
-});
-
-server.on('error', (err) => {
-  console.error('Server error:', err);
 });
