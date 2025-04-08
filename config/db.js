@@ -29,7 +29,7 @@ const config5 = createDbConfig(5);
 const config6 = createDbConfig(6);
 
 // Log the configurations for verification (excluding passwords)
-console.log("DB Config 1:", { ...config1, password: '***' });
+//console.log("DB Config 1:", { ...config1, password: '***' });
 // Add similar logs for config2-6 if needed for debugging
 
 // Helper function to create and connect a pool, handling errors
