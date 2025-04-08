@@ -10,16 +10,14 @@ const {
     getContractorProjects 
 } = require('../controllers/userController');
 
-// Authentication & Modification Routes (POST)
-router.post('/login', login); // Requires userId, password
-router.post('/verify-otp', verifyOTP); // Requires userId, otp 
-router.post('/resend-otp', resendOTP); // Requires userId
-router.post('/profile', profile); // Requires userId 
-router.post('/contractor-projects', getContractorProjects); // Requires contractorName
+// All routes are POST and require 'office' in the body where applicable
 
-// Read-only Report Routes (GET)
-// Year should be passed as a query parameter, e.g., /buildingMPRreport?year=2023-2024
-router.get('/buildingMPRreport', buildingMPRreport); 
-router.get('/CrfMPRreport', CrfMPRreport); 
+router.post('/login', login); // Requires userId, password, office
+router.post('/verify-otp', verifyOTP); // Requires userId, otp. Office context from otpStore.
+router.post('/resend-otp', resendOTP); // Requires userId, office
+router.post('/profile', profile); // Requires userId, office
+router.post('/buildingMPRreport', buildingMPRreport); // Requires year, office
+router.post('/CrfMPRreport', CrfMPRreport); // Requires year, office
+router.post('/contractor-projects', getContractorProjects); // Requires contractorName, office
 
 module.exports = router;

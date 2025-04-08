@@ -1,202 +1,224 @@
-const {pool1, pool2, pool3, pool4, pool5, pool6, poolConnect1, poolConnect2, poolConnect3, poolConnect4, poolConnect5, poolConnect6 } = require('../config/db');
+const { getPool, sql } = require("../config/db");
 
-const getPool = async (office) => {
-  if (office === 'P_W_Division_Akola') {
-    await poolConnect1;
-    return pool1;
-  } else if (office === 'P_W_Division_Washim') {
-    await poolConnect2;
-    return pool2;
-  } else if (office === 'P_W_Division_Buldhana') {
-    await poolConnect3;
-    return pool3;
-  } else if (office === 'P_W_Division_Khamgaon') {
-    await poolConnect4;
-    return pool4;
-  } else if (office === 'P_W_Division_WBAkola') {
-    await poolConnect5;
-    return pool5;
-  }
-  else if (office === 'P_W_Circle_Akola') {
-    await poolConnect6;
-    return pool6;
-  }
-  else {
-    throw new Error('Invalid office selection');
-  }
+// Helper function to get budget counts from a specific table
+const getTableBudgetCount = async (pool, tableName) => {
+  const query = `SELECT COUNT(*) as count FROM ${tableName}`;
+  const result = await pool.request().query(query);
+  return result.recordset[0].count;
 };
 
-// Get count of all budget tables with titles
+// Get total budget count across all master tables
 const getBudgetCount = async (req, res) => {
+  const { office } = req.body;
+  if (!office) {
+      return res.status(400).json({ success: false, message: "Office parameter is required" });
+  }
   try {
-    const { office } = req.body;
+      const pool = await getPool(office);
+      if (!pool) throw new Error(`Database pool is not available for office ${office}.`);
 
-    if (!office) {
-      return res.status(400).json({
-        success: false,
-        message: "Office parameter is required",
-      });
-    }
-
-    const pool = await getPool(office);
-    await pool.connect();
-    
-    // Create queries for all tables
-    const tableQueries = [
-      { table: 'BudgetMasterBuilding', title: 'Building' },
-      { table: 'BudgetMasterCRF', title: 'CRF' },
-      { table: 'BudgetMasterAunty', title: 'Annuity' },
-      { table: 'BudgetMasterNABARD', title: 'NABARD' },
-      { table: 'BudgetMasterRoad', title: 'RAOD' },
-      { table: 'BudgetMaster2515', title: '2515' },
-      { table: 'BudgetMasterDepositFund', title: 'Deposit' },
-      { table: 'BudgetMasterDPDC', title: 'DPDC' },
-      { table: 'BudgetMasterGAT_A', title: 'AMC' },
-      { table: 'BudgetMasterGAT_D', title: 'FDR' },
-      { table: 'BudgetMasterGAT_FBC', title: 'BCR' },
-      { table: 'BudgetMasterMLA', title: 'MLA' },
-      { table: 'BudgetMasterMP', title: 'MP' },
-      { table: 'BudgetMasterNonResidentialBuilding', title: '2059' },
-      { table: 'BudgetMasterResidentialBuilding', title: '2216' },
-      
+    const tables = [
+      "BudgetMasterBuilding",
+      "BudgetMasterCRF",
+      "BudgetMasterAunty",
+      "BudgetMasterDepositFund",
+      "BudgetMasterDPDC",
+      "BudgetMasterGAT_A",
+      "BudgetMasterGAT_D",
+      "BudgetMasterGAT_FBC",
+      "BudgetMasterMLA",
+      "BudgetMasterMP",
+      "BudgetMasterNABARD",
+      "BudgetMasterRoad",
+      "BudgetMasterNonResidentialBuilding",
+      "BudgetMasterResidentialBuilding",
+      "BudgetMaster2515",
     ];
-    
-    // Store results in array for sorting
-    const resultsArray = [];
-    
-    for (const query of tableQueries) {
-      try {
-        const result = await pool.request()
-          .query(`SELECT COUNT(*) as count FROM ${query.table}`);
-        
-        resultsArray.push({
-          title: query.title,
-          table: query.table,
-          count: result.recordset[0].count
-        });
-      } catch (error) {
-        console.error(`Error querying table ${query.table}:`, error.message);
-        resultsArray.push({
-          title: query.title,
-          table: query.table,
-          count: 0,
-          error: `Table may not exist or cannot be accessed`
-        });
-      }
+    let totalCount = 0;
+    for (const table of tables) {
+      totalCount += await getTableBudgetCount(pool, table);
     }
-    
-    // Sort results by count in ascending order (lowest to highest)
-    //resultsArray.sort((a, b) => a.count - b.count);
-    
-    res.json({resultsArray, success: 'true'});
+    res.json({ success: true, totalCount });
   } catch (error) {
-    console.error('Error getting budget counts:', error);
-    res.status(500).json({ message: 'Server error', error: error.message });
+    console.error("Error getting budget count:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error getting budget count",
+      error: error.message,
+    });
   }
 };
 
-// Get counts grouped by Upvibhag from all budget tables
+// Helper function to get Upvibhag counts from a specific table
+const getTableUpvibhagCounts = async (pool, tableName) => {
+  const query = `SELECT Upvibhag, COUNT(*) as count FROM ${tableName} GROUP BY Upvibhag`;
+  const result = await pool.request().query(query);
+  return result.recordset;
+};
+
+// Get Upvibhag counts aggregated across all master tables
 const getUpvibhagCounts = async (req, res) => {
-  try {
     const { office } = req.body;
-
     if (!office) {
-      return res.status(400).json({
-        success: false,
-        message: "office parameter is required",
+        return res.status(400).json({ success: false, message: "Office parameter is required" });
+    }
+    try {
+        const pool = await getPool(office);
+        if (!pool) throw new Error(`Database pool is not available for office ${office}.`);
+
+    const tables = [
+      "BudgetMasterBuilding",
+      "BudgetMasterCRF",
+      "BudgetMasterAunty",
+      "BudgetMasterDepositFund",
+      "BudgetMasterDPDC",
+      "BudgetMasterGAT_A",
+      "BudgetMasterGAT_D",
+      "BudgetMasterGAT_FBC",
+      "BudgetMasterMLA",
+      "BudgetMasterMP",
+      "BudgetMasterNABARD",
+      "BudgetMasterRoad",
+      "BudgetMasterNonResidentialBuilding",
+      "BudgetMasterResidentialBuilding",
+      "BudgetMaster2515",
+    ];
+
+    const aggregatedCounts = {};
+
+    for (const table of tables) {
+      const results = await getTableUpvibhagCounts(pool, table);
+      results.forEach((row) => {
+        if (row.Upvibhag) { // Ensure Upvibhag is not null or empty
+          aggregatedCounts[row.Upvibhag] = (aggregatedCounts[row.Upvibhag] || 0) + row.count;
+        }
       });
     }
 
-    const pool = await getPool(office);
-    await pool.connect();
-    
-    // Define tables to query
-    const tableQueries = [
-      { table: 'BudgetMasterBuilding', title: 'Building' },
-      { table: 'BudgetMasterCRF', title: 'CRF' },
-      { table: 'BudgetMasterAunty', title: 'Annuity' },
-      { table: 'BudgetMasterNABARD', title: 'NABARD' },
-      { table: 'BudgetMasterRoad', title: 'RAOD' },
-      { table: 'BudgetMaster2515', title: '2515' },
-      { table: 'BudgetMasterDepositFund', title: 'Deposit' },
-      { table: 'BudgetMasterDPDC', title: 'DPDC' },
-      { table: 'BudgetMasterGAT_A', title: 'AMC' },
-      { table: 'BudgetMasterGAT_D', title: 'FDR' },
-      { table: 'BudgetMasterGAT_FBC', title: 'BCR' },
-      { table: 'BudgetMasterMLA', title: 'MLA' },
-      { table: 'BudgetMasterMP', title: 'MP' },
-      { table: 'BudgetMasterNonResidentialBuilding', title: '2059' },
-      { table: 'BudgetMasterResidentialBuilding', title: '2216' },
-    ];
-    
-    /*const tables = [
-      'BudgetMasterAunty',
-      'BudgetMaster2515',
-      'BudgetMasterBuilding',
-      'BudgetMasterCRF',
-      'BudgetMasterDepositFund',
-      'BudgetMasterDPDC',
-      'BudgetMasterGAT_A',
-      'BudgetMasterGAT_D',
-      'BudgetMasterGAT_FBC',
-      'BudgetMasterMLA',
-      'BudgetMasterMP',
-      'BudgetMasterNABARD',
-      'BudgetMasterNonResidentialBuilding',
-      'BudgetMasterResidentialBuilding',
-      'BudgetMasterRoad'
-    ];*/
-    
-    // Results object to store data
-    const tableResults = {};
-    
-    // Query each table
-    for (const query of tableQueries) {
-      try {
-        const result = await pool.request()
-          .query(`SELECT COUNT(*) AS count, Upvibhag FROM ${query.table} GROUP BY Upvibhag`);
-        
-        // Skip tables with no results
-        if (result.recordset.length === 0) {
-          continue;
-        }
-        
-        // Create array for this table's results using title as the key
-        tableResults[query.title] = [];
-        
-        // Process results for this table
-        for (const row of result.recordset) {
-          tableResults[query.title].push({
-            upvibhag: row.Upvibhag || 'Unknown',
-            count: row.count
-          });
-        }
-        
-        // Sort each table's results by count (descending)
-        tableResults[query.title].sort((a, b) => b.count - a.count);
-        
-      } catch (error) {
-        console.log(`Table ${query.table} may not have Upvibhag column or doesn't exist: ${error.message}`);
-      }
-    }
-    
-    res.json({ tableResults, success: true });
+    // Convert aggregatedCounts object to an array of { Upvibhag, count }
+    const responseData = Object.entries(aggregatedCounts).map(([Upvibhag, count]) => ({ Upvibhag, count }));
+
+    res.json({ success: true, data: responseData });
   } catch (error) {
-    console.error('Error getting Upvibhag counts:', error);
-    res.status(500).json({ message: 'Server error', error: error.message });
+    console.error("Error getting Upvibhag counts:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error getting Upvibhag counts",
+      error: error.message,
+    });
   }
 };
-// const notification = async (req,res) => {
-//   try{
-//     await pool.connect();
 
-//     if(userId)
+// Get Unique Years from Provision Tables
+const getUniqueYears = async (req, res) => {
+    const { office } = req.body;
+    if (!office) {
+        return res.status(400).json({ success: false, message: "Office parameter is required" });
+    }
+    try {
+        const pool = await getPool(office);
+        if (!pool) throw new Error(`Database pool is not available for office ${office}.`);
+        
+        // Example: Query one provision table, adjust if needed
+        const query = `SELECT DISTINCT Arthsankalpiyyear FROM BuildingProvision ORDER BY Arthsankalpiyyear DESC`; 
+        const result = await pool.request().query(query);
+        const years = result.recordset.map(row => row.Arthsankalpiyyear);
+        res.json({ success: true, years });
+    } catch (error) {
+        console.error("Error getting unique years:", error);
+        res.status(500).json({ success: false, message: "Error getting unique years", error: error.message });
+    }
+};
 
+// Get Unique Head Names from Master Tables
+const getUniqueHeadNames = async (req, res) => {
+    const { office } = req.body;
+    if (!office) {
+        return res.status(400).json({ success: false, message: "Office parameter is required" });
+    }
+    try {
+        const pool = await getPool(office);
+        if (!pool) throw new Error(`Database pool is not available for office ${office}.`);
+        
+        // Example: Query one master table, adjust if needed
+        const query = `SELECT DISTINCT LekhaShirshName FROM BudgetMasterBuilding WHERE LekhaShirshName IS NOT NULL ORDER BY LekhaShirshName`; 
+        const result = await pool.request().query(query);
+        const headNames = result.recordset.map(row => row.LekhaShirshName);
+        res.json({ success: true, headNames });
+    } catch (error) {
+        console.error("Error getting unique head names:", error);
+        res.status(500).json({ success: false, message: "Error getting unique head names", error: error.message });
+    }
+};
 
-//   }
-// }
+// Get Budget Summary by Year (Aggregated)
+const getBudgetSummaryByYear = async (req, res) => {
+    const { office, year } = req.body;
+    if (!office || !year) {
+        return res.status(400).json({ success: false, message: "Office and Year parameters are required" });
+    }
+    try {
+        const pool = await getPool(office);
+        if (!pool) throw new Error(`Database pool is not available for office ${office}.`);
+
+        // Example: Aggregated query on Building tables, adjust as needed
+        const query = `
+            SELECT 
+                m.LekhaShirshName, 
+                COUNT(m.WorkID) AS WorkCount,
+                SUM(p.Tartud) AS TotalTartud,
+                SUM(p.AkunAnudan) AS TotalAnudan,
+                SUM(p.AikunKharch) AS TotalKharch
+            FROM BudgetMasterBuilding m
+            JOIN BuildingProvision p ON m.WorkID = p.WorkID
+            WHERE p.Arthsankalpiyyear = @year
+            GROUP BY m.LekhaShirshName
+            ORDER BY m.LekhaShirshName;
+        `;
+        const result = await pool.request()
+            .input('year', sql.VarChar, year)
+            .query(query);
+        res.json({ success: true, data: result.recordset });
+    } catch (error) {
+        console.error("Error getting budget summary by year:", error);
+        res.status(500).json({ success: false, message: "Error getting budget summary by year", error: error.message });
+    }
+};
+
+// Get Budget Details by Year and Head Name
+const getBudgetDetailsByYearAndHead = async (req, res) => {
+    const { office, year, headName } = req.body;
+    if (!office || !year || !headName) {
+        return res.status(400).json({ success: false, message: "Office, Year, and Head Name parameters are required" });
+    }
+    try {
+        const pool = await getPool(office);
+        if (!pool) throw new Error(`Database pool is not available for office ${office}.`);
+        
+        // Example: Detailed query on Building tables, adjust as needed
+        const query = `
+            SELECT m.*, p.*
+            FROM BudgetMasterBuilding m
+            JOIN BuildingProvision p ON m.WorkID = p.WorkID
+            WHERE p.Arthsankalpiyyear = @year AND m.LekhaShirshName = @headName
+            ORDER BY m.WorkID;
+        `;
+        const result = await pool.request()
+            .input('year', sql.VarChar, year)
+            .input('headName', sql.NVarChar, headName) // Use NVarChar for head name
+            .query(query);
+        res.json({ success: true, data: result.recordset });
+    } catch (error) {
+        console.error("Error getting budget details:", error);
+        res.status(500).json({ success: false, message: "Error getting budget details", error: error.message });
+    }
+};
 
 module.exports = {
   getBudgetCount,
-  getUpvibhagCounts
+  getUpvibhagCounts,
+  getUniqueYears,
+  getUniqueHeadNames,
+  getBudgetSummaryByYear,
+  getBudgetDetailsByYearAndHead,
 }; 

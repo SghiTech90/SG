@@ -1,4 +1,4 @@
-const { getConnectedPool, sql } = require('../config/db');
+const { getPool, sql } = require('../config/db');
 
 // Generic function to get all head report based on table names
 const getAllHeadReport = async (req, res, masterTable, provisionTable, reportName) => {
@@ -12,7 +12,7 @@ const getAllHeadReport = async (req, res, masterTable, provisionTable, reportNam
             });
         }
 
-        const pool = await getConnectedPool();
+        const pool = await getPool();
         if (!pool) {
           throw new Error("Database pool is not available.");
         }

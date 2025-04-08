@@ -1,4 +1,4 @@
-const { getConnectedPool, sql } = require("../config/db");
+const { getPool, sql } = require("../config/db");
 const axios = require("axios");
 require("dotenv").config();
 
@@ -58,19 +58,19 @@ const sendSMS = async (mobileNo, message) => {
 
 // Login and send OTP
 const login = async (req, res) => {
-  const { userId, password } = req.body;
+  const { userId, password, office } = req.body;
   
-  if (!userId || !password) {
-    return res.status(400).json({ message: 'User ID and password are required' });
+  if (!userId || !password || !office) {
+    return res.status(400).json({ message: 'User ID, password, and office are required' });
   }
 
-  console.log(userId, password);
+  console.log(`Login attempt: UserID=${userId}, Office=${office}`);
   
   try {
-    console.log("Attempting to get database pool...");
-    const pool = await getConnectedPool();
+    console.log("Attempting to get database pool for office:", office);
+    const pool = await getPool(office);
     if (!pool) {
-      throw new Error("Database pool is not available.");
+      throw new Error(`Database pool is not available for office ${office}.`);
     }
     console.log("Database pool acquired.");
 
@@ -98,7 +98,7 @@ const login = async (req, res) => {
     const otp = generateOTP();
     console.log(`Generated OTP: ${otp} for user: ${userId}`);
 
-    otpStore[userId] = { otp, mobileNo: user.MobileNo, Name: user.Name, post: user.Post, expiry: Date.now() + 2 * 60 * 1000 };
+    otpStore[userId] = { otp, mobileNo: user.MobileNo, Name: user.Name, post: user.Post, office: office, expiry: Date.now() + 2 * 60 * 1000 };
     console.log("OTP stored. Sending SMS...");
 
     await sendSMS(user.MobileNo, `Your one time password login (OTP) is ${otp}  Please use it to verify your mobile number with -Swapsoft`);
@@ -138,10 +138,11 @@ const verifyOTP = async (req, res) => {
     }
     
     console.log(`OTP verified successfully for user: ${userId}`);
+    const verifiedOffice = otpData.office;
     delete otpStore[userId];
         
-    // Respond with success
-    res.json({ message: 'Login successful', userId, post: otpData.post, success: true });
+    // Respond with success, include office if needed later
+    res.json({ message: 'Login successful', userId, post: otpData.post, office: verifiedOffice, success: true });
     
   } catch (error) {
     console.error('OTP verification error:', error);
@@ -151,16 +152,16 @@ const verifyOTP = async (req, res) => {
 
 // Resend OTP
 const resendOTP = async (req, res) => {
-  const { userId } = req.body;
+  const { userId, office } = req.body;
   
-  if (!userId) {
-    return res.status(400).json({ message: 'User ID is required', success: false });
+  if (!userId || !office) {
+    return res.status(400).json({ message: 'User ID and office are required', success: false });
   }
   
   try {
-    const pool = await getConnectedPool();
+    const pool = await getPool(office);
     if (!pool) {
-      throw new Error("Database pool is not available.");
+      throw new Error(`Database pool is not available for office ${office}.`);
     }
 
     const result = await pool.request()
@@ -175,7 +176,7 @@ const resendOTP = async (req, res) => {
     const currentUserId = user.UserId; 
     
     const otp = generateOTP();
-    otpStore[currentUserId] = { otp, mobileNo: user.MobileNo, post: user.Post, expiry: Date.now() + 2 * 60 * 1000 };
+    otpStore[currentUserId] = { otp, mobileNo: user.MobileNo, post: user.Post, office: office, expiry: Date.now() + 2 * 60 * 1000 };
     
     await sendSMS(user.MobileNo, `Your new OTP for login is ${otp} - Swapsoft`);
     
@@ -189,18 +190,18 @@ const resendOTP = async (req, res) => {
 
 // Profile - Now a POST request to accept userId
 const profile = async (req, res) => {
-  const { userId } = req.body;
+  const { userId, office } = req.body;
   
-  if (!userId) {
-      return res.status(400).json({ message: 'User ID is required', success: false });
+  if (!userId || !office) {
+      return res.status(400).json({ message: 'User ID and office are required', success: false });
   }
   
-  console.log(`Trying to fetch profile data for User ID: ${userId}`);
+  console.log(`Trying to fetch profile data for User ID: ${userId} in office: ${office}`);
   
   try {
-    const pool = await getConnectedPool();
+    const pool = await getPool(office);
     if (!pool) {
-      throw new Error("Database pool is not available.");
+      throw new Error(`Database pool is not available for office ${office}.`);
     }
     
     const result = await pool.request()
@@ -231,21 +232,21 @@ const profile = async (req, res) => {
   }
 };
 
-// Building MPR Report - Now GET with year as query param
+// Building MPR Report - Now a POST request with year and office
 const buildingMPRreport = async (req, res) => {
     try {
-        const { year } = req.query; // Use req.query for GET
+        const { year, office } = req.body;
         
-        if (!year) {
+        if (!year || !office) {
             return res.status(400).json({
                 success: false,
-                message: 'Year query parameter is required'
+                message: 'Year and office parameters are required'
             });
         }
 
-        const pool = await getConnectedPool();
+        const pool = await getPool(office);
         if (!pool) {
-          throw new Error("Database pool is not available.");
+          throw new Error(`Database pool is not available for office ${office}.`);
         }
 
         const query = `
@@ -307,18 +308,18 @@ const buildingMPRreport = async (req, res) => {
 // Get contractor project counts - POST request
 const getContractorProjects = async (req, res) => {
   try {
-      const { contractorName } = req.body;
+      const { contractorName, office } = req.body;
       
-      if (!contractorName) {
+      if (!contractorName || !office) {
           return res.status(400).json({
               success: false,
-              message: 'Contractor name is required'
+              message: 'Contractor name and office are required'
           });
       }
 
-      const pool = await getConnectedPool();
+      const pool = await getPool(office);
       if (!pool) {
-        throw new Error("Database pool is not available.");
+        throw new Error(`Database pool is not available for office ${office}.`);
       }
 
       const query = `
@@ -377,21 +378,21 @@ const getContractorProjects = async (req, res) => {
   }
 };
 
-// CRF MPR Report - Now GET with year as query param
+// CRF MPR Report - Now POST with year and office
 const CrfMPRreport = async (req, res) => {
     try {
-        const { year } = req.query; // Use req.query for GET
+        const { year, office } = req.body;
         
-        if (!year) {
+        if (!year || !office) {
             return res.status(400).json({
                 success: false,
-                message: 'Year query parameter is required'
+                message: 'Year and office parameters are required'
             });
         }
 
-        const pool = await getConnectedPool();
+        const pool = await getPool(office);
         if (!pool) {
-          throw new Error("Database pool is not available.");
+          throw new Error(`Database pool is not available for office ${office}.`);
         }
 
         const query = `
