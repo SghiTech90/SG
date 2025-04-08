@@ -1,10 +1,11 @@
-const { pool1, pool2, sql, poolConnect1, poolConnect2, pool3, pool4, pool5, pool6, poolConnect3, poolConnect4, poolConnect5, poolConnect6 } = require('../config/db');
-const axios = require('axios');
-require('dotenv').config();
+const { getConnectedPool, sql } = require("../config/db");
+const axios = require("axios");
+require("dotenv").config();
 
 // WishbySMS configuration
 const wishbyApiKey = process.env.WISHBY_API_KEY;
 const wishbySenderId = process.env.WISHBY_SENDER_ID;
+//const DLT_TE_ID_TEXT= "1707174246348497746";
 
 // Store OTPs temporarily (in production, use Redis or another cache system)
 const otpStore = {};
@@ -25,7 +26,7 @@ const sendSMS = async (mobileNo, message) => {
     let apiUrl = `https://login.wishbysms.com/api/sendhttp.php?authkey=${wishbyApiKey}&mobiles=${phoneNumber}&message=${encodedMessage}&sender=${wishbySenderId}&route=4&country=91`;
     
     if (process.env.DLT_TE_ID) apiUrl += `&DLT_TE_ID=${process.env.DLT_TE_ID}`;
-
+    
     const response = await axios.get(apiUrl);
     return { success: true, response: response.data };
   } catch (error) {
@@ -34,160 +35,185 @@ const sendSMS = async (mobileNo, message) => {
   }
 };
 
-// Function to select database pool
-const getPool = async (office) => {
-  if (office === 'P_W_Division_Akola') {
-    await poolConnect1;
-    return pool1;
-  } else if (office === 'P_W_Division_Washim') {
-    await poolConnect2;
-    return pool2;
-  } else if (office === 'P_W_Division_Buldhana') {
-    await poolConnect3;
-    return pool3;
-  } else if (office === 'P_W_Division_Khamgaon') {
-    await poolConnect4;
-    return pool4;
-  } else if (office === 'P_W_Division_WBAkola') {
-    await poolConnect5;
-    return pool5;
-  }
-  else if (office === 'P_W_Circle_Akola') {
-    await poolConnect6;
-    return pool6;
-  }
-  else {
-    throw new Error('Invalid office selection');
-  }
-};
+// const sendTEXT = async (mobileNo, message) => {
+//   try {
+//     let phoneNumber = mobileNo.startsWith('91') ? mobileNo : '91' + mobileNo;
+//     console.log(phoneNumber);
+//     console.log(wishbyApiKey);
+//     console.log(wishbySenderId);
+    
+//     const encodedMessage = encodeURIComponent(message);
+//     console.log(encodedMessage);
+//     let apiUrl = `https://login.wishbysms.com/api/sendhttp.php?authkey=${wishbyApiKey}&mobiles=${phoneNumber}&message=${encodedMessage}&sender=${wishbySenderId}&route=4&country=91`;
+    
+//     if (DLT_TE_ID_TEXT) apiUrl += `&DLT_TE_ID_TEXT=${DLT_TE_ID_TEXT}`;
+    
+//     const response = await axios.get(apiUrl);
+//     return { success: true, response: response.data };
+//   } catch (error) {
+//     console.error('Error sending SMS:', error);
+//     return { success: false, error: error.message };
+//   }
+// };
 
 // Login and send OTP
 const login = async (req, res) => {
-  const { userId, password, office } = req.body;
+  const { userId, password } = req.body;
   
-  if (!userId || !password || !office) {
-    return res.status(400).json({ message: 'User ID, password, and office are required' });
+  if (!userId || !password) {
+    return res.status(400).json({ message: 'User ID and password are required' });
   }
 
+  console.log(userId, password);
+  
   try {
-    const pool = await getPool(office);
+    console.log("Attempting to get database pool...");
+    const pool = await getConnectedPool();
+    if (!pool) {
+      throw new Error("Database pool is not available.");
+    }
+    console.log("Database pool acquired.");
+
+    const query = `SELECT UserId, Password, Post, MobileNo FROM [dbo].[SCreateAdmin] WHERE UserId = @userId`;
+    console.log("Executing login query...");
     const result = await pool.request()
       .input('userId', sql.VarChar, userId)
-      .query('SELECT UserId, Password, Post, MobileNo FROM SCreateAdmin WHERE UserId = @userId');
-    
+      .query(query);
+    console.log("Login query executed.");
+
     if (result.recordset.length === 0) {
-      return res.status(404).json({ message: `Invalid credentials - Please Verify your office ${office}`, success: false });
+      console.log(`User not found: ${userId}`);
+      return res.status(404).json({ message: `Invalid credentials - User not found`, success: false });
     }
     
     const user = result.recordset[0];
+    console.log("User found, checking password...");
+
     if (user.Password !== password) {
+      console.log(`Invalid password for user: ${userId}`);
       return res.status(401).json({ message: 'Invalid password', success: false });
     }
+    console.log("Password verified. Generating OTP...");
 
     const otp = generateOTP();
-    otpStore[userId] = { otp, mobileNo: user.MobileNo, post: user.Post, expiry: Date.now() + 2 * 60 * 1000 };
+    console.log(`Generated OTP: ${otp} for user: ${userId}`);
 
-    await sendSMS(user.MobileNo, `Your one time password login (OTP) is ${otp}  Please use it to verify your mobile number with -Swapsoft`);
+    otpStore[userId] = { otp, mobileNo: user.MobileNo, Name: user.Name, post: user.Post, expiry: Date.now() + 2 * 60 * 1000 };
+    console.log("OTP stored. Sending SMS...");
+
+    await sendSMS(user.MobileNo, `Your one time password login (OTP) is ${otp}  Please use it to verify your mobile number with -Swapsoft`);
+    console.log("SMS presumably sent.");
+
+    res.json({ message: 'OTP sent successfully', success: true, Name: user.Name, userId, post: user.Post, mobileNo: user.MobileNo.replace(/\d(?=\d{4})/g, '*') });
     
-    res.json({ message: 'OTP sent successfully', success: true, userId, post: user.Post, mobileNo: user.MobileNo.replace(/\d(?=\d{4})/g, '*') });
-
   } catch (error) {
     console.error('Login error:', error);
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ message: 'An internal server error occurred during login.', success: false, error: error.message });
   }
 };
 
 // Verify OTP
+// Verify OTP - FIXED VERSION
 const verifyOTP = async (req, res) => {
   const { userId, otp } = req.body;
   
   if (!userId || !otp) {
     return res.status(400).json({ message: 'User ID and OTP are required', success: false });
   }
-
+  
   try {
     if (!otpStore[userId]) {
-      return res.status(400).json({ message: 'No OTP request found. Please login again.', success: false });
+      return res.status(400).json({ message: 'No OTP request found or it has expired. Please login again.', success: false });
     }
     
     const otpData = otpStore[userId];
-
+    
     if (Date.now() > otpData.expiry) {
       delete otpStore[userId];
       return res.status(400).json({ message: 'OTP has expired. Please login again.', success: false });
     }
-
+    
     if (otpData.otp !== otp) {
       return res.status(401).json({ message: 'Invalid OTP', success: false });
     }
-
+    
+    console.log(`OTP verified successfully for user: ${userId}`);
     delete otpStore[userId];
-
+        
+    // Respond with success
     res.json({ message: 'Login successful', userId, post: otpData.post, success: true });
-
+    
   } catch (error) {
     console.error('OTP verification error:', error);
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ message: 'An internal server error occurred during OTP verification.', success: false });
   }
 };
 
 // Resend OTP
 const resendOTP = async (req, res) => {
-  const { userId, office } = req.body;
+  const { userId } = req.body;
   
-  if (!userId || !office) {
-    return res.status(400).json({ message: 'User ID and office are required', success: false });
+  if (!userId) {
+    return res.status(400).json({ message: 'User ID is required', success: false });
   }
-
+  
   try {
-    const pool = await getPool(office);
+    const pool = await getConnectedPool();
+    if (!pool) {
+      throw new Error("Database pool is not available.");
+    }
+
     const result = await pool.request()
       .input('userId', sql.VarChar, userId)
-      .query('SELECT UserId, MobileNo, Post FROM SCreateAdmin WHERE UserId = @userId');
+      .query('SELECT UserId, MobileNo, Post FROM [dbo].[SCreateAdmin] WHERE UserId = @userId');
     
     if (result.recordset.length === 0) {
       return res.status(404).json({ message: 'User not found', success: false });
     }
-
+    
     const user = result.recordset[0];
+    const currentUserId = user.UserId; 
+    
     const otp = generateOTP();
-    otpStore[userId] = { otp, mobileNo: user.MobileNo, post: user.Post, expiry: Date.now() + 2 * 60 * 1000 };
-
-    await sendSMS(user.MobileNo, `Your OTP for login is ${otp} - Swapsoft`);
-
-    res.json({ message: 'OTP resent successfully', success: true, userId });
-
+    otpStore[currentUserId] = { otp, mobileNo: user.MobileNo, post: user.Post, expiry: Date.now() + 2 * 60 * 1000 };
+    
+    await sendSMS(user.MobileNo, `Your new OTP for login is ${otp} - Swapsoft`);
+    
+    res.json({ message: 'OTP resent successfully', success: true, userId: currentUserId });
+    
   } catch (error) {
     console.error('Resend OTP error:', error);
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ message: 'An internal server error occurred while resending OTP.', success: false, error: error.message });
   }
 };
 
+// Profile - Now a POST request to accept userId
 const profile = async (req, res) => {
-  const { userId, office } = req.body;
+  const { userId } = req.body;
   
-  console.log(`Trying to fetch user Data ${userId}`);
+  if (!userId) {
+      return res.status(400).json({ message: 'User ID is required', success: false });
+  }
+  
+  console.log(`Trying to fetch profile data for User ID: ${userId}`);
   
   try {
-    const pool = await getPool(office);
-    await pool.connect();
+    const pool = await getConnectedPool();
+    if (!pool) {
+      throw new Error("Database pool is not available.");
+    }
     
-    // Query user from SCreateAdmin table using mobile number
     const result = await pool.request()
       .input('userId', sql.VarChar, userId)
-      .query('select UserId,Name,Office,Post,MobileNo,Email,Image from SCreateAdmin where UserId = @userId');
+      .query('SELECT UserId, Name, Office, Post, MobileNo, Email, Image FROM [dbo].[SCreateAdmin] WHERE UserId = @userId');
     
-    // Check if user exists
     if (result.recordset.length === 0) {
-      return res.status(404).json({ message: 'No user found with this userId', success: 'false' });
+      return res.status(404).json({ message: 'No user found with this User ID', success: false });
     }
     
     const user = result.recordset[0];
-    console.log(user);
+    console.log("User profile data retrieved:", user);
     
-    //const userId = user.UserId;
-
-    // Return success but don't include sensitive information
     res.json({ 
       Image: user.Image,
       Email: user.Email,
@@ -196,25 +222,30 @@ const profile = async (req, res) => {
       Office: user.Office,
       name: user.Name,
       userId: user.UserId,
-      success: 'true',
+      success: true
     });
     
   } catch (error) {
-    console.error('Resend OTP error:', error);
-    res.status(500).json({ message: 'Server error', error: error.message, success: 'false' });
+    console.error('Profile fetch error:', error);
+    res.status(500).json({ message: 'An internal server error occurred while fetching profile.', success: false, error: error.message });
   }
 };
 
-// Get Building MPR Report
+// Building MPR Report - Now GET with year as query param
 const buildingMPRreport = async (req, res) => {
     try {
-        const { year, office } = req.body;
+        const { year } = req.query; // Use req.query for GET
         
         if (!year) {
             return res.status(400).json({
                 success: false,
-                message: 'Year parameter is required'
+                message: 'Year query parameter is required'
             });
+        }
+
+        const pool = await getConnectedPool();
+        if (!pool) {
+          throw new Error("Database pool is not available.");
         }
 
         const query = `
@@ -252,10 +283,9 @@ const buildingMPRreport = async (req, res) => {
                 ' ' + convert(NVARCHAR(max), a.[ShakhaAbhiyantMobile]) AS abhiyanta
             FROM BudgetMasterBuilding AS a
             JOIN BuildingProvision AS b ON a.WorkID = b.WorkID
-            WHERE b.Arthsankalpiyyear = @year`
-        ;
+            WHERE b.Arthsankalpiyyear = @year
+        `;
 
-        const pool = await getPool(office);
         const result = await pool.request()
             .input('year', year)
             .query(query);
@@ -274,16 +304,94 @@ const buildingMPRreport = async (req, res) => {
     }
 };
 
-// Get CRF MPR Report
+// Get contractor project counts - POST request
+const getContractorProjects = async (req, res) => {
+  try {
+      const { contractorName } = req.body;
+      
+      if (!contractorName) {
+          return res.status(400).json({
+              success: false,
+              message: 'Contractor name is required'
+          });
+      }
+
+      const pool = await getConnectedPool();
+      if (!pool) {
+        throw new Error("Database pool is not available.");
+      }
+
+      const query = `
+        SELECT 
+            (SELECT count(*) FROM [dbo].[BudgetMasterBuilding] WHERE ThekedaarName = @contractorName) AS Building,
+            (SELECT count(*) FROM [dbo].[BudgetMasterCRF] WHERE ThekedaarName = @contractorName) AS CRF,
+            (SELECT count(*) FROM [dbo].[BudgetMasterAunty] WHERE ThekedaarName = @contractorName) AS Annuity,
+            (SELECT count(*) FROM [dbo].[BudgetMasterDepositFund] WHERE ThekedaarName = @contractorName) AS Deposit,
+            (SELECT count(*) FROM [dbo].[BudgetMasterDPDC] WHERE ThekedaarName = @contractorName) AS DPDC,
+            (SELECT count(*) FROM [dbo].[BudgetMasterGAT_A] WHERE ThekedaarName = @contractorName) AS Gat_A,
+            (SELECT count(*) FROM [dbo].[BudgetMasterGAT_D] WHERE ThekedaarName = @contractorName) AS Gat_D,
+            (SELECT count(*) FROM [dbo].[BudgetMasterGAT_FBC] WHERE ThekedaarName = @contractorName) AS Gat_BCF,
+            (SELECT count(*) FROM [dbo].[BudgetMasterMLA] WHERE ThekedaarName = @contractorName) AS MLA,
+            (SELECT count(*) FROM [dbo].[BudgetMasterMP] WHERE ThekedaarName = @contractorName) AS MP,
+            (SELECT count(*) FROM [dbo].[BudgetMasterNABARD] WHERE ThekedaarName = @contractorName) AS Nabard,
+            (SELECT count(*) FROM [dbo].[BudgetMasterRoad] WHERE ThekedaarName = @contractorName) AS Road,
+            (SELECT count(*) FROM [dbo].[BudgetMasterNonResidentialBuilding] WHERE ThekedaarName = @contractorName) AS NRB2059,
+            (SELECT count(*) FROM [dbo].[BudgetMasterResidentialBuilding] WHERE ThekedaarName = @contractorName) AS RB2216,
+            (SELECT count(*) FROM [dbo].[BudgetMaster2515] WHERE ThekedaarName = @contractorName) AS GramVikas
+      `;
+
+      const result = await pool.request()
+          .input('contractorName', sql.NVarChar, contractorName)
+          .query(query);
+      
+      const data = result.recordset[0] || {};
+      const counts = {
+        Building: data.Building || 0,
+        CRF: data.CRF || 0,
+        Annuity: data.Annuity || 0,
+        Deposit: data.Deposit || 0,
+        DPDC: data.DPDC || 0,
+        Gat_A: data.Gat_A || 0,
+        Gat_D: data.Gat_D || 0,
+        Gat_BCF: data.Gat_BCF || 0,
+        MLA: data.MLA || 0,
+        MP: data.MP || 0,
+        Nabard: data.Nabard || 0,
+        Road: data.Road || 0,
+        NRB2059: data.NRB2059 || 0,
+        RB2216: data.RB2216 || 0,
+        GramVikas: data.GramVikas || 0
+      };
+
+      res.json({
+          success: true,
+          data: counts
+      });
+  } catch (error) {
+      console.error('Error in getContractorProjects:', error);
+      res.status(500).json({
+          success: false,
+          message: 'Error fetching contractor project counts',
+          error: error.message
+      });
+  }
+};
+
+// CRF MPR Report - Now GET with year as query param
 const CrfMPRreport = async (req, res) => {
     try {
-        const { year, office } = req.body;
+        const { year } = req.query; // Use req.query for GET
         
         if (!year) {
             return res.status(400).json({
                 success: false,
-                message: 'Year parameter is required'
+                message: 'Year query parameter is required'
             });
+        }
+
+        const pool = await getConnectedPool();
+        if (!pool) {
+          throw new Error("Database pool is not available.");
         }
 
         const query = `
@@ -312,9 +420,8 @@ const CrfMPRreport = async (req, res) => {
                 a.[Shera] as 'Remarks'
             FROM BudgetMasterCRF as a 
             join CRFProvision as b on a.WorkID=b.WorkID 
-            where b.Arthsankalpiyyear = @year`
-        ;
-        const pool = await getPool(office);
+            where b.Arthsankalpiyyear = @year
+        `;
 
         const result = await pool.request()
             .input('year', year)
@@ -334,4 +441,4 @@ const CrfMPRreport = async (req, res) => {
     }
 };
 
-module.exports = { login, verifyOTP, resendOTP, profile, buildingMPRreport, CrfMPRreport };
+module.exports = { login, verifyOTP, resendOTP, profile, buildingMPRreport, CrfMPRreport, getContractorProjects };
