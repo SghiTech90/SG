@@ -21,8 +21,9 @@ const getBudgetCount = async (req, res) => {
 
     const tableQueries = [
       { table: 'BudgetMasterAunty', title: 'Annuity' },
-      { table: 'BudgetMaster2515', title: '2515' },
       { table: 'BudgetMasterBuilding', title: 'Building' },
+      { table: 'BudgetMasterNABARD', title: 'NABARD' },
+      { table: 'BudgetMasterRoad', title: 'ROAD' },
       { table: 'BudgetMasterCRF', title: 'CRF' },
       { table: 'BudgetMasterDepositFund', title: 'Deposit' },
       { table: 'BudgetMasterDPDC', title: 'DPDC' },
@@ -31,10 +32,9 @@ const getBudgetCount = async (req, res) => {
       { table: 'BudgetMasterGAT_FBC', title: 'BCR' },
       { table: 'BudgetMasterMLA', title: 'MLA' },
       { table: 'BudgetMasterMP', title: 'MP' },
-      { table: 'BudgetMasterNABARD', title: 'NABARD' },
       { table: 'BudgetMasterNonResidentialBuilding', title: '2059' },
       { table: 'BudgetMasterResidentialBuilding', title: '2216' },
-      { table: 'BudgetMasterRoad', title: 'ROAD' }
+      { table: 'BudgetMaster2515', title: '2515' }
     ];
 
     const resultsArray = [];
