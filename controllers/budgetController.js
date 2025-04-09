@@ -10,42 +10,62 @@ const getTableBudgetCount = async (pool, tableName) => {
 // Get total budget count across all master tables
 const getBudgetCount = async (req, res) => {
   const { office } = req.body;
-  if (!office) {
-      return res.status(400).json({ success: false, message: "Office parameter is required" });
-  }
-  try {
-      const pool = await getPool(office);
-      if (!pool) throw new Error(`Database pool is not available for office ${office}.`);
 
-    const tables = [
-      "BudgetMasterBuilding",
-      "BudgetMasterCRF",
-      "BudgetMasterAunty",
-      "BudgetMasterDepositFund",
-      "BudgetMasterDPDC",
-      "BudgetMasterGAT_A",
-      "BudgetMasterGAT_D",
-      "BudgetMasterGAT_FBC",
-      "BudgetMasterMLA",
-      "BudgetMasterMP",
-      "BudgetMasterNABARD",
-      "BudgetMasterRoad",
-      "BudgetMasterNonResidentialBuilding",
-      "BudgetMasterResidentialBuilding",
-      "BudgetMaster2515",
+  if (!office) {
+    return res.status(400).json({ success: false, message: "Office parameter is required" });
+  }
+
+  try {
+    const pool = await getPool(office);
+    if (!pool) throw new Error(`Database pool is not available for office ${office}.`);
+
+    const tableQueries = [
+      { table: 'BudgetMasterAunty', title: 'Annuity' },
+      { table: 'BudgetMaster2515', title: '2515' },
+      { table: 'BudgetMasterBuilding', title: 'Building' },
+      { table: 'BudgetMasterCRF', title: 'CRF' },
+      { table: 'BudgetMasterDepositFund', title: 'Deposit' },
+      { table: 'BudgetMasterDPDC', title: 'DPDC' },
+      { table: 'BudgetMasterGAT_A', title: 'AMC' },
+      { table: 'BudgetMasterGAT_D', title: 'FDR' },
+      { table: 'BudgetMasterGAT_FBC', title: 'BCR' },
+      { table: 'BudgetMasterMLA', title: 'MLA' },
+      { table: 'BudgetMasterMP', title: 'MP' },
+      { table: 'BudgetMasterNABARD', title: 'NABARD' },
+      { table: 'BudgetMasterNonResidentialBuilding', title: '2059' },
+      { table: 'BudgetMasterResidentialBuilding', title: '2216' },
+      { table: 'BudgetMasterRoad', title: 'ROAD' }
     ];
-    let totalCount = 0;
-    for (const table of tables) {
-      totalCount += await getTableBudgetCount(pool, table);
+
+    const resultsArray = [];
+
+    for (const query of tableQueries) {
+      try {
+        const result = await pool.request().query(`SELECT COUNT(*) as count FROM ${query.table}`);
+        resultsArray.push({
+          title: query.title,
+          table: query.table,
+          count: result.recordset[0].count
+        });
+      } catch (error) {
+        console.error(`Error querying table ${query.table}:`, error.message);
+        resultsArray.push({
+          title: query.title,
+          table: query.table,
+          count: 0,
+          error: "Table may not exist or cannot be accessed"
+        });
+      }
     }
-    res.json({ success: true, totalCount });
+
+    // Sort results by count ascending
+    resultsArray.sort((a, b) => a.count - b.count);
+
+    res.json({ success: true, data: resultsArray });
+
   } catch (error) {
-    console.error("Error getting budget count:", error);
-    res.status(500).json({
-      success: false,
-      message: "Error getting budget count",
-      error: error.message,
-    });
+    console.error("Error getting budget counts:", error);
+    res.status(500).json({ success: false, message: "Server error", error: error.message });
   }
 };
 
