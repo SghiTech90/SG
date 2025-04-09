@@ -6,6 +6,8 @@ const axios = require('axios');
 
 const userRoutes = require('./routes/userRoutes');
 const allHeadRoutes = require('./routes/allHeadRoutes');
+const budgetRoutes = require('./routes/budgetRoutes');
+const notificationRoutes = require('./routes/notificationRoutes');
 
 const app = express();
 
@@ -21,6 +23,9 @@ console.log("Database connection initialization initiated in db.js");
 
 app.use('/api/user', userRoutes);
 app.use('/api/allhead', allHeadRoutes);
+app.use('/api/budget', budgetRoutes);
+app.use('/api/notifications', notificationRoutes);
+
 
 app.post('/api/data', (req, res) => {
   const { name, email } = req.body;
