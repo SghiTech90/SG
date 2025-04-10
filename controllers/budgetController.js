@@ -234,6 +234,252 @@ const getBudgetDetailsByYearAndHead = async (req, res) => {
     }
 };
 
+const BudgetMasterAunty = async (req, res) => {
+  const { office } = req.body;
+  if (!office ) {
+      return res.status(400).json({ success: false, message: "Office parameters are required" });
+  }
+  try {
+      const pool = await getPool(office);
+      if (!pool) throw new Error(`Database pool is not available for office ${office}.`);
+      
+      // Example: Detailed query on Building tables, adjust as needed
+      const query = `
+SELECT a.[Sadyasthiti]as 'Work Status', Count(a.[Sadyasthiti])as'Total Work',sum(cast(a.[PrashaskiyAmt] as decimal(10,2))) as 'Estimated Cost',sum(cast(a.[TrantrikAmt]as decimal(10,2)))as 'T.S Cost',sum(cast(b.[Tartud]as decimal(10,2))) as 'Budget Provision 2023-2024',sum(cast(b.[AikunKharch]as decimal(10,2))) as 'Expenditure 2023-2024' FROM BudgetMasterAunty a full outer join AuntyProvision  b on a.workid=b.workid where a.[Sadyasthiti]IS NOT NULL and b.Arthsankalpiyyear='2023-2024'   GROUP BY a.[Sadyasthiti] order by case a.[Sadyasthiti] when N'पूर्ण' then 1 when N'Completed' then 1 when N'Incomplete' then 2 when N'अपूर्ण' then 2 when N'प्रगतीत' then 3 when N'Inprogress' then 3 when N'Processing' then 3 when N'Current' then 3 when N'चालू' then 3  when N'Tender Stage' then 4 when N'निविदा स्तर' then 4 when N'Estimated Stage' then 5 when N'अंदाजपत्रकिय स्थर' then 5 when N'अंदाजपत्रकीय स्तर' then 5 when N'Not Started' then 6 when N'सुरु न झालेली' then 6 when N'सुरू करणे' then 7 when N'' then 8 end`;
+      const result = await pool.request()
+          .query(query);
+      res.json({ success: true, data: result.recordset });
+  } catch (error) {
+      console.error("Error getting BudgetMasterAunty details:", error);
+      res.status(500).json({ success: false, message: "Error getting BudgetMasterAunty details", error: error.message });
+  }
+};
+
+const BudgetMasterBuilding = async (req, res) => {
+  const { office } = req.body;
+  if (!office ) {
+      return res.status(400).json({ success: false, message: "Office parameters are required" });
+  }
+  try {
+      const pool = await getPool(office);
+      if (!pool) throw new Error(`Database pool is not available for office ${office}.`);
+      
+      // Example: Detailed query on Building tables, adjust as needed
+      const query = `
+          SELECT a.[Sadyasthiti]as 'Work Status', Count(a.[Sadyasthiti])as'Total Work',sum(cast(a.[PrashaskiyAmt] as decimal(10,2))) as 'Estimated Cost',sum(cast(a.[TrantrikAmt]as decimal(10,2)))as 'T.S Cost',sum(cast(b.[Tartud]as decimal(10,2))) as 'Budget Provision 2023-2024',sum(cast(b.[AikunKharch]as decimal(10,2))) as 'Expenditure 2023-2024' FROM BudgetMasterBuilding a full outer join BuildingProvision  b on a.workid=b.workid where a.[Sadyasthiti]IS NOT NULL and b.Arthsankalpiyyear='2023-2024'   GROUP BY a.[Sadyasthiti] order by case a.[Sadyasthiti] when N'पूर्ण' then 1 when N'Completed' then 1 when N'Incomplete' then 2 when N'अपूर्ण' then 2 when N'प्रगतीत' then 3 when N'Inprogress' then 3 when N'Processing' then 3 when N'Current' then 3 when N'चालू' then 3  when N'Tender Stage' then 4 when N'निविदा स्तर' then 4 when N'Estimated Stage' then 5 when N'अंदाजपत्रकिय स्थर' then 5 when N'अंदाजपत्रकीय स्तर' then 5 when N'Not Started' then 6 when N'सुरु न झालेली' then 6 when N'सुरू करणे' then 7 when N'' then 8 end`;
+      const result = await pool.request()
+          .query(query);
+      res.json({ success: true, data: result.recordset });
+  } catch (error) {
+      console.error("Error getting BudgetMasterBuilding details:", error);
+      res.status(500).json({ success: false, message: "Error getting BudgetMasterBuilding details", error: error.message });
+  }
+};
+
+const BudgetMasterCRF = async (req, res) => {
+  const { office } = req.body;
+  if (!office ) {
+      return res.status(400).json({ success: false, message: "Office parameters are required" });
+  }
+  try {
+      const pool = await getPool(office);
+      if (!pool) throw new Error(`Database pool is not available for office ${office}.`);
+      
+      // Example: Detailed query on Building tables, adjust as needed
+      const query = `
+          SELECT a.[Sadyasthiti]as 'Work Status', Count(a.[Sadyasthiti])as'Total Work',sum(cast(a.[PrashaskiyAmt] as decimal(10,2))) as 'Estimated Cost',sum(cast(a.[TrantrikAmt]as decimal(10,2)))as 'T.S Cost',sum(cast(b.[Tartud]as decimal(10,2))) as 'Budget Provision 2023-2024',sum(cast(b.[AikunKharch]as decimal(10,2))) as 'Expenditure 2023-2024' FROM BudgetMasterCRF a full outer join CRFProvision  b on a.workid=b.workid where a.[Sadyasthiti]IS NOT NULL and b.Arthsankalpiyyear='2023-2024'   GROUP BY a.[Sadyasthiti] order by case a.[Sadyasthiti] when N'पूर्ण' then 1 when N'Completed' then 1 when N'Incomplete' then 2 when N'अपूर्ण' then 2 when N'प्रगतीत' then 3 when N'Inprogress' then 3 when N'Processing' then 3 when N'Current' then 3 when N'चालू' then 3  when N'Tender Stage' then 4 when N'निविदा स्तर' then 4 when N'Estimated Stage' then 5 when N'अंदाजपत्रकिय स्थर' then 5 when N'अंदाजपत्रकीय स्तर' then 5 when N'Not Started' then 6 when N'सुरु न झालेली' then 6 when N'सुरू करणे' then 7 when N'' then 8 end`;
+      const result = await pool.request()
+          .query(query);
+      res.json({ success: true, data: result.recordset });
+  } catch (error) {
+      console.error("Error getting BudgetMasterCRF details:", error);
+      res.status(500).json({ success: false, message: "Error getting BudgetMasterCRF details", error: error.message });
+  }
+};
+
+const BudgetMasterDepositFund = async (req, res) => {
+  const { office } = req.body;
+  if (!office ) {
+      return res.status(400).json({ success: false, message: "Office parameters are required" });
+  }
+  try {
+      const pool = await getPool(office);
+      if (!pool) throw new Error(`Database pool is not available for office ${office}.`);
+      
+      // Example: Detailed query on Building tables, adjust as needed
+      const query = `SELECT a.[Sadyasthiti]as 'Work Status', Count(a.[Sadyasthiti])as'Total Work',sum(cast(a.[PrashaskiyAmt] as decimal(10,2))) as 'Estimated Cost',sum(cast(a.[TrantrikAmt]as decimal(10,2)))as 'T.S Cost',sum(cast(b.[Tartud]as decimal(10,2))) as 'Budget Provision 2023-2024',sum(cast(b.[AikunKharch]as decimal(10,2))) as 'Expenditure 2023-2024' FROM BudgetMasterDepositFund a full outer join DepositFundProvision  b on a.workid=b.workid where a.[Sadyasthiti]IS NOT NULL and b.Arthsankalpiyyear='2023-2024'   GROUP BY a.[Sadyasthiti] order by case a.[Sadyasthiti] when N'पूर्ण' then 1 when N'Completed' then 1 when N'Incomplete' then 2 when N'अपूर्ण' then 2 when N'प्रगतीत' then 3 when N'Inprogress' then 3 when N'Processing' then 3 when N'Current' then 3 when N'चालू' then 3  when N'Tender Stage' then 4 when N'निविदा स्तर' then 4 when N'Estimated Stage' then 5 when N'अंदाजपत्रकिय स्थर' then 5 when N'अंदाजपत्रकीय स्तर' then 5 when N'Not Started' then 6 when N'सुरु न झालेली' then 6 when N'सुरू करणे' then 7 when N'' then 8 end`;
+      const result = await pool.request()
+          .query(query);
+      res.json({ success: true, data: result.recordset });
+  } catch (error) {
+      console.error("Error getting BudgetMasterDepositFund details:", error);
+      res.status(500).json({ success: false, message: "Error getting BudgetMasterDepositFund details", error: error.message });
+  }
+};
+
+const BudgetMasterDPDC = async (req, res) => {
+  const { office } = req.body;
+  if (!office ) {
+      return res.status(400).json({ success: false, message: "Office parameters are required" });
+  }
+  try {
+      const pool = await getPool(office);
+      if (!pool) throw new Error(`Database pool is not available for office ${office}.`);
+      
+      // Example: Detailed query on Building tables, adjust as needed
+      const query = `
+          SELECT a.[Sadyasthiti]as 'Work Status', Count(a.[Sadyasthiti])as'Total Work',sum(cast(a.[PrashaskiyAmt] as decimal(10,2))) as 'Estimated Cost',sum(cast(a.[TrantrikAmt]as decimal(10,2)))as 'T.S Cost',sum(cast(b.[Tartud]as decimal(10,2))) as 'Budget Provision 2023-2024',sum(cast(b.[AikunKharch]as decimal(10,2))) as 'Expenditure 2023-2024' FROM BudgetMasterDPDC a full outer join DPDCProvision  b on a.workid=b.workid where a.[Sadyasthiti]IS NOT NULL and b.Arthsankalpiyyear='2023-2024'   GROUP BY a.[Sadyasthiti] order by case a.[Sadyasthiti] when N'पूर्ण' then 1 when N'Completed' then 1 when N'Incomplete' then 2 when N'अपूर्ण' then 2 when N'प्रगतीत' then 3 when N'Inprogress' then 3 when N'Processing' then 3 when N'Current' then 3 when N'चालू' then 3  when N'Tender Stage' then 4 when N'निविदा स्तर' then 4 when N'Estimated Stage' then 5 when N'अंदाजपत्रकिय स्थर' then 5 when N'अंदाजपत्रकीय स्तर' then 5 when N'Not Started' then 6 when N'सुरु न झालेली' then 6 when N'सुरू करणे' then 7 when N'' then 8 end`;
+      const result = await pool.request()
+          .query(query);
+      res.json({ success: true, data: result.recordset });
+  } catch (error) {
+      console.error("Error getting BudgetMasterDPDC details:", error);
+      res.status(500).json({ success: false, message: "Error getting BudgetMasterDPDC details", error: error.message });
+  }
+};
+
+const BudgetMasterGAT_A = async (req, res) => {
+  const { office } = req.body;
+  if (!office ) {
+      return res.status(400).json({ success: false, message: "Office parameters are required" });
+  }
+  try {
+      const pool = await getPool(office);
+      if (!pool) throw new Error(`Database pool is not available for office ${office}.`);
+      
+      // Example: Detailed query on Building tables, adjust as needed
+      const query = `SELECT a.[Sadyasthiti]as 'Work Status', Count(a.[Sadyasthiti])as'Total Work',sum(cast(a.[PrashaskiyAmt] as decimal(10,2))) as 'Estimated Cost',sum(cast(a.[TrantrikAmt]as decimal(10,2)))as 'T.S Cost',sum(cast(b.[Tartud]as decimal(10,2))) as 'Budget Provision 2023-2024',sum(cast(b.[AikunKharch]as decimal(10,2))) as 'Expenditure 2023-2024' FROM BudgetMasterGAT_A a full outer join GAT_AProvision  b on a.workid=b.workid where a.[Sadyasthiti]IS NOT NULL and b.Arthsankalpiyyear='2023-2024'   GROUP BY a.[Sadyasthiti] order by case a.[Sadyasthiti] when N'पूर्ण' then 1 when N'Completed' then 1 when N'Incomplete' then 2 when N'अपूर्ण' then 2 when N'प्रगतीत' then 3 when N'Inprogress' then 3 when N'Processing' then 3 when N'Current' then 3 when N'चालू' then 3  when N'Tender Stage' then 4 when N'निविदा स्तर' then 4 when N'Estimated Stage' then 5 when N'अंदाजपत्रकिय स्थर' then 5 when N'अंदाजपत्रकीय स्तर' then 5 when N'Not Started' then 6 when N'सुरु न झालेली' then 6 when N'सुरू करणे' then 7 when N'' then 8 end`;
+      const result = await pool.request()
+          .query(query);
+      res.json({ success: true, data: result.recordset });
+  } catch (error) {
+      console.error("Error getting BudgetMasterGAT_A details:", error);
+      res.status(500).json({ success: false, message: "Error getting BudgetMasterGAT_A details", error: error.message });
+  }
+};
+
+const BudgetMasterGAT_D = async (req, res) => {
+  const { office } = req.body;
+  if (!office ) {
+      return res.status(400).json({ success: false, message: "Office parameters are required" });
+  }
+  try {
+      const pool = await getPool(office);
+      if (!pool) throw new Error(`Database pool is not available for office ${office}.`);
+      
+      // Example: Detailed query on Building tables, adjust as needed
+      const query = `SELECT a.[Sadyasthiti]as 'Work Status', Count(a.[Sadyasthiti])as'Total Work',sum(cast(a.[PrashaskiyAmt] as decimal(10,2))) as 'Estimated Cost',sum(cast(a.[TrantrikAmt]as decimal(10,2)))as 'T.S Cost',sum(cast(b.[Tartud]as decimal(10,2))) as 'Budget Provision 2023-2024',sum(cast(b.[AikunKharch]as decimal(10,2))) as 'Expenditure 2023-2024' FROM BudgetMasterGAT_D a full outer join GAT_DProvision  b on a.workid=b.workid where a.[Sadyasthiti]IS NOT NULL and b.Arthsankalpiyyear='2023-2024'   GROUP BY a.[Sadyasthiti] order by case a.[Sadyasthiti] when N'पूर्ण' then 1 when N'Completed' then 1 when N'Incomplete' then 2 when N'अपूर्ण' then 2 when N'प्रगतीत' then 3 when N'Inprogress' then 3 when N'Processing' then 3 when N'Current' then 3 when N'चालू' then 3  when N'Tender Stage' then 4 when N'निविदा स्तर' then 4 when N'Estimated Stage' then 5 when N'अंदाजपत्रकिय स्थर' then 5 when N'अंदाजपत्रकीय स्तर' then 5 when N'Not Started' then 6 when N'सुरु न झालेली' then 6 when N'सुरू करणे' then 7 when N'' then 8 end`;
+      const result = await pool.request()
+          .query(query);
+      res.json({ success: true, data: result.recordset });
+  } catch (error) {
+      console.error("Error getting BudgetMasterGAT_D details:", error);
+      res.status(500).json({ success: false, message: "Error getting BudgetMasterGAT_D details", error: error.message });
+  }
+};
+
+const BudgetMasterGAT_FBC = async (req, res) => {
+  const { office } = req.body;
+  if (!office ) {
+      return res.status(400).json({ success: false, message: "Office parameters are required" });
+  }
+  try {
+      const pool = await getPool(office);
+      if (!pool) throw new Error(`Database pool is not available for office ${office}.`);
+      
+      // Example: Detailed query on Building tables, adjust as needed
+      const query = `SELECT a.[Sadyasthiti]as 'Work Status', Count(a.[Sadyasthiti])as'Total Work',sum(cast(a.[PrashaskiyAmt] as decimal(10,2))) as 'Estimated Cost',sum(cast(a.[TrantrikAmt]as decimal(10,2)))as 'T.S Cost',sum(cast(b.[Tartud]as decimal(10,2))) as 'Budget Provision 2023-2024',sum(cast(b.[AikunKharch]as decimal(10,2))) as 'Expenditure 2023-2024' FROM BudgetMasterGAT_FBC a full outer join GAT_FBCProvision  b on a.workid=b.workid where a.[Sadyasthiti]IS NOT NULL and b.Arthsankalpiyyear='2023-2024'   GROUP BY a.[Sadyasthiti] order by case a.[Sadyasthiti] when N'पूर्ण' then 1 when N'Completed' then 1 when N'Incomplete' then 2 when N'अपूर्ण' then 2 when N'प्रगतीत' then 3 when N'Inprogress' then 3 when N'Processing' then 3 when N'Current' then 3 when N'चालू' then 3  when N'Tender Stage' then 4 when N'निविदा स्तर' then 4 when N'Estimated Stage' then 5 when N'अंदाजपत्रकिय स्थर' then 5 when N'अंदाजपत्रकीय स्तर' then 5 when N'Not Started' then 6 when N'सुरु न झालेली' then 6 when N'सुरू करणे' then 7 when N'' then 8 end`;
+      const result = await pool.request()
+          .query(query);
+      res.json({ success: true, data: result.recordset });
+  } catch (error) {
+      console.error("Error getting BudgetMasterGAT_FBC details:", error);
+      res.status(500).json({ success: false, message: "Error getting BudgetMasterGAT_FBC details", error: error.message });
+  }
+};
+
+const BudgetMaster2515 = async (req, res) => {
+  const { office } = req.body;
+  if (!office ) {
+      return res.status(400).json({ success: false, message: "Office parameters are required" });
+  }
+  try {
+      const pool = await getPool(office);
+      if (!pool) throw new Error(`Database pool is not available for office ${office}.`);
+      
+      // Example: Detailed query on Building tables, adjust as needed
+      const query = `
+          SELECT a.[Sadyasthiti]as 'Work Status', Count(a.[Sadyasthiti])as'Total Work',sum(cast(a.[PrashaskiyAmt] as decimal(10,2))) as 'Estimated Cost',sum(cast(a.[TrantrikAmt]as decimal(10,2)))as 'T.S Cost',sum(cast(b.[Tartud]as decimal(10,2))) as 'Budget Provision 2023-2024',sum(cast(b.[AikunKharch]as decimal(10,2))) as 'Expenditure 2023-2024' FROM [BudgetMaster2515] a full outer join [2515Provision]  b on a.workid=b.workid where a.[Sadyasthiti]IS NOT NULL and b.Arthsankalpiyyear='2023-2024'   GROUP BY a.[Sadyasthiti] order by case a.[Sadyasthiti] when N'पूर्ण' then 1 when N'Completed' then 1 when N'Incomplete' then 2 when N'अपूर्ण' then 2 when N'प्रगतीत' then 3 when N'Inprogress' then 3 when N'Processing' then 3 when N'Current' then 3 when N'चालू' then 3  when N'Tender Stage' then 4 when N'निविदा स्तर' then 4 when N'Estimated Stage' then 5 when N'अंदाजपत्रकिय स्थर' then 5 when N'अंदाजपत्रकीय स्तर' then 5 when N'Not Started' then 6 when N'सुरु न झालेली' then 6 when N'सुरू करणे' then 7 when N'' then 8 end`;
+      const result = await pool.request()
+          .query(query);
+      res.json({ success: true, data: result.recordset });
+  } catch (error) {
+      console.error("Error getting BudgetMaster2515 details:", error);
+      res.status(500).json({ success: false, message: "Error getting BudgetMaster2515 details", error: error.message });
+  }
+};
+
+const BudgetMasterMLA = async (req, res) => {
+  const { office } = req.body;
+  if (!office ) {
+      return res.status(400).json({ success: false, message: "Office parameters are required" });
+  }
+  try {
+      const pool = await getPool(office);
+      if (!pool) throw new Error(`Database pool is not available for office ${office}.`);
+      
+      // Example: Detailed query on Building tables, adjust as needed
+      const query = `SELECT a.[Sadyasthiti]as 'Work Status', Count(a.[Sadyasthiti])as'Total Work',sum(cast(a.[PrashaskiyAmt] as decimal(10,2))) as 'Estimated Cost',sum(cast(a.[TrantrikAmt]as decimal(10,2)))as 'T.S Cost',sum(cast(b.[Tartud]as decimal(10,2))) as 'Budget Provision 2023-2024',sum(cast(b.[AikunKharch]as decimal(10,2))) as 'Expenditure 2023-2024' FROM BudgetMasterMLA a full outer join MLAProvision  b on a.workid=b.workid where a.[Sadyasthiti]IS NOT NULL and b.Arthsankalpiyyear='2023-2024'   GROUP BY a.[Sadyasthiti] order by case a.[Sadyasthiti] when N'पूर्ण' then 1 when N'Completed' then 1 when N'Incomplete' then 2 when N'अपूर्ण' then 2 when N'प्रगतीत' then 3 when N'Inprogress' then 3 when N'Processing' then 3 when N'Current' then 3 when N'चालू' then 3  when N'Tender Stage' then 4 when N'निविदा स्तर' then 4 when N'Estimated Stage' then 5 when N'अंदाजपत्रकिय स्थर' then 5 when N'अंदाजपत्रकीय स्तर' then 5 when N'Not Started' then 6 when N'सुरु न झालेली' then 6 when N'सुरू करणे' then 7 when N'' then 8 end`;
+      const result = await pool.request()
+          .query(query);
+      res.json({ success: true, data: result.recordset });
+  } catch (error) {
+      console.error("Error getting BudgetMasterMLA  details:", error);
+      res.status(500).json({ success: false, message: "Error getting BudgetMasterMLA  details", error: error.message });
+  }
+};
+
+const BudgetMasterMP = async (req, res) => {
+  const { office } = req.body;
+  if (!office ) {
+      return res.status(400).json({ success: false, message: "Office parameters are required" });
+  }
+  try {
+      const pool = await getPool(office);
+      if (!pool) throw new Error(`Database pool is not available for office ${office}.`);
+      
+      // Example: Detailed query on Building tables, adjust as needed
+      const query = `SELECT a.[Sadyasthiti]as 'Work Status', Count(a.[Sadyasthiti])as'Total Work',sum(cast(a.[PrashaskiyAmt] as decimal(10,2))) as 'Estimated Cost',sum(cast(a.[TrantrikAmt]as decimal(10,2)))as 'T.S Cost',sum(cast(b.[Tartud]as decimal(10,2))) as 'Budget Provision 2023-2024',sum(cast(b.[AikunKharch]as decimal(10,2))) as 'Expenditure 2023-2024' FROM BudgetMasterMP a full outer join MPProvision  b on a.workid=b.workid where a.[Sadyasthiti]IS NOT NULL and b.Arthsankalpiyyear='2023-2024'   GROUP BY a.[Sadyasthiti] order by case a.[Sadyasthiti] when N'पूर्ण' then 1 when N'Completed' then 1 when N'Incomplete' then 2 when N'अपूर्ण' then 2 when N'प्रगतीत' then 3 when N'Inprogress' then 3 when N'Processing' then 3 when N'Current' then 3 when N'चालू' then 3  when N'Tender Stage' then 4 when N'निविदा स्तर' then 4 when N'Estimated Stage' then 5 when N'अंदाजपत्रकिय स्थर' then 5 when N'अंदाजपत्रकीय स्तर' then 5 when N'Not Started' then 6 when N'सुरु न झालेली' then 6 when N'सुरू करणे' then 7 when N'' then 8 end`;
+      const result = await pool.request()
+          .query(query);
+      res.json({ success: true, data: result.recordset });
+  } catch (error) {
+      console.error("Error getting BudgetMaster2515 details:", error);
+      res.status(500).json({ success: false, message: "Error getting BudgetMaster2515 details", error: error.message });
+  }
+};
+
+const BudgetMasterNABARD = async (req, res) => {
+  const { office } = req.body;
+  if (!office ) {
+      return res.status(400).json({ success: false, message: "Office parameters are required" });
+  }
+  try {
+      const pool = await getPool(office);
+      if (!pool) throw new Error(`Database pool is not available for office ${office}.`);
+      
+      // Example: Detailed query on Building tables, adjust as needed
+      const query = `
+      SELECT a.[Sadyasthiti]as 'Work Status', Count(a.[Sadyasthiti])as'Total Work',sum(cast(a.[PrashaskiyAmt] as decimal(10,2))) as 'Estimated Cost',sum(cast(a.[TrantrikAmt]as decimal(10,2)))as 'T.S Cost',sum(cast(b.[Tartud]as decimal(10,2))) as 'Budget Provision 2023-2024',sum(cast(b.[AikunKharch]as decimal(10,2))) as 'Expenditure 2023-2024' FROM BudgetMasterNABARD a full outer join NABARDProvision  b on a.workid=b.workid where a.[Sadyasthiti]IS NOT NULL and b.Arthsankalpiyyear='2023-2024'   GROUP BY a.[Sadyasthiti] order by case a.[Sadyasthiti] when N'पूर्ण' then 1 when N'Completed' then 1 when N'Incomplete' then 2 when N'अपूर्ण' then 2 when N'प्रगतीत' then 3 when N'Inprogress' then 3 when N'Processing' then 3 when N'Current' then 3 when N'चालू' then 3  when N'Tender Stage' then 4 when N'निविदा स्तर' then 4 when N'Estimated Stage' then 5 when N'अंदाजपत्रकिय स्थर' then 5 when N'अंदाजपत्रकीय स्तर' then 5 when N'Not Started' then 6 when N'सुरु न झालेली' then 6 when N'सुरू करणे' then 7 when N'' then 8 end`;
+      const result = await pool.request()
+          .query(query);
+      res.json({ success: true, data: result.recordset });
+  } catch (error) {
+      console.error("Error getting BudgetMasterNABARD details:", error);
+      res.status(500).json({ success: false, message: "Error getting BudgetMasterNABARD details", error: error.message });
+  }
+};
+
 module.exports = {
   getBudgetCount,
   getUpvibhagCounts,
@@ -241,4 +487,16 @@ module.exports = {
   getUniqueHeadNames,
   getBudgetSummaryByYear,
   getBudgetDetailsByYearAndHead,
+  BudgetMaster2515,
+  BudgetMasterNABARD,
+  BudgetMasterMP,
+  BudgetMasterMLA,
+  BudgetMasterGAT_FBC,
+  BudgetMasterGAT_D,
+  BudgetMasterGAT_A,
+  BudgetMasterDPDC,
+  BudgetMasterDepositFund,
+  BudgetMasterCRF,
+  BudgetMasterBuilding,
+  BudgetMasterAunty
 }; 
