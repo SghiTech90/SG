@@ -20,11 +20,12 @@ const getBudgetCount = async (req, res) => {
     if (!pool) throw new Error(`Database pool is not available for office ${office}.`);
 
     const tableQueries = [
+        { table: 'BudgetMasterBuilding', title: 'Building' },
+        { table: 'BudgetMasterCRF', title: 'CRF' },
       { table: 'BudgetMasterAunty', title: 'Annuity' },
-      { table: 'BudgetMasterBuilding', title: 'Building' },
       { table: 'BudgetMasterNABARD', title: 'NABARD' },
       { table: 'BudgetMasterRoad', title: 'ROAD' },
-      { table: 'BudgetMasterCRF', title: 'CRF' },
+      { table: 'BudgetMaster2515', title: '2515' },
       { table: 'BudgetMasterDepositFund', title: 'Deposit' },
       { table: 'BudgetMasterDPDC', title: 'DPDC' },
       { table: 'BudgetMasterGAT_A', title: 'AMC' },
@@ -33,8 +34,7 @@ const getBudgetCount = async (req, res) => {
       { table: 'BudgetMasterMLA', title: 'MLA' },
       { table: 'BudgetMasterMP', title: 'MP' },
       { table: 'BudgetMasterNonResidentialBuilding', title: '2059' },
-      { table: 'BudgetMasterResidentialBuilding', title: '2216' },
-      { table: 'BudgetMaster2515', title: '2515' }
+      { table: 'BudgetMasterResidentialBuilding', title: '2216' }
     ];
 
     const resultsArray = [];
