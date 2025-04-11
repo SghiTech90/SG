@@ -58,9 +58,6 @@ const getBudgetCount = async (req, res) => {
       }
     }
 
-    // Sort results by count ascending
-    resultsArray.sort((a, b) => a.count - b.count);
-
     res.json({ success: true, data: resultsArray });
 
   } catch (error) {
