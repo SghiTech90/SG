@@ -18,7 +18,22 @@ const {
     BudgetMasterDepositFund,
     BudgetMasterCRF,
     BudgetMasterBuilding,
-    BudgetMasterAunty
+    BudgetMasterAunty,
+    Cont2515,
+    ContAnnuity,
+    ContBuilding,
+    ContNABARD,
+    ContSHDOR,
+    ContCRF,
+    ContMLA,
+    ContMP,
+    ContDPDC,
+    ContGAT_A,
+    ContGAT_FBC,
+    ContDepositFund,
+    ContGAT_D,
+    ContResidentialBuilding2216,
+    ContNonResidentialBuilding2909
 } = require('../controllers/budgetController');
 
 // Route to get budget count
@@ -51,5 +66,22 @@ router.post('/BudgetMasterDepositFund', BudgetMasterDepositFund); // Requires of
 router.post('/BudgetMasterCRF', BudgetMasterCRF); // Requires office, year, headName
 router.post('/BudgetMasterBuilding', BudgetMasterBuilding); // Requires office, year, headName
 router.post('/BudgetMasterAunty', BudgetMasterAunty); // Requires office, year, headName
+
+
+router.post('/Cont2515', Cont2515);
+router.post('/ContAnnuity', ContAnnuity);
+router.post('/ContBuilding', ContBuilding);
+router.post('/ContNABARD', ContNABARD);
+router.post('/ContSHDOR', ContSHDOR);
+router.post('/ContCRF', ContCRF);
+router.post('/ContMLA', ContMLA);
+router.post('/ContMP', ContMP);
+router.post('/ContDPDC', ContDPDC);
+router.post('/ContGAT_A', ContGAT_A);
+router.post('/ContGAT_FBC', ContGAT_FBC);
+router.post('/ContDepositFund', ContDepositFund);
+router.post('/ContGAT_D', ContGAT_D);
+router.post('/ContResidentialBuilding2216', ContResidentialBuilding2216);
+router.post('/ContNonResidentialBuilding2909', ContNonResidentialBuilding2909);
 
 module.exports = router; 

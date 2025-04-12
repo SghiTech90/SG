@@ -232,10 +232,10 @@ const getBudgetDetailsByYearAndHead = async (req, res) => {
 };
 
 const BudgetMasterAunty = async (req, res) => {
-  const { office } = req.body;
-  if (!office ) {
-      return res.status(400).json({ success: false, message: "Office parameters are required" });
-  }
+    const { office, position } = req.body;
+    if (!office || !position) {
+        return res.status(400).json({ success: false, message: "Office parameter is required" });
+    }
   try {
       const pool = await getPool(office);
       if (!pool) throw new Error(`Database pool is not available for office ${office}.`);
@@ -253,10 +253,10 @@ SELECT a.[Sadyasthiti]as 'Work Status', Count(a.[Sadyasthiti])as'Total Work',sum
 };
 
 const BudgetMasterBuilding = async (req, res) => {
-  const { office } = req.body;
-  if (!office ) {
-      return res.status(400).json({ success: false, message: "Office parameters are required" });
-  }
+    const { office, position } = req.body;
+    if (!office || !position) {
+        return res.status(400).json({ success: false, message: "Office parameter is required" });
+    }
   try {
       const pool = await getPool(office);
       if (!pool) throw new Error(`Database pool is not available for office ${office}.`);
@@ -274,10 +274,10 @@ const BudgetMasterBuilding = async (req, res) => {
 };
 
 const BudgetMasterCRF = async (req, res) => {
-  const { office } = req.body;
-  if (!office ) {
-      return res.status(400).json({ success: false, message: "Office parameters are required" });
-  }
+    const { office, position } = req.body;
+    if (!office || !position) {
+        return res.status(400).json({ success: false, message: "Office parameter is required" });
+    }
   try {
       const pool = await getPool(office);
       if (!pool) throw new Error(`Database pool is not available for office ${office}.`);
@@ -295,10 +295,10 @@ const BudgetMasterCRF = async (req, res) => {
 };
 
 const BudgetMasterDepositFund = async (req, res) => {
-  const { office } = req.body;
-  if (!office ) {
-      return res.status(400).json({ success: false, message: "Office parameters are required" });
-  }
+    const { office, position } = req.body;
+    if (!office || !position) {
+        return res.status(400).json({ success: false, message: "Office parameter is required" });
+    }
   try {
       const pool = await getPool(office);
       if (!pool) throw new Error(`Database pool is not available for office ${office}.`);
@@ -315,10 +315,10 @@ const BudgetMasterDepositFund = async (req, res) => {
 };
 
 const BudgetMasterDPDC = async (req, res) => {
-  const { office } = req.body;
-  if (!office ) {
-      return res.status(400).json({ success: false, message: "Office parameters are required" });
-  }
+    const { office, position } = req.body;
+    if (!office || !position) {
+        return res.status(400).json({ success: false, message: "Office parameter is required" });
+    }
   try {
       const pool = await getPool(office);
       if (!pool) throw new Error(`Database pool is not available for office ${office}.`);
@@ -336,10 +336,10 @@ const BudgetMasterDPDC = async (req, res) => {
 };
 
 const BudgetMasterGAT_A = async (req, res) => {
-  const { office } = req.body;
-  if (!office ) {
-      return res.status(400).json({ success: false, message: "Office parameters are required" });
-  }
+    const { office, position } = req.body;
+    if (!office || !position) {
+        return res.status(400).json({ success: false, message: "Office parameter is required" });
+    }
   try {
       const pool = await getPool(office);
       if (!pool) throw new Error(`Database pool is not available for office ${office}.`);
@@ -356,10 +356,10 @@ const BudgetMasterGAT_A = async (req, res) => {
 };
 
 const BudgetMasterGAT_D = async (req, res) => {
-  const { office } = req.body;
-  if (!office ) {
-      return res.status(400).json({ success: false, message: "Office parameters are required" });
-  }
+    const { office, position } = req.body;
+    if (!office || !position) {
+        return res.status(400).json({ success: false, message: "Office parameter is required" });
+    }
   try {
       const pool = await getPool(office);
       if (!pool) throw new Error(`Database pool is not available for office ${office}.`);
@@ -376,10 +376,10 @@ const BudgetMasterGAT_D = async (req, res) => {
 };
 
 const BudgetMasterGAT_FBC = async (req, res) => {
-  const { office } = req.body;
-  if (!office ) {
-      return res.status(400).json({ success: false, message: "Office parameters are required" });
-  }
+    const { office, position } = req.body;
+    if (!office || !position) {
+        return res.status(400).json({ success: false, message: "Office parameter is required" });
+    }
   try {
       const pool = await getPool(office);
       if (!pool) throw new Error(`Database pool is not available for office ${office}.`);
@@ -396,10 +396,10 @@ const BudgetMasterGAT_FBC = async (req, res) => {
 };
 
 const BudgetMaster2515 = async (req, res) => {
-  const { office } = req.body;
-  if (!office ) {
-      return res.status(400).json({ success: false, message: "Office parameters are required" });
-  }
+    const { office, position } = req.body;
+    if (!office || !position) {
+        return res.status(400).json({ success: false, message: "Office parameter is required" });
+    }
   try {
       const pool = await getPool(office);
       if (!pool) throw new Error(`Database pool is not available for office ${office}.`);
@@ -417,10 +417,10 @@ const BudgetMaster2515 = async (req, res) => {
 };
 
 const BudgetMasterMLA = async (req, res) => {
-  const { office } = req.body;
-  if (!office ) {
-      return res.status(400).json({ success: false, message: "Office parameters are required" });
-  }
+    const { office, position } = req.body;
+    if (!office || !position) {
+        return res.status(400).json({ success: false, message: "Office parameter is required" });
+    }
   try {
       const pool = await getPool(office);
       if (!pool) throw new Error(`Database pool is not available for office ${office}.`);
@@ -437,10 +437,10 @@ const BudgetMasterMLA = async (req, res) => {
 };
 
 const BudgetMasterMP = async (req, res) => {
-  const { office } = req.body;
-  if (!office ) {
-      return res.status(400).json({ success: false, message: "Office parameters are required" });
-  }
+    const { office, position } = req.body;
+    if (!office || !position) {
+        return res.status(400).json({ success: false, message: "Office parameter is required" });
+    }
   try {
       const pool = await getPool(office);
       if (!pool) throw new Error(`Database pool is not available for office ${office}.`);
@@ -457,10 +457,10 @@ const BudgetMasterMP = async (req, res) => {
 };
 
 const BudgetMasterNABARD = async (req, res) => {
-  const { office } = req.body;
-  if (!office ) {
-      return res.status(400).json({ success: false, message: "Office parameters are required" });
-  }
+    const { office, position } = req.body;
+    if (!office || !position) {
+        return res.status(400).json({ success: false, message: "Office parameter is required" });
+    }
   try {
       const pool = await getPool(office);
       if (!pool) throw new Error(`Database pool is not available for office ${office}.`);
@@ -474,6 +474,337 @@ const BudgetMasterNABARD = async (req, res) => {
   } catch (error) {
       console.error("Error getting BudgetMasterNABARD details:", error);
       res.status(500).json({ success: false, message: "Error getting BudgetMasterNABARD details", error: error.message });
+  }
+};
+
+//contractor
+const Cont2515 = async (req, res) => {
+    const { office, position, post, name } = req.body;
+    if (!office || !position || !post || !name ) {
+        return res.status(400).json({ success: false, message: "parameter is required" });
+    }
+  try {
+      const pool = await getPool(office);
+      if (!pool) throw new Error(`Database pool is not available for office ${office}.`);
+      
+      // Example: Detailed query on Building tables, adjust as needed
+      const query = `
+      SELECT a.[Sadyasthiti]as 'Work Status', Count(a.[Sadyasthiti])as'Total Work',sum(cast(a.[PrashaskiyAmt] as decimal(10,2))) as 'AA cost Rs in lakhs',sum(cast(a.[TrantrikAmt]as decimal(10,2)))as 'Technical Sanction Cost Rs in Lakh',sum(cast(b.[Tartud]as decimal(10,2))) as 'Total Provision Rs in Lakh',sum(cast(b.[AikunKharch]as decimal(10,2))) as 'Total Expense Rs in Lakh' FROM [BudgetMaster2515] a full outer join [2515Provision]  b on a.workid=b.workid where a.[Sadyasthiti]!='' and ThekedaarName=@name and b.Arthsankalpiyyear='2023-2024' GROUP BY a.[Sadyasthiti]`;
+      const result = await pool.request()
+      .input('name', name)
+          .query(query);
+      res.json({ success: true, data: result.recordset });
+  } catch (error) {
+      console.error("Error getting Cont2515 details:", error);
+      res.status(500).json({ success: false, message: "Error getting Cont2515 details", error: error.message });
+  }
+};
+
+const ContAnnuity = async (req, res) => {
+    const { office, position, post, name } = req.body;
+    if (!office || !position || !post || !name ) {
+        return res.status(400).json({ success: false, message: "parameter is required" });
+    }
+  try {
+      const pool = await getPool(office);
+      if (!pool) throw new Error(`Database pool is not available for office ${office}.`);
+      
+      // Example: Detailed query on Building tables, adjust as needed
+      const query = `
+      SELECT a.[Sadyasthiti]as 'Work Status', Count(a.[Sadyasthiti])as'Total Work',sum(cast(a.[PrashaskiyAmt] as decimal(10,2))) as 'AA cost Rs in lakhs',sum(cast(a.[TrantrikAmt]as decimal(10,2)))as 'Technical Sanction Cost Rs in Lakh',sum(cast(b.[Tartud]as decimal(10,2))) as 'Total Provision Rs in Lakh',sum(cast(b.[AikunKharch]as decimal(10,2))) as 'Total Expense Rs in Lakh' FROM BudgetMasterAunty a full outer join AuntyProvision  b on a.workid=b.workid where a.[Sadyasthiti]!='' and ThekedaarName=@name and b.Arthsankalpiyyear='2023-2024' GROUP BY a.[Sadyasthiti]`;
+      const result = await pool.request()
+      .input('name', name)
+          .query(query);
+      res.json({ success: true, data: result.recordset });
+  } catch (error) {
+      console.error("Error getting ContAnnuity details:", error);
+      res.status(500).json({ success: false, message: "Error getting ContAnnuity details", error: error.message });
+  }
+};
+
+const ContBuilding = async (req, res) => {
+    const { office, position, post, name } = req.body;
+    if (!office || !position || !post || !name ) {
+        return res.status(400).json({ success: false, message: "parameter is required" });
+    }
+  try {
+      const pool = await getPool(office);
+      if (!pool) throw new Error(`Database pool is not available for office ${office}.`);
+      
+      // Example: Detailed query on Building tables, adjust as needed
+      const query = `
+      SELECT a.[Sadyasthiti]as 'Work Status', Count(a.[Sadyasthiti])as'Total Work',sum(cast(a.[PrashaskiyAmt] as decimal(10,2))) as 'AA cost Rs in lakhs',sum(cast(a.[TrantrikAmt]as decimal(10,2)))as 'Technical Sanction Cost Rs in Lakh',sum(cast(b.[Tartud]as decimal(10,2))) as 'Total Provision Rs in Lakh',sum(cast(b.[AikunKharch]as decimal(10,2))) as 'Total Expense Rs in Lakh' FROM BudgetMasterBuilding  a full outer join BuildingProvision  b on a.workid=b.workid where a.[Sadyasthiti]!='' and ThekedaarName=@name and b.Arthsankalpiyyear='2023-2024' GROUP BY a.[Sadyasthiti]`;
+      const result = await pool.request()
+      .input('name', name)
+          .query(query);
+      res.json({ success: true, data: result.recordset });
+  } catch (error) {
+      console.error("Error getting ContBuilding details:", error);
+      res.status(500).json({ success: false, message: "Error getting ContBuilding details", error: error.message });
+  }
+};
+
+const ContNABARD = async (req, res) => {
+    const { office, position, post, name } = req.body;
+    if (!office || !position || !post || !name ) {
+        return res.status(400).json({ success: false, message: "parameter is required" });
+    }
+  try {
+      const pool = await getPool(office);
+      if (!pool) throw new Error(`Database pool is not available for office ${office}.`);
+      
+      // Example: Detailed query on Building tables, adjust as needed
+      const query = `
+      SELECT a.[Sadyasthiti]as 'Work Status', Count(a.[Sadyasthiti])as'Total Work',sum(cast(a.[PrashaskiyAmt] as decimal(10,2))) as 'AA cost Rs in lakhs',sum(cast(a.[TrantrikAmt]as decimal(10,2)))as 'Technical Sanction Cost Rs in Lakh',sum(cast(b.[Tartud]as decimal(10,2))) as 'Total Provision Rs in Lakh',sum(cast(b.[AikunKharch]as decimal(10,2))) as 'Total Expense Rs in Lakh' FROM BudgetMasterNABARD  a full outer join NABARDProvision  b on a.workid=b.workid where a.[Sadyasthiti]!='' and ThekedaarName=@name and b.Arthsankalpiyyear='2023-2024' GROUP BY a.[Sadyasthiti]`;
+      const result = await pool.request()
+      .input('name', name)
+          .query(query);
+      res.json({ success: true, data: result.recordset });
+  } catch (error) {
+      console.error("Error getting ContNABARD details:", error);
+      res.status(500).json({ success: false, message: "Error getting ContNABARD details", error: error.message });
+  }
+};
+
+const ContSHDOR = async (req, res) => {
+    const { office, position, post, name } = req.body;
+    if (!office || !position || !post || !name ) {
+        return res.status(400).json({ success: false, message: "parameter is required" });
+    }
+  try {
+      const pool = await getPool(office);
+      if (!pool) throw new Error(`Database pool is not available for office ${office}.`);
+      
+      // Example: Detailed query on Building tables, adjust as needed
+      const query = `
+      SELECT a.[Sadyasthiti]as 'Work Status', Count(a.[Sadyasthiti])as'Total Work',sum(cast(a.[PrashaskiyAmt] as decimal(10,2))) as 'AA cost Rs in lakhs',sum(cast(a.[TrantrikAmt]as decimal(10,2)))as 'Technical Sanction Cost Rs in Lakh',sum(cast(b.[Tartud]as decimal(10,2))) as 'Total Provision Rs in Lakh',sum(cast(b.[AikunKharch]as decimal(10,2))) as 'Total Expense Rs in Lakh' FROM BudgetMasterRoad  a full outer join RoadProvision  b on a.workid=b.workid where a.[Sadyasthiti]!='' and ThekedaarName=@name and b.Arthsankalpiyyear='2023-2024' GROUP BY a.[Sadyasthiti]`;
+      const result = await pool.request()
+      .input('name', name)
+          .query(query);
+      res.json({ success: true, data: result.recordset });
+  } catch (error) {
+      console.error("Error getting ContSHDOR details:", error);
+      res.status(500).json({ success: false, message: "Error getting ContSHDOR details", error: error.message });
+  }
+};
+
+const ContCRF = async (req, res) => {
+    const { office, position, post, name } = req.body;
+    if (!office || !position || !post || !name ) {
+        return res.status(400).json({ success: false, message: "parameter is required" });
+    }
+  try {
+      const pool = await getPool(office);
+      if (!pool) throw new Error(`Database pool is not available for office ${office}.`);
+      
+      // Example: Detailed query on Building tables, adjust as needed
+      const query = `
+      SELECT a.[Sadyasthiti]as 'Work Status', Count(a.[Sadyasthiti])as'Total Work',sum(cast(a.[PrashaskiyAmt] as decimal(10,2))) as 'AA cost Rs in lakhs',sum(cast(a.[TrantrikAmt]as decimal(10,2)))as 'Technical Sanction Cost Rs in Lakh',sum(cast(b.[Tartud]as decimal(10,2))) as 'Total Provision Rs in Lakh',sum(cast(b.[AikunKharch]as decimal(10,2))) as 'Total Expense Rs in Lakh' FROM BudgetMasterCRF  a full outer join CRFProvision  b on a.workid=b.workid where a.[Sadyasthiti]!='' and ThekedaarName=@name and b.Arthsankalpiyyear='2023-2024' GROUP BY a.[Sadyasthiti]`;
+      const result = await pool.request()
+      .input('name', name)
+          .query(query);
+      res.json({ success: true, data: result.recordset });
+  } catch (error) {
+      console.error("Error getting ContCRF details:", error);
+      res.status(500).json({ success: false, message: "Error getting ContCRF details", error: error.message });
+  }
+};
+
+const ContMLA = async (req, res) => {
+    const { office, position, post, name } = req.body;
+    if (!office || !position || !post || !name ) {
+        return res.status(400).json({ success: false, message: "parameter is required" });
+    }
+  try {
+      const pool = await getPool(office);
+      if (!pool) throw new Error(`Database pool is not available for office ${office}.`);
+      
+      // Example: Detailed query on Building tables, adjust as needed
+      const query = `
+      SELECT a.[Sadyasthiti]as 'Work Status', Count(a.[Sadyasthiti])as'Total Work',sum(cast(a.[PrashaskiyAmt] as decimal(10,2))) as 'AA cost Rs in lakhs',sum(cast(a.[TrantrikAmt]as decimal(10,2)))as 'Technical Sanction Cost Rs in Lakh',sum(cast(b.[Tartud]as decimal(10,2))) as 'Total Provision Rs in Lakh',sum(cast(b.[AikunKharch]as decimal(10,2))) as 'Total Expense Rs in Lakh' FROM BudgetMasterMLA   a full outer join MLAProvision  b on a.workid=b.workid where a.[Sadyasthiti]!='' and ThekedaarName=@name and b.Arthsankalpiyyear='2023-2024' GROUP BY a.[Sadyasthiti]`;
+      const result = await pool.request()
+      .input('name', name)
+          .query(query);
+      res.json({ success: true, data: result.recordset });
+  } catch (error) {
+      console.error("Error getting ContMLA details:", error);
+      res.status(500).json({ success: false, message: "Error getting ContMLA details", error: error.message });
+  }
+};
+
+const ContMP = async (req, res) => {
+    const { office, position, post, name } = req.body;
+    if (!office || !position || !post || !name ) {
+        return res.status(400).json({ success: false, message: "parameter is required" });
+    }
+  try {
+      const pool = await getPool(office);
+      if (!pool) throw new Error(`Database pool is not available for office ${office}.`);
+      
+      // Example: Detailed query on Building tables, adjust as needed
+      const query = `
+      SELECT a.[Sadyasthiti]as 'Work Status', Count(a.[Sadyasthiti])as'Total Work',sum(cast(a.[PrashaskiyAmt] as decimal(10,2))) as 'AA cost Rs in lakhs',sum(cast(a.[TrantrikAmt]as decimal(10,2)))as 'Technical Sanction Cost Rs in Lakh',sum(cast(b.[Tartud]as decimal(10,2))) as 'Total Provision Rs in Lakh',sum(cast(b.[AikunKharch]as decimal(10,2))) as 'Total Expense Rs in Lakh' FROM BudgetMasterMP  a full outer join MPProvision  b on a.workid=b.workid where a.[Sadyasthiti]!='' and ThekedaarName=@name and b.Arthsankalpiyyear='2023-2024' GROUP BY a.[Sadyasthiti]`;
+      const result = await pool.request()
+      .input('name', name)
+          .query(query);
+      res.json({ success: true, data: result.recordset });
+  } catch (error) {
+      console.error("Error getting ContMP details:", error);
+      res.status(500).json({ success: false, message: "Error getting ContMP details", error: error.message });
+  }
+};
+
+const ContDPDC = async (req, res) => {
+    const { office, position, post, name } = req.body;
+    if (!office || !position || !post || !name ) {
+        return res.status(400).json({ success: false, message: "parameter is required" });
+    }
+  try {
+      const pool = await getPool(office);
+      if (!pool) throw new Error(`Database pool is not available for office ${office}.`);
+      
+      // Example: Detailed query on Building tables, adjust as needed
+      const query = `
+      SELECT a.[Sadyasthiti]as 'Work Status', Count(a.[Sadyasthiti])as'Total Work',sum(cast(a.[PrashaskiyAmt] as decimal(10,2))) as 'AA cost Rs in lakhs',sum(cast(a.[TrantrikAmt]as decimal(10,2)))as 'Technical Sanction Cost Rs in Lakh',sum(cast(b.[Tartud]as decimal(10,2))) as 'Total Provision Rs in Lakh',sum(cast(b.[AikunKharch]as decimal(10,2))) as 'Total Expense Rs in Lakh' FROM BudgetMasterDPDC  a full outer join DPDCProvision  b on a.workid=b.workid where a.[Sadyasthiti]!='' and ThekedaarName=@name and b.Arthsankalpiyyear='2023-2024' GROUP BY a.[Sadyasthiti]`;
+      const result = await pool.request()
+      .input('name', name)
+          .query(query);
+      res.json({ success: true, data: result.recordset });
+  } catch (error) {
+      console.error("Error getting ContDPDC details:", error);
+      res.status(500).json({ success: false, message: "Error getting ContDPDC details", error: error.message });
+  }
+};
+
+const ContGAT_A = async (req, res) => {
+    const { office, position, post, name } = req.body;
+    if (!office || !position || !post || !name ) {
+        return res.status(400).json({ success: false, message: "parameter is required" });
+    }
+  try {
+      const pool = await getPool(office);
+      if (!pool) throw new Error(`Database pool is not available for office ${office}.`);
+      
+      // Example: Detailed query on Building tables, adjust as needed
+      const query = `
+     SELECT a.[Sadyasthiti]as 'Work Status', Count(a.[Sadyasthiti])as'Total Work',sum(cast(a.[PrashaskiyAmt] as decimal(10,2))) as 'AA cost Rs in lakhs',sum(cast(a.[TrantrikAmt]as decimal(10,2)))as 'Technical Sanction Cost Rs in Lakh',sum(cast(b.[Tartud]as decimal(10,2))) as 'Total Provision Rs in Lakh',sum(cast(b.[AikunKharch]as decimal(10,2))) as 'Total Expense Rs in Lakh' FROM BudgetMasterGAT_A  a full outer join GAT_AProvision  b on a.workid=b.workid where a.[Sadyasthiti]!='' and ThekedaarName=@name and b.Arthsankalpiyyear='2023-2024' GROUP BY a.[Sadyasthiti]`;
+      const result = await pool.request()
+      .input('name', name)
+          .query(query);
+      res.json({ success: true, data: result.recordset });
+  } catch (error) {
+      console.error("Error getting ContGAT_A details:", error);
+      res.status(500).json({ success: false, message: "Error getting ContGAT_A details", error: error.message });
+  }
+};
+
+const ContGAT_FBC = async (req, res) => {
+    const { office, position, post, name } = req.body;
+    if (!office || !position || !post || !name ) {
+        return res.status(400).json({ success: false, message: "parameter is required" });
+    }
+  try {
+      const pool = await getPool(office);
+      if (!pool) throw new Error(`Database pool is not available for office ${office}.`);
+      
+      // Example: Detailed query on Building tables, adjust as needed
+      const query = `
+      SELECT a.[Sadyasthiti]as 'Work Status', Count(a.[Sadyasthiti])as'Total Work',sum(cast(a.[PrashaskiyAmt] as decimal(10,2))) as 'AA cost Rs in lakhs',sum(cast(a.[TrantrikAmt]as decimal(10,2)))as 'Technical Sanction Cost Rs in Lakh',sum(cast(b.[Tartud]as decimal(10,2))) as 'Total Provision Rs in Lakh',sum(cast(b.[AikunKharch]as decimal(10,2))) as 'Total Expense Rs in Lakh' FROM BudgetMasterGAT_FBC a full outer join GAT_FBCProvision  b on a.workid=b.workid where a.[Sadyasthiti]!='' and ThekedaarName=@name and b.Arthsankalpiyyear='2023-2024' GROUP BY a.[Sadyasthiti]`;
+      const result = await pool.request()
+      .input('name', name)
+          .query(query);
+      res.json({ success: true, data: result.recordset });
+  } catch (error) {
+      console.error("Error getting ContGAT_FBC details:", error);
+      res.status(500).json({ success: false, message: "Error getting ContGAT_FBC details", error: error.message });
+  }
+};
+
+const ContDepositFund = async (req, res) => {
+    const { office, position, post, name } = req.body;
+    if (!office || !position || !post || !name ) {
+        return res.status(400).json({ success: false, message: "parameter is required" });
+    }
+  try {
+      const pool = await getPool(office);
+      if (!pool) throw new Error(`Database pool is not available for office ${office}.`);
+      
+      // Example: Detailed query on Building tables, adjust as needed
+      const query = `
+      SELECT a.[Sadyasthiti]as 'Work Status', Count(a.[Sadyasthiti])as'Total Work',sum(cast(a.[PrashaskiyAmt] as decimal(10,2))) as 'AA cost Rs in lakhs',sum(cast(a.[TrantrikAmt]as decimal(10,2)))as 'Technical Sanction Cost Rs in Lakh',sum(cast(b.[Tartud]as decimal(10,2))) as 'Total Provision Rs in Lakh',sum(cast(b.[AikunKharch]as decimal(10,2))) as 'Total Expense Rs in Lakh' FROM BudgetMasterDepositFund  a full outer join DepositFundProvision  b on a.workid=b.workid where a.[Sadyasthiti]!='' and ThekedaarName=@name and b.Arthsankalpiyyear='2023-2024' GROUP BY a.[Sadyasthiti]`;
+      const result = await pool.request()
+      .input('name', name)
+          .query(query);
+      res.json({ success: true, data: result.recordset });
+  } catch (error) {
+      console.error("Error getting ContDepositFund details:", error);
+      res.status(500).json({ success: false, message: "Error getting ContDepositFund details", error: error.message });
+  }
+};
+
+const ContGAT_D = async (req, res) => {
+    const { office, position, post, name } = req.body;
+    if (!office || !position || !post || !name ) {
+        return res.status(400).json({ success: false, message: "parameter is required" });
+    }
+  try {
+      const pool = await getPool(office);
+      if (!pool) throw new Error(`Database pool is not available for office ${office}.`);
+      
+      // Example: Detailed query on Building tables, adjust as needed
+      const query = `
+      SELECT a.[Sadyasthiti]as 'Work Status', Count(a.[Sadyasthiti])as'Total Work',sum(cast(a.[PrashaskiyAmt] as decimal(10,2))) as 'AA cost Rs in lakhs',sum(cast(a.[TrantrikAmt]as decimal(10,2)))as 'Technical Sanction Cost Rs in Lakh',sum(cast(b.[Tartud]as decimal(10,2))) as 'Total Provision Rs in Lakh',sum(cast(b.[AikunKharch]as decimal(10,2))) as 'Total Expense Rs in Lakh' FROM BudgetMasterGAT_D  a full outer join GAT_DProvision  b on a.workid=b.workid where a.[Sadyasthiti]!='' and ThekedaarName=@name and b.Arthsankalpiyyear='2023-2024' GROUP BY a.[Sadyasthiti]`;
+      const result = await pool.request()
+      .input('name', name)
+          .query(query);
+      res.json({ success: true, data: result.recordset });
+  } catch (error) {
+      console.error("Error getting ContGAT_D details:", error);
+      res.status(500).json({ success: false, message: "Error getting ContGAT_D details", error: error.message });
+  }
+};
+
+const ContResidentialBuilding2216 = async (req, res) => {
+    const { office, position, post, name } = req.body;
+    if (!office || !position || !post || !name ) {
+        return res.status(400).json({ success: false, message: "parameter is required" });
+    }
+  try {
+      const pool = await getPool(office);
+      if (!pool) throw new Error(`Database pool is not available for office ${office}.`);
+      
+      // Example: Detailed query on Building tables, adjust as needed
+      const query = `
+      SELECT a.[Sadyasthiti]as 'Work Status', Count(a.[Sadyasthiti])as'Total Work',sum(cast(a.[PrashaskiyAmt] as decimal(10,2))) as 'AA cost Rs in lakhs',sum(cast(a.[TrantrikAmt]as decimal(10,2)))as 'Technical Sanction Cost Rs in Lakh',sum(cast(b.[Tartud]as decimal(10,2))) as 'Total Provision Rs in Lakh',sum(cast(b.[AikunKharch]as decimal(10,2))) as 'Total Expense Rs in Lakh' FROM BudgetMasterResidentialBuilding  a full outer join ResidentialBuildingProvision  b on a.workid=b.workid where a.[Sadyasthiti]!='' and ThekedaarName=@name and b.Arthsankalpiyyear='2023-2024' GROUP BY a.[Sadyasthiti]`;
+      const result = await pool.request()
+      .input('name', name)
+          .query(query);
+      res.json({ success: true, data: result.recordset });
+  } catch (error) {
+      console.error("Error getting ContResidentialBuilding2216 details:", error);
+      res.status(500).json({ success: false, message: "Error getting ContResidentialBuilding2216 details", error: error.message });
+  }
+};
+
+const ContNonResidentialBuilding2909 = async (req, res) => {
+    const { office, position, post, name } = req.body;
+    if (!office || !position || !post || !name ) {
+        return res.status(400).json({ success: false, message: "parameter is required" });
+    }
+  try {
+      const pool = await getPool(office);
+      if (!pool) throw new Error(`Database pool is not available for office ${office}.`);
+      
+      // Example: Detailed query on Building tables, adjust as needed
+      const query = `
+      SELECT a.[Sadyasthiti]as 'Work Status', Count(a.[Sadyasthiti])as'Total Work',sum(cast(a.[PrashaskiyAmt] as decimal(10,2))) as 'AA cost Rs in lakhs',sum(cast(a.[TrantrikAmt]as decimal(10,2)))as 'Technical Sanction Cost Rs in Lakh',sum(cast(b.[Tartud]as decimal(10,2))) as 'Total Provision Rs in Lakh',sum(cast(b.[AikunKharch]as decimal(10,2))) as 'Total Expense Rs in Lakh' FROM BudgetMasterNonResidentialBuilding  a full outer join NonResidentialBuildingProvision  b on a.workid=b.workid where a.[Sadyasthiti]!='' and ThekedaarName=@name and b.Arthsankalpiyyear='2023-2024' GROUP BY a.[Sadyasthiti`;
+      const result = await pool.request()
+      .input('name', name)
+          .query(query);
+      res.json({ success: true, data: result.recordset });
+  } catch (error) {
+      console.error("Error getting ContNonResidentialBuilding2909 details:", error);
+      res.status(500).json({ success: false, message: "Error getting ContNonResidentialBuilding2909 details", error: error.message });
   }
 };
 
@@ -495,5 +826,20 @@ module.exports = {
   BudgetMasterDepositFund,
   BudgetMasterCRF,
   BudgetMasterBuilding,
-  BudgetMasterAunty
+  BudgetMasterAunty,
+  Cont2515,
+  ContAnnuity,
+  ContBuilding,
+  ContNABARD,
+  ContSHDOR,
+  ContCRF,
+  ContMLA,
+  ContMP,
+  ContDPDC,
+  ContGAT_A,
+  ContGAT_FBC,
+  ContDepositFund,
+  ContGAT_D,
+  ContResidentialBuilding2216,
+  ContNonResidentialBuilding2909
 }; 
