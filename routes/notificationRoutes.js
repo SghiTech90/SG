@@ -1,8 +1,10 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const { getUpcomingDueDates } = require('../controllers/notificationController');
+const {
+  getUpcomingDueDates,
+} = require("../controllers/notificationController");
 
 // Route to get upcoming due dates (next 20 days)
-router.post('/upcoming-due-dates', getUpcomingDueDates);
+router.post("/upcoming-due-dates", getUpcomingDueDates);
 
-module.exports = router; 
+module.exports = router;
