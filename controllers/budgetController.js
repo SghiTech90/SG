@@ -594,6 +594,7 @@ const BudgetMasterNABARD = async (req, res) => {
   }
 };
 
+
 //contractor
 const Cont2515 = async (req, res) => {
   const { office, position, post, name } = req.body;
@@ -1004,8 +1005,8 @@ const ContNonResidentialBuilding2909 = async (req, res) => {
 };
 
 const contractorGraph = async (req, res) => {
-  const { office, position, post, name } = req.body;
-  if (!office || !position || !post || !name) {
+  const { office, position, name } = req.body;
+  if (!office || !position || !name) {
     return res
       .status(400)
       .json({ success: false, message: "parameter is required" });
