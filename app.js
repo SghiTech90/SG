@@ -44,18 +44,18 @@ app.get("/", (req, res) => {
 });
 
 const apiEndpoints = [
-  'http://localhost:3001/api/budget/BudgetMasterNABARD',
-  'http://localhost:3001/api/budget/BudgetMaster2515',
-  'http://localhost:3001/api/budget/BudgetMasterMP',
-  'http://localhost:3001/api/budget/BudgetMasterMLA',
-  'http://localhost:3001/api/budget/BudgetMasterGAT_FBC',
-  'http://localhost:3001/api/budget/BudgetMasterGAT_D',
-  'http://localhost:3001/api/budget/BudgetMasterGAT_A',
-  'http://localhost:3001/api/budget/BudgetMasterDPDC',
-  'http://localhost:3001/api/budget/BudgetMasterDepositFund',
-  'http://localhost:3001/api/budget/BudgetMasterCRF',
-  'http://localhost:3001/api/budget/BudgetMasterBuilding',
-  'http://localhost:3001/api/budget/BudgetMasterAunty'
+  'https://sghitech-production.up.railway.app/api/budget/BudgetMasterNABARD',
+  'https://sghitech-production.up.railway.app/api/budget/BudgetMaster2515',
+  'https://sghitech-production.up.railway.app/api/budget/BudgetMasterMP',
+  'https://sghitech-production.up.railway.app/api/budget/BudgetMasterMLA',
+  'https://sghitech-production.up.railway.app/api/budget/BudgetMasterGAT_FBC',
+  'https://sghitech-production.up.railway.app/api/budget/BudgetMasterGAT_D',
+  'https://sghitech-production.up.railway.app/api/budget/BudgetMasterGAT_A',
+  'https://sghitech-production.up.railway.app/api/budget/BudgetMasterDPDC',
+  'https://sghitech-production.up.railway.app/api/budget/BudgetMasterDepositFund',
+  'https://sghitech-production.up.railway.app/api/budget/BudgetMasterCRF',
+  'https://sghitech-production.up.railway.app/api/budget/BudgetMasterBuilding',
+  'https://sghitech-production.up.railway.app/api/budget/BudgetMasterAunty'
 ];
 
 app.post('/aggregate', async (req, res) => {
@@ -100,7 +100,6 @@ app.post('/aggregate', async (req, res) => {
         aggregatedResult["Expenditure 2023-2024"] += Number(result["Expenditure 2023-2024"] || 0);
       }
     });
-    
     
     aggregatedResult["Estimated Cost"] = parseFloat(aggregatedResult["Estimated Cost"].toFixed(2));
     aggregatedResult["T.S Cost"] = parseFloat(aggregatedResult["T.S Cost"].toFixed(2));
