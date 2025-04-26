@@ -12,6 +12,7 @@ const {
   GAT_A_AllHEAD,
   GAT_D_AllHEAD,
   GRAMVIKAS_AllHEAD,
+  AunnityAllHEAD
 } = require("../controllers/allHeadController");
 
 // All routes are POST and require 'year' and 'office' in the body
