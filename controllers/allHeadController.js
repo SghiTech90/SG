@@ -9,16 +9,16 @@ const getAllHeadReport = async (
   reportName
 ) => {
   try {
-    const { year } = req.query; // Get year from query parameters for GET requests
+    const { office } = req.query; // Get office from query parameters for GET requests
 
-    if (!year) {
+    if (!office) {
       return res.status(400).json({
         success: false,
-        message: "Year query parameter is required",
+        message: "office query parameter is required",
       });
     }
 
-    const pool = await getPool();
+    const pool = await getPool(office);
     if (!pool) {
       throw new Error("Database pool is not available.");
     }
@@ -43,12 +43,11 @@ const getAllHeadReport = async (
                 CAST(CASE WHEN a.[Sadyasthiti] = N'सुरू न झालेली'  THEN 1 ELSE 0 END as decimal(18,0)) as 'NS'
             FROM ${masterTable} as a 
             JOIN ${provisionTable} as b ON a.WorkID = b.WorkID 
-            WHERE b.Arthsankalpiyyear = @year
+            WHERE b.Arthsankalpiyyear = "2025-2026"
         `;
 
     const result = await pool
       .request()
-      .input("year", year) // Input year parameter
       .query(query);
 
     res.json({
