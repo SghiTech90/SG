@@ -26,6 +26,8 @@ router.post("/NABARDAllHEAD", NABARDAllHEAD);
 router.post("/ROADAllHEAD", ROADAllHEAD);
 router.post("/GAT_A_AllHEAD", GAT_A_AllHEAD);
 router.post("/GAT_D_AllHEAD", GAT_D_AllHEAD);
-router.post("/GRAMVIKAS_AllHEAD", GRAMVIKAS_AllHEAD);
+  
+  router.post("/GRAMVIKAS_AllHEAD", GRAMVIKAS_AllHEAD);
+  router.post("/AunnityAllHEAD", AunnityAllHEAD);
 
 module.exports = router;

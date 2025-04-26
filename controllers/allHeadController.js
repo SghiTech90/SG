@@ -72,6 +72,14 @@ const buildingAllHEAD = (req, res) =>
     "BuildingProvision",
     "buildingAllHEAD"
   );
+  const AunnityAllHEAD = (req, res) =>
+    getAllHeadReport(
+      req,
+      res,
+      "BudgetMasterNABARD",
+      "NABARDProvision",
+      "AunnityAllHEAD"
+    );
 const CrfMPRreportAllHEAD = (req, res) =>
   getAllHeadReport(
     req,
@@ -153,4 +161,5 @@ module.exports = {
   GAT_A_AllHEAD,
   GAT_D_AllHEAD,
   GRAMVIKAS_AllHEAD,
+  AunnityAllHEAD
 };
