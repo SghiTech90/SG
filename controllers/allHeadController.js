@@ -9,12 +9,12 @@ const getAllHeadReport = async (
   reportName
 ) => {
   try {
-    const { office } = req.query; // Get office from query parameters for GET requests
+    const { office } = req.body; // 👈 changed from req.query to req.body
 
     if (!office) {
       return res.status(400).json({
         success: false,
-        message: "office query parameter is required",
+        message: "office body parameter is required",
       });
     }
 
@@ -23,7 +23,6 @@ const getAllHeadReport = async (
       throw new Error("Database pool is not available.");
     }
 
-    // Use template literals and ensure table names are safe (or validate them)
     const query = `
             SELECT 
                 ROW_NUMBER() OVER(PARTITION BY a.[LekhaShirsh] ORDER BY a.[Upvibhag] ASC) as 'SrNo',
@@ -43,7 +42,7 @@ const getAllHeadReport = async (
                 CAST(CASE WHEN a.[Sadyasthiti] = N'सुरू न झालेली'  THEN 1 ELSE 0 END as decimal(18,0)) as 'NS'
             FROM ${masterTable} as a 
             JOIN ${provisionTable} as b ON a.WorkID = b.WorkID 
-            WHERE b.Arthsankalpiyyear = "2025-2026"
+            WHERE b.Arthsankalpiyyear = '2025-2026'
         `;
 
     const result = await pool
