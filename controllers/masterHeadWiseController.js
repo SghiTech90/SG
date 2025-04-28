@@ -351,10 +351,10 @@ SELECT ROW_NUMBER() OVER (
 	,b.[Mar] AS 'Mar'
 FROM BudgetMasterCRF AS a
 JOIN CRFProvision AS b ON a.WorkId = b.WorkId
-WHERE a.[LekhaShirshName] = N'(03) राज्यमार्ग केंद्रीय मार्ग  निधी 30540078'
-	AND a.[Arthsankalpiyyear] = N'2023-2024'
+WHERE  a.[LekhaShirshName] = N'(04) जिल्हा व इतर मार्ग केंद्रीय मार्ग निधी'
+	AND a.[Arthsankalpiyyear] = N'2021-2022'
 	AND b.[Arthsankalpiyyear] = N'2025-2026'
-	AND a.[Sadyasthiti] = N'पूर्ण'
+	AND a.[Sadyasthiti] = N'काम पुर्ण'
 
 UNION
 
@@ -480,13 +480,14 @@ SELECT isNULL('', '') AS 'SrNo'
 	,sum(b.[Mar]) AS 'Mar'
 FROM BudgetMasterCRF AS a
 JOIN CRFProvision AS b ON a.WorkId = b.WorkId
-WHERE a.[LekhaShirshName] = N'(03) राज्यमार्ग केंद्रीय मार्ग  निधी 30540078'
-	AND a.[Arthsankalpiyyear] = N'2023-2024'
+WHERE a.[LekhaShirshName] = N'(04) जिल्हा व इतर मार्ग केंद्रीय मार्ग निधी'
+	AND a.[Arthsankalpiyyear] = N'2021-2022'
 	AND b.[Arthsankalpiyyear] = N'2025-2026'
-	AND a.[Sadyasthiti] = N'पूर्ण'
+	AND a.[Sadyasthiti] = N'काम पुर्ण '
 GROUP BY a.[Arthsankalpiyyear]
 ORDER BY a.[Arthsankalpiyyear]
-	,a.Upvibhag DESC        `;
+	,a.Upvibhag DESC  
+      `;
 
     const result = await pool.request().query(query);
 
