@@ -34,7 +34,9 @@ const {
   ContGAT_D,
   ContResidentialBuilding2216,
   ContNonResidentialBuilding2909,
-  contractorGraph
+  contractorGraph,
+  ContractorBuildingReportApi,
+  ContractorCRFReportApi
 } = require("../controllers/budgetController");
 
 // Route to get budget count
@@ -70,7 +72,8 @@ router.post("/BudgetMasterCRF", BudgetMasterCRF);
 router.post("/BudgetMasterBuilding", BudgetMasterBuilding); 
 router.post("/BudgetMasterAunty", BudgetMasterAunty); 
 
-//contractor
+//contractor post for abstract report
+
 router.post("/Cont2515", Cont2515);
 router.post("/ContAnnuity", ContAnnuity);
 router.post("/ContBuilding", ContBuilding);
@@ -86,5 +89,13 @@ router.post("/ContDepositFund", ContDepositFund);
 router.post("/ContGAT_D", ContGAT_D);
 router.post("/ContResidentialBuilding2216", ContResidentialBuilding2216);
 router.post("/ContNonResidentialBuilding2909", ContNonResidentialBuilding2909);
+
+//contractor report page
+router.post("/ContractorBuildingReportApi", ContractorBuildingReportApi);
+ router.post("/ContractorCRFReportApi", ContractorCRFReportApi); 
+// router.post("/contractorGraph", contractorGraph);
+// router.post("/contractorGraph", contractorGraph);
+// router.post("/contractorGraph", contractorGraph);
+// router.post("/contractorGraph", contractorGraph);
 
 module.exports = router;
