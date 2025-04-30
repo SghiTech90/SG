@@ -74,42 +74,115 @@ app.post('/aggregate', async (req, res) => {
 
     const responses = await Promise.all(requests);
 
-    // Grouped result by Work Status
-    const groupedResult = {};
+    // Initialize result structure by Head Name
+    const headResults = {};
+    
+    // Map to convert Hindi status to English column names
+    const statusMap = {
+      "पूर्ण": "Completed",
+      "प्रगतीत": "Inprogress",
+      "निविदा स्तर": "Tender Stage",
+      "अनुमान स्तर": "Estimated Stage",
+      "सुरु न झालेले": "Not Started"
+      // Add other status mappings as needed
+    };
 
+    // Process each response
     responses.forEach(response => {
       if (response.data && response.data.success && Array.isArray(response.data.data)) {
+        // Extract the head name from the endpoint URL
+        const endpointUrl = response.config.url;
+        const headNameMatch = endpointUrl.match(/BudgetMaster([^/]+)$/);
+        let headName = headNameMatch ? headNameMatch[1] : "Unknown";
+        
+        // Clean up head name
+        if (headName === "Aunty") headName = "Annuity";
+        if (headName === "2515") headName = "SH & DOR";
+        
+        if (!headResults[headName]) {
+          headResults[headName] = {
+            "Head Name": headName,
+            "Completed": 0,
+            "Incomplete": 0,
+            "Inprogress": 0,
+            "Tender Stage": 0,
+            "Estimated Stage": 0,
+            "Not Started": 0,
+            "No Status": 0,
+            "No.of.works": 0,
+            "Estimated Cost 2025-2026": 0,
+            "T.S Cost 2025-2026": 0,
+            "Budget Provision 2025-2026": 0,
+            "Expenditure 2025-2026": 0
+          };
+        }
+        
         response.data.data.forEach(item => {
           const status = item["Work Status"] || "Unknown";
-
-          if (!groupedResult[status]) {
-            groupedResult[status] = {
-              "Work Status": status,
-              "Total Work": 0,
-              "Estimated Cost": 0,
-              "T.S Cost": 0,
-              "Budget Provision 2023-2024": 0,
-              "Expenditure 2023-2024": 0
-            };
+          const englishStatus = statusMap[status] || "No Status";
+          
+          // Increment the appropriate status column
+          if (headResults[headName][englishStatus] !== undefined) {
+            headResults[headName][englishStatus] += 1;
           }
-
-          groupedResult[status]["Total Work"] += Number(item["Total Work"] || 0);
-          groupedResult[status]["Estimated Cost"] += Number(item["Estimated Cost"] || 0);
-          groupedResult[status]["T.S Cost"] += Number(item["T.S Cost"] || 0);
-          groupedResult[status]["Budget Provision 2023-2024"] += Number(item["Budget Provision 2023-2024"] || 0);
-          groupedResult[status]["Expenditure 2023-2024"] += Number(item["Expenditure 2023-2024"] || 0);
+          
+          // Add to total number of works
+          headResults[headName]["No.of.works"] += 1;
+          
+          // Add financial data
+          headResults[headName]["Estimated Cost 2025-2026"] += Number(item["Estimated Cost"] || 0);
+          headResults[headName]["T.S Cost 2025-2026"] += Number(item["T.S Cost"] || 0);
+          headResults[headName]["Budget Provision 2025-2026"] += Number(item["Budget Provision 2023-2024"] || 0);
+          headResults[headName]["Expenditure 2025-2026"] += Number(item["Expenditure 2023-2024"] || 0);
         });
       }
     });
 
-    // Final result as array
-    const resultArray = Object.values(groupedResult).map(item => ({
-      ...item,
-      "Estimated Cost": parseFloat(item["Estimated Cost"].toFixed(2)),
-      "T.S Cost": parseFloat(item["T.S Cost"].toFixed(2)),
-      "Budget Provision 2023-2024": parseFloat(item["Budget Provision 2023-2024"].toFixed(2)),
-      "Expenditure 2023-2024": parseFloat(item["Expenditure 2023-2024"].toFixed(2))
-    }));
+    // Calculate totals row
+    const totalRow = {
+      "Head Name": "Total",
+      "Completed": 0,
+      "Incomplete": 0,
+      "Inprogress": 0,
+      "Tender Stage": 0,
+      "Estimated Stage": 0,
+      "Not Started": 0,
+      "No Status": 0,
+      "No.of.works": 0,
+      "Estimated Cost 2025-2026": 0,
+      "T.S Cost 2025-2026": 0,
+      "Budget Provision 2025-2026": 0,
+      "Expenditure 2025-2026": 0
+    };
+
+    // Convert to array and format numbers
+    const resultArray = Object.values(headResults).map(item => {
+      // Add to total row
+      Object.keys(totalRow).forEach(key => {
+        if (key !== "Head Name") {
+          totalRow[key] += item[key] || 0;
+        }
+      });
+      
+      // Format the financial values
+      return {
+        ...item,
+        "Estimated Cost 2025-2026": parseFloat(item["Estimated Cost 2025-2026"].toFixed(2)),
+        "T.S Cost 2025-2026": parseFloat(item["T.S Cost 2025-2026"].toFixed(2)),
+        "Budget Provision 2025-2026": parseFloat(item["Budget Provision 2025-2026"].toFixed(2)),
+        "Expenditure 2025-2026": parseFloat(item["Expenditure 2025-2026"].toFixed(2))
+      };
+    });
+    
+    // Format the totals row financial values
+    Object.keys(totalRow).forEach(key => {
+      if (key.includes("Cost") || key.includes("Provision") || key.includes("Expenditure")) {
+        totalRow[key] = parseFloat(totalRow[key].toFixed(2));
+      }
+    });
+    
+    // Add total row to the result
+    resultArray.push(totalRow);
 
     res.json({
       success: true,
