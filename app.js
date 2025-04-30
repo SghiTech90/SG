@@ -61,56 +61,61 @@ const apiEndpoints = [
 app.post('/aggregate', async (req, res) => {
   try {
     const { office, position } = req.body;
-    
-    
+
     if (!office || !position) {
       return res
         .status(400)
         .json({ success: false, message: "Office and position parameters are required" });
     }
-    
-    
+
     const requests = apiEndpoints.map(endpoint => 
       axios.post(endpoint, { office, position })
     );
-    
+
     const responses = await Promise.all(requests);
-    
-    
-    const aggregatedResult = {
-      "Work Status": "Active", 
-      "Total Work": 0,
-      "Estimated Cost": 0,
-      "T.S Cost": 0,
-      "Budget Provision 2023-2024": 0,
-      "Expenditure 2023-2024": 0
-    };
-    
-    
+
+    // Grouped result by Work Status
+    const groupedResult = {};
+
     responses.forEach(response => {
-      
-      if (response.data && response.data.success && response.data.data && response.data.data.length > 0) {
-        const result = response.data.data[0]; 
-        
-        
-        aggregatedResult["Total Work"] += Number(result["Total Work"] || 0);
-        aggregatedResult["Estimated Cost"] += Number(result["Estimated Cost"] || 0);
-        aggregatedResult["T.S Cost"] += Number(result["T.S Cost"] || 0);
-        aggregatedResult["Budget Provision 2023-2024"] += Number(result["Budget Provision 2023-2024"] || 0);
-        aggregatedResult["Expenditure 2023-2024"] += Number(result["Expenditure 2023-2024"] || 0);
+      if (response.data && response.data.success && Array.isArray(response.data.data)) {
+        response.data.data.forEach(item => {
+          const status = item["Work Status"] || "Unknown";
+
+          if (!groupedResult[status]) {
+            groupedResult[status] = {
+              "Work Status": status,
+              "Total Work": 0,
+              "Estimated Cost": 0,
+              "T.S Cost": 0,
+              "Budget Provision 2023-2024": 0,
+              "Expenditure 2023-2024": 0
+            };
+          }
+
+          groupedResult[status]["Total Work"] += Number(item["Total Work"] || 0);
+          groupedResult[status]["Estimated Cost"] += Number(item["Estimated Cost"] || 0);
+          groupedResult[status]["T.S Cost"] += Number(item["T.S Cost"] || 0);
+          groupedResult[status]["Budget Provision 2023-2024"] += Number(item["Budget Provision 2023-2024"] || 0);
+          groupedResult[status]["Expenditure 2023-2024"] += Number(item["Expenditure 2023-2024"] || 0);
+        });
       }
     });
-    
-    aggregatedResult["Estimated Cost"] = parseFloat(aggregatedResult["Estimated Cost"].toFixed(2));
-    aggregatedResult["T.S Cost"] = parseFloat(aggregatedResult["T.S Cost"].toFixed(2));
-    aggregatedResult["Budget Provision 2023-2024"] = parseFloat(aggregatedResult["Budget Provision 2023-2024"].toFixed(2));
-    aggregatedResult["Expenditure 2023-2024"] = parseFloat(aggregatedResult["Expenditure 2023-2024"].toFixed(2));
-    
-    
+
+    // Final result as array
+    const resultArray = Object.values(groupedResult).map(item => ({
+      ...item,
+      "Estimated Cost": parseFloat(item["Estimated Cost"].toFixed(2)),
+      "T.S Cost": parseFloat(item["T.S Cost"].toFixed(2)),
+      "Budget Provision 2023-2024": parseFloat(item["Budget Provision 2023-2024"].toFixed(2)),
+      "Expenditure 2023-2024": parseFloat(item["Expenditure 2023-2024"].toFixed(2))
+    }));
+
     res.json({
       success: true,
-      data: [aggregatedResult]
+      data: resultArray
     });
+
   } catch (error) {
     console.error('Error aggregating API data:', error);
     res.status(500).json({ 
@@ -120,6 +125,7 @@ app.post('/aggregate', async (req, res) => {
     });
   }
 });
+
 
 app.use((req, res, next) => {
   res.status(404).json({ success: false, message: "404 - Route Not Found" });
