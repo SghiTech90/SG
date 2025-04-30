@@ -120,16 +120,17 @@ app.post('/aggregate', async (req, res) => {
         response.data.data.forEach(item => {
           const status = item["Work Status"] || "Unknown";
           const englishStatus = statusMap[status] || "No Status";
-          
+          const totalWorks = Number(item["Total Work"] || 0);
+        
           // Increment the appropriate status column
           if (headResults[headName][englishStatus] !== undefined) {
-            headResults[headName][englishStatus] += 1;
+            headResults[headName][englishStatus] += totalWorks;
           }
-          
+        
           // Add to total number of works
-          headResults[headName]["No.of.works"] += 1;
-          
-          // Add financial data
+          headResults[headName]["No.of.works"] += totalWorks;
+        
+          // Add financial data (already assumed to be total for that status group)
           headResults[headName]["Estimated Cost 2025-2026"] += Number(item["Estimated Cost"] || 0);
           headResults[headName]["T.S Cost 2025-2026"] += Number(item["T.S Cost"] || 0);
           headResults[headName]["Budget Provision 2025-2026"] += Number(item["Budget Provision 2023-2024"] || 0);
