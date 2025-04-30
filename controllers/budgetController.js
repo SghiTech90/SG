@@ -1556,7 +1556,7 @@ const ContractorDPDCReportApi = async (req, res) => {
   }
 };
 
-const ContractorMLAReportApi = async (req, res) => {
+const ContractorAnnuityReportApi = async (req, res) => {
   const { office, post, year, name } = req.body;
   
   if (!office || !post || !year || !name) {
@@ -1628,5 +1628,5 @@ module.exports = {
   ContractorNabardReportApi,
   ContractorRoadReportApi,
   ContractorDPDCReportApi,
-  ContractorMLAReportApi
+  ContractorAnnuityReportApi
 };
