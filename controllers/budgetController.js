@@ -1460,6 +1460,38 @@ const ContractorCRFReportApi = async (req, res) => {
   }
 };
 
+const ContractorNabardReportApi = async (req, res) => {
+  const { office, post, year, name } = req.body;
+  
+  if (!office || !post || !year || !name) {
+    return res.status(400).json({ success: false, message: "parameter is required" });
+  }
+  
+  try {
+    const pool = await getPool(office);
+    if (!pool) throw new Error(`Database pool is not available for office ${office}.`);
+  
+    const query = `
+     SELECT ROW_NUMBER() OVER(PARTITION BY a.[RDF_SrNo] ORDER BY a.[Upvibhag]) as 'SrNo', a.[WorkId] as 'Work Id',a.[U_WIN] as 'U_WIN',a.[RDF_NO] as 'RIDF NO', a.[RDF_SrNo] as 'SrNo',a.[Arthsankalpiyyear] as 'Budget of Year',a.Dist as 'District',a.[Taluka] as 'Taluka',a.[ArthsankalpiyBab] as 'Budget of Item',a.[KamacheName]as 'Name of Work',a.[Kamachavav] as 'Scope of Work',a.[LekhaShirshName] as 'Headwise',a.[SubType] as 'Division',a.[Upvibhag] as 'Sub Division',convert(nvarchar(max),a.[ShakhaAbhyantaName])+' '+convert(nvarchar(max),a.[ShakhaAbhiyantMobile]) as 'Sectional Engineer',convert(nvarchar(max),a.[UpabhyantaName])+' '+convert(nvarchar(max),a.[UpAbhiyantaMobile]) as 'Deputy Engineer',a.[AmdaracheName] as 'MLA',a.[KhasdaracheName] as 'MP',convert(nvarchar(max),a.[ThekedaarName])+' '+convert(nvarchar(max),a.[ThekedarMobile]) as 'Contractor',a.[PrashaskiyKramank] as 'Administrative No',a.[PrashaskiyDate] as 'A A Date',a.[PIC_NO] as 'PIC No',cast(a.[PrashaskiyAmt] as decimal(10,2)) as 'AA cost Rs in lakhs',cast(a.[TrantrikAmt]as decimal(10,2))as 'Technical Sanction Cost Rs in Lakh',a.[TrantrikKrmank]+' '+a.[TrantrikDate] as 'Technical Sanction No and Date',a.[NividaKrmank] as 'Tender No',cast(a.[NividaAmt] as decimal(10,2)) as 'Tender Amount',a.[karyarambhadesh] as 'Work Order',a.[NividaDate] as 'Tender Date',a.[kamachiMudat] as 'Work Order Date',a.[KamPurnDate] as 'Work Completion Date',b.[MudatVadhiDate] as 'Extension Month',b.[ManjurAmt] as 'Estimated Cost Approved',b.[MarchEndingExpn] as 'Expenditure up to MAR 2021',b.[UrvaritAmt] as 'Remaining Cost',b.[Chalukharch] as 'Current Cost',b.[Magilkharch] as 'Previous Cost',b.[VarshbharatilKharch] as 'Expenditure up to 8/2020 during year 20-21 Rs in Lakhs',b.[AikunKharch] as 'Total Expense',b.[Takunone] as 'Budget Provision in @year Rs in Lakhs',b.[Takuntwo] as 'Second Provision',b.[Takunthree] as 'Third Provision',b.[Takunfour] as 'Fourth Provision',b.[Tartud] as 'Total Provision',b.[AkunAnudan] as 'Total Grand',b.[Magni] as 'Demand for 2021-22 Rs in Lakhs',a.[PahaniMudye] as 'Observation Memo',a.[Pahanikramank] as 'Probable date of completion',b.[DeyakachiSadyasthiti] as 'Bill Status',a.[Sadyasthiti] as 'Physical Progress of work',a.[Road_No] as 'Road Category',a.[LengthRoad] as 'Road Length',a.[RoadType] as 'Road Type',a.[WBMI_km] as 'WBMI Km',a.[WBMII_km] as 'WBMII Km',a.[WBMIII_km] as 'WBMIII Km',a.[BBM_km] as 'BBM Km',a.[Carpet_km] as 'Carpet Km',a.[Surface_km] as 'Surface Km',cast(a.[CD_Works_No] as decimal(10,2))  as 'CD_Works_No',a.[PCR] as 'PCR submitted or not',a.[Shera] as 'Remark',b.[Apr] as 'Apr',b.[May] as 'May',b.[Jun] as 'Jun',b.[Jul] as 'Jul',b.[Aug] as 'Aug',b.[Sep] as 'Sep',b.[Oct] as 'Oct',b.[Nov] as 'Nov',b.[Dec] as 'Dec',b.[Jan] as 'Jan',b.[Feb] as 'Feb',b.[Mar] as 'Mar' from BudgetMasterNABARD as a join NABARDProvision as b on a.WorkId=b.WorkId  where a.[ThekedaarName]=@name and b.[Arthsankalpiyyear]='2025-2026'   union select isNULL (a.[RDF_SrNo],'')as'SrNo',isNULL ('Total','') as 'Work Id',isNULL ('','') as 'U_WIN',isNULL ('','')as 'RIDF NO', cast(a.[RDF_SrNo] as int) as 'srno',isNULL ('Total','')as 'Budget of Year',isNULL ('','') as 'District',isNULL ('','') as 'Taluka',isNULL ('','') as 'Budget of Item',isNULL ('','')as 'Name of Work',isNULL ('','') as 'Scope of Work',isNULL ('','')as 'Headwise',isNULL ('','') as 'Division',isNULL ('','') as 'Sub Division',isNULL ('','') as 'Sectional Engineer',isNULL ('','') as 'Deputy Engineer',isNULL ('','') as 'MLA',isNULL ('','') as 'MP',isNULL ('','') as 'Contractor',isNULL ('','') as 'Administrative No',isNULL ('','') as 'A A Date','Total' as 'PIC No',sum(cast(a.[PrashaskiyAmt] as decimal(10,2))) as 'AA cost Rs in lakhs',sum(cast(a.[TrantrikAmt]as decimal(10,2)))as 'Technical Sanction Cost Rs in Lakh',isNULL ('','') as 'Technical Sanction No and Date',isNULL ('','') as 'Tender No',sum(cast(a.[NividaAmt] as decimal(10,2))) as 'Tender Amount',isNULL ('','') as 'Work Order',isNULL ('','') as 'Tender Date',isNULL ('','') as 'Work Order Date',isNULL ('','') as 'Work Completion Date',isNULL ('','') as 'Extension Month',sum(b.[ManjurAmt]) as 'Estimated Cost Approved',sum(b.[MarchEndingExpn]) as 'Expenditure up to MAR 2021',sum(b.[UrvaritAmt]) as 'Remaining Cost',sum(b.[Chalukharch]) as 'Current Cost',sum(b.[Magilkharch]) as 'Previous Cost',sum(b.[VarshbharatilKharch]) as 'Expenditure up to 8/2020 during year 20-21 Rs in Lakhs',sum(b.[AikunKharch]) as 'Total Expense', sum(b.[Takunone]) as 'Budget Provision in @year Rs in Lakhs',sum(b.[Takuntwo]) as 'Second Provision',sum(b.[Takunthree]) as 'Third Provision',sum(b.[Takunfour]) as 'Fourth Provision',sum(b.[Tartud]) as 'Total Provision',sum(b.[AkunAnudan]) as 'Total Grand',sum(b.[Magni]) as 'Demand for @year Rs in Lakhs',isNULL ('','') as 'Observation Memo',isNULL ('','') as 'Probable date of completion',isNULL ('','') as 'Bill Status',isNULL ('','') as 'Physical Progress of work',isNULL ('','') as 'Road Category',isNULL ('','') as 'Road Length',isNULL ('','') as 'Road Type',sum(a.[WBMI_km]) as 'WBMI Km',sum(a.[WBMII_km]) as 'WBMII Km',sum(a.[WBMIII_km]) as 'WBMIII Km',sum(a.[BBM_km]) as 'BBM Km',sum(a.[Carpet_km]) as 'Carpet Km',sum(a.[Surface_km]) as 'Surface Km',sum(cast(a.[CD_Works_No] as decimal(10,2)))  as 'CD_Works_No',isNULL ('','') as 'PCR submitted or not',isNULL ('','')as 'Remark',sum(b.[Apr]) as 'Apr',sum(b.[May]) as 'May',sum(b.[Jun]) as 'Jun',sum(b.[Jul]) as 'Jul',sum(b.[Aug]) as 'Aug',sum(b.[Sep]) as 'Sep',sum(b.[Oct]) as 'Oct',sum(b.[Nov]) as 'Nov',sum(b.[Dec]) as 'Dec',sum(b.[Jan]) as 'Jan',sum(b.[Feb]) as 'Feb',sum(b.[Mar]) as 'Mar' from BudgetMasterNABARD as a join NABARDProvision as b on a.WorkId=b.WorkId  where a.[ThekedaarName]=@name and b.[Arthsankalpiyyear]=@year   group by a.[RDF_SrNo] order by a.[RDF_SrNo],a.[Arthsankalpiyyear],a.[Upvibhag],a.taluka
+    `;
+    
+    const result = await pool
+      .request()
+      .input("name", name)
+      .input("year", year)
+      .query(query);
+    
+    res.json({ success: true, data: result.recordset });
+  } catch (error) {
+    console.error("Error getting CRF contractor report details:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error getting CRF contractor report details",
+      error: error.message,
+    });
+  }
+};
+
 module.exports = {
   getBudgetCount,
   getUpvibhagCounts,
@@ -1496,5 +1528,6 @@ module.exports = {
   ContNonResidentialBuilding2909,
   contractorGraph,
   ContractorBuildingReportApi,
-  ContractorCRFReportApi
+  ContractorCRFReportApi,
+  ContractorNabardReportApi
 };
