@@ -38,7 +38,9 @@ const {
   ContractorBuildingReportApi,
   ContractorCRFReportApi,
   ContractorNabardReportApi,
-  ContractorRoadReportApi
+  ContractorRoadReportApi,
+  ContractorDPDCReportApi,
+  ContractorMLAReportApi
 } = require("../controllers/budgetController");
 
 // Route to get budget count
@@ -97,7 +99,7 @@ router.post("/ContractorBuildingReportApi", ContractorBuildingReportApi);
 router.post("/ContractorCRFReportApi", ContractorCRFReportApi); 
 router.post("/ContractorNabardReportApi", ContractorNabardReportApi);
 router.post("/ContractorRoadReportApi", ContractorRoadReportApi);
-// router.post("/contractorGraph", contractorGraph);
-// router.post("/contractorGraph", contractorGraph);
+router.post("/ContractorDPDCReportApi", ContractorDPDCReportApi);
+router.post("/ContractorMLAReportApi", ContractorMLAReportApi);
 
 module.exports = router;
