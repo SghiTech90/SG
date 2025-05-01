@@ -19,6 +19,7 @@ const {
   BudgetMasterCRF,
   BudgetMasterBuilding,
   BudgetMasterAunty,
+  BudgetMasterRoad,
   Cont2515,
   ContAnnuity,
   ContBuilding,
@@ -80,6 +81,8 @@ router.post("/BudgetMasterDepositFund", BudgetMasterDepositFund);
 router.post("/BudgetMasterCRF", BudgetMasterCRF); 
 router.post("/BudgetMasterBuilding", BudgetMasterBuilding); 
 router.post("/BudgetMasterAunty", BudgetMasterAunty); 
+router.post("/BudgetMasterRoad", BudgetMasterRoad); 
+
 
 //contractor post for abstract report
 

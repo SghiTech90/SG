@@ -598,6 +598,32 @@ const BudgetMasterMP = async (req, res) => {
   }
 };
 
+const BudgetMasterRoad = async (req, res) => {
+  const { office, position } = req.body;
+  if (!office || !position) {
+    return res
+      .status(400)
+      .json({ success: false, message: "Office parameter is required" });
+  }
+  try {
+    const pool = await getPool(office);
+    if (!pool)
+      throw new Error(`Database pool is not available for office ${office}.`);
+
+    // Example: Detailed query on Building tables, adjust as needed
+    const query = `SELECT a.[Sadyasthiti]as 'Work Status', Count(a.[Sadyasthiti])as'Total Work',sum(cast(a.[PrashaskiyAmt] as decimal(10,2))) as 'Estimated Cost',sum(cast(a.[TrantrikAmt]as decimal(10,2)))as 'T.S Cost',sum(cast(b.[Tartud]as decimal(10,2))) as 'Budget Provision 2023-2024',sum(cast(b.[AikunKharch]as decimal(10,2))) as 'Expenditure 2023-2024' FROM BudgetMasterRoad a full outer join RoadProvision  b on a.workid=b.workid where a.[Sadyasthiti]IS NOT NULL and b.Arthsankalpiyyear='2023-2024'   GROUP BY a.[Sadyasthiti] order by case a.[Sadyasthiti] when N'पूर्ण' then 1 when N'Completed' then 1 when N'Incomplete' then 2 when N'अपूर्ण' then 2 when N'प्रगतीत' then 3 when N'Inprogress' then 3 when N'Processing' then 3 when N'Current' then 3 when N'चालू' then 3  when N'Tender Stage' then 4 when N'निविदा स्तर' then 4 when N'Estimated Stage' then 5 when N'अंदाजपत्रकिय स्थर' then 5 when N'अंदाजपत्रकीय स्तर' then 5 when N'Not Started' then 6 when N'सुरु न झालेली' then 6 when N'सुरू करणे' then 7 when N'' then 8 end`;
+    const result = await pool.request().query(query);
+    res.json({ success: true, data: result.recordset });
+  } catch (error) {
+    console.error("Error getting BudgetMaster2515 details:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error getting BudgetMaster2515 details",
+      error: error.message,
+    });
+  }
+};
+
 const BudgetMasterNABARD = async (req, res) => {
   const { office, position } = req.body;
   if (!office || !position) {
@@ -1762,6 +1788,7 @@ module.exports = {
   BudgetMasterCRF,
   BudgetMasterBuilding,
   BudgetMasterAunty,
+  BudgetMasterRoad,
   Cont2515,
   ContAnnuity,
   ContBuilding,
