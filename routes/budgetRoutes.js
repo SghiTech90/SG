@@ -46,7 +46,12 @@ const {
   ContractorCRFUpdatePanelApi,
   ContractorNABARDUpdatePanelApi,
   ContractorRoadUpdatePanelApi,
-  ContractorAuntyUpdatePanelApi
+  ContractorAuntyUpdatePanelApi,
+  DEBuildingUpdatePanelApi,
+  DECRFUpdatePanelApi,
+  DENABARDUpdatePanelApi,
+  DERoadUpdatePanelApi,
+  DEAuntyUpdatePanelApi
 } = require("../controllers/budgetController");
 
 // Route to get budget count
@@ -111,10 +116,17 @@ router.post("/ContractorDPDCReportApi", ContractorDPDCReportApi);
 router.post("/ContractorAnnuityReportApi", ContractorAnnuityReportApi);
 
 //contractor update report page
+//बी.टी. देशमुख (contractor)
 router.post("/ContractorBuildingUpdatePanelApi", ContractorBuildingUpdatePanelApi);
 router.post("/ContractorCRFUpdatePanelApi", ContractorCRFUpdatePanelApi);
 router.post("/ContractorNABARDUpdatePanelApi", ContractorNABARDUpdatePanelApi);
 router.post("/ContractorRoadUpdatePanelApi", ContractorRoadUpdatePanelApi);
 router.post("/ContractorAuntyUpdatePanelApi", ContractorAuntyUpdatePanelApi);
+//श्री. आर.एल राठोड (DE) 
+router.post("/DEBuildingUpdatePanelApi", DEBuildingUpdatePanelApi);
+router.post("/DECRFUpdatePanelApi", DECRFUpdatePanelApi);
+router.post("/DENABARDUpdatePanelApi", DENABARDUpdatePanelApi);
+router.post("/DERoadUpdatePanelApi", DERoadUpdatePanelApi);
+router.post("/DEAuntyUpdatePanelApi", DEAuntyUpdatePanelApi);
 
 module.exports = router;
