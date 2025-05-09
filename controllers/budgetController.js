@@ -1628,7 +1628,7 @@ const ContractorBuildingUpdatePanelApi = async (req, res) => {
 
     // Example: Detailed query on Building tables, adjust as needed
     const query = `
-    SELECT  [WorkId] as 'वर्क आयडी',[Arthsankalpiyyear] as 'अर्थसंकल्पीय वर्ष',[KamacheName] as 'कामाचे नाव',[Shera] as 'शेरा'  from BudgetMasterGAT_A  where ThekedaarName=@name 
+    SELECT  [WorkId] as 'वर्क आयडी',[Arthsankalpiyyear] as 'अर्थसंकल्पीय वर्ष',[KamacheName] as 'कामाचे नाव',[Shera] as 'शेरा'  from BudgetMasterBuilding  where ThekedaarName=@name 
       `;
     const result = await pool.request().input("name", name).query(query);
     res.json({ success: true, data: result.recordset });
