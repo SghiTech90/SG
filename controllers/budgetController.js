@@ -1979,6 +1979,63 @@ const ContUpdPanelCrf = async (req, res) => {
   }
 };
 
+const ContUpdPanelNABARD = async (req, res) => {
+  const { office, name } = req.body;
+  if (!office || !name) {
+    return res
+      .status(400)
+      .json({ success: false, message: "parameter is required" });
+  }
+  try {
+    const pool = await getPool(office);
+    if (!pool)
+      throw new Error(`Database pool is not available for office ${office}.`);
+
+    // Example: Detailed query on Building tables, adjust as needed
+    const query = `SELECT  [WorkId] as 'वर्क आयडी',[Arthsankalpiyyear] as 'अर्थसंकल्पीय वर्ष',[KamacheName] as 'कामाचे नाव',[Shera] as 'शेरा'  from BudgetMasterNabard   where ShakhaAbhyantaName=N'मे.ए.एम.कोठारी' or [UpabhyantaName]=N'मे.ए.एम.कोठारी' or ThekedaarName=N'मे.ए.एम.कोठारी'        `;
+    const result = await pool.request().input("name", name).query(query);
+    res.json({ success: true, data: result.recordset });
+  } catch (error) {
+    console.error(
+      "Error getting contractorGraph details:",
+      error
+    );
+    res.status(500).json({
+      success: false,
+      message: "Error getting contractorGraph details",
+      error: error.message,
+    });
+  }
+};
+
+const ContUpdPanelROAD = async (req, res) => {
+  const { office, name } = req.body;
+  if (!office || !name) {
+    return res
+      .status(400)
+      .json({ success: false, message: "parameter is required" });
+  }
+  try {
+    const pool = await getPool(office);
+    if (!pool)
+      throw new Error(`Database pool is not available for office ${office}.`);
+
+    // Example: Detailed query on Building tables, adjust as needed
+    const query = `SELECT  [WorkId] as 'वर्क आयडी',[Arthsankalpiyyear] as 'अर्थसंकल्पीय वर्ष',[KamacheName] as 'कामाचे नाव',[Shera] as 'शेरा'  from BudgetMasterRoad   where ShakhaAbhyantaName=N'मे.ए.एम.कोठारी' or [UpabhyantaName]=N'मे.ए.एम.कोठारी' or ThekedaarName=N'मे.ए.एम.कोठारी'    `;
+    const result = await pool.request().input("name", name).query(query);
+    res.json({ success: true, data: result.recordset });
+  } catch (error) {
+    console.error(
+      "Error getting contractorGraph details:",
+      error
+    );
+    res.status(500).json({
+      success: false,
+      message: "Error getting contractorGraph details",
+      error: error.message,
+    });
+  }
+};
 module.exports = {
   getBudgetCount,
   getUpvibhagCounts,
@@ -2032,5 +2089,7 @@ module.exports = {
   DERoadUpdatePanelApi,
   DEAuntyUpdatePanelApi,
   ContUpdPanelBuilding,
-  ContUpdPanelCrf
+  ContUpdPanelCrf,
+  ContUpdPanelNABARD,
+  ContUpdPanelROAD
 };

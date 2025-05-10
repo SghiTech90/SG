@@ -53,7 +53,9 @@ const {
   DERoadUpdatePanelApi,
   DEAuntyUpdatePanelApi,
   ContUpdPanelBuilding,
-  ContUpdPanelCrf
+  ContUpdPanelCrf,
+  ContUpdPanelNABARD,
+  ContUpdPanelROAD
 } = require("../controllers/budgetController");
 
 // Route to get budget count
@@ -133,9 +135,9 @@ router.post("/DEAuntyUpdatePanelApi", DEAuntyUpdatePanelApi);
 //Contractor Update Panel Select Queries
 //--Contractor = मे.ए.एम.कोठारी // ShakhaAbhyantaName= श्री. पी एम घोडस्कर //  UpabhyantaName = श्री. पी एम घोडस्कर
 router.post("/ContUpdPanelBuilding", ContUpdPanelBuilding);
-router.post("/ContUpdPanelNABARD", ContNABARD);
+router.post("/ContUpdPanelNABARD", ContUpdPanelNABARD);
 router.post("/ContUpdPanelCRF", ContUpdPanelCrf);
-router.post("/ContUpdPanelRoad", ContNABARD);
+router.post("/ContUpdPanelROAD", ContUpdPanelROAD);
 router.post("/ContUpdPanelAnnuity", ContNABARD);
 
 
