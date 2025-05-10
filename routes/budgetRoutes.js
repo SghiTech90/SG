@@ -57,11 +57,13 @@ const {
   ContUpdPanelNABARD,
   ContUpdPanelROAD,
   ContUpdPanelAunty,
-    ContUpdPhotoAunty,
-ContUpdPhotoRoad,
-ContUpdPhotoCrf,
-ContUpdPhotoNabard,
-ContUpdPhotoBuilding
+  ContUpdPhotoAunty,
+  ContUpdPhotoRoad,
+  ContUpdPhotoCrf,
+  ContUpdPhotoNabard,
+  ContUpdPhotoBuilding,
+  uploadImage,
+  UpdateStatus
 } = require("../controllers/budgetController");
 
 // Route to get budget count
@@ -152,5 +154,12 @@ router.post("/ContUpdPhotoNABARD", ContUpdPhotoNabard);
 router.post("/ContUpdPhotoCRF", ContUpdPhotoCrf);
 router.post("/ContUpdPhotoROAD", ContUpdPhotoRoad);
 router.post("/ContUpdPhotoAunty", ContUpdPhotoAunty);
+
+//Insert Image
+router.post("/uploadImage", uploadImage);
+
+//update status in correspondance to workID
+router.post("/UpdateStatus", UpdateStatus);
+
 
 module.exports = router;

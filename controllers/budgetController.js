@@ -2217,6 +2217,91 @@ const ContUpdPhotoAunty = async (req, res) => {
   }
 };
 
+const uploadImage = async (req, res) => {
+  const { office, Data, filename, Content, Longitude, Latitude } = req.body;
+
+  if (!office || !Data || !filename || !Content || !Longitude || !Latitude) {
+    return res.status(400).json({
+      success: false,
+      message: "Parameters 'office', 'Data', 'Latitude','Longitude', 'filename', and 'Content' are required",
+    });
+  }
+
+  try {
+    const pool = await getPool(office);
+    if (!pool) {
+      throw new Error(`Database pool is not available for office ${office}.`);
+    }
+
+    const query = `
+      INSERT INTO [ImageGallary]
+      ([WorkId], [Type], [Image], [ContentType], [Filepath], [Description],[Longitude], [Latitude])
+      VALUES (@WorkId, @Type, @Data, @Content, @Filename, @Description, @Longitude, @Latitude)
+    `;
+
+    const result = await pool
+      .request()
+      .input("Data", sql.VarBinary(sql.MAX), Data)
+      .input("Content", sql.NVarChar, Content)
+      .input("Filename", sql.NVarChar, filename)
+      .query(query);
+
+    return res.status(200).json({
+      success: true,
+      message: "Image uploaded successfully",
+    });
+  } catch (error) {
+    console.error("Error uploading image:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Error uploading image",
+      error: error.message,
+    });
+  }
+};
+
+
+const UpdateStatus = async (req, res) => {
+  const { office, workID, status } = req.body;
+
+  if (!office || !workID || status === undefined) {
+    return res.status(400).json({
+      success: false,
+      message: "Parameters 'office', 'workID', and 'status' are required",
+    });
+  }
+
+  try {
+    const pool = await getPool(office);
+    if (!pool) {
+      throw new Error(`Database pool is not available for office ${office}.`);
+    }
+
+    const query = `
+      UPDATE [ImageGallary]
+      SET [Description] = @Status
+      WHERE [WorkId] = @WorkId AND [Type] = 'Building'
+    `;
+
+    const result = await pool
+      .request()
+      .input("WorkId", sql.NVarChar, workID)
+      .input("Status", sql.NVarChar, status)
+      .query(query);
+
+    return res.status(200).json({
+      success: true,
+      message: "Status updated successfully",
+    });
+  } catch (error) {
+    console.error("Error updating status:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Error updating status",
+      error: error.message,
+    });
+  }
+};
 
 
 module.exports = {
@@ -2280,5 +2365,7 @@ module.exports = {
   ContUpdPhotoRoad,
   ContUpdPhotoCrf,
   ContUpdPhotoNabard,
-  ContUpdPhotoBuilding
+  ContUpdPhotoBuilding,
+  uploadImage,
+  UpdateStatus
 };
