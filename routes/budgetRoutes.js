@@ -55,7 +55,8 @@ const {
   ContUpdPanelBuilding,
   ContUpdPanelCrf,
   ContUpdPanelNABARD,
-  ContUpdPanelROAD
+  ContUpdPanelROAD,
+  ContUpdPanelAunty
 } = require("../controllers/budgetController");
 
 // Route to get budget count
@@ -138,7 +139,7 @@ router.post("/ContUpdPanelBuilding", ContUpdPanelBuilding);
 router.post("/ContUpdPanelNABARD", ContUpdPanelNABARD);
 router.post("/ContUpdPanelCRF", ContUpdPanelCrf);
 router.post("/ContUpdPanelROAD", ContUpdPanelROAD);
-router.post("/ContUpdPanelAnnuity", ContNABARD);
+router.post("/ContUpdPanelAunty", ContUpdPanelAunty);
 
 
 module.exports = router;

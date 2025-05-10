@@ -1963,7 +1963,7 @@ const ContUpdPanelCrf = async (req, res) => {
       throw new Error(`Database pool is not available for office ${office}.`);
 
     // Example: Detailed query on Building tables, adjust as needed
-    const query = `SELECT  [WorkId] as 'वर्क आयडी',[Arthsankalpiyyear] as 'अर्थसंकल्पीय वर्ष',[KamacheName] as 'कामाचे नाव',[Shera] as 'शेरा'  from BudgetMasterCRF   where ShakhaAbhyantaName=N'मे.ए.एम.कोठारी' or [UpabhyantaName]=N'मे.ए.एम.कोठारी' or ThekedaarName=N'मे.ए.एम.कोठारी'       `;
+    const query = `SELECT  [WorkId] as 'वर्क आयडी',[Arthsankalpiyyear] as 'अर्थसंकल्पीय वर्ष',[KamacheName] as 'कामाचे नाव',[Shera] as 'शेरा'  from BudgetMasterCRF   where ShakhaAbhyantaName=@name  or [UpabhyantaName]=@name  or ThekedaarName=@name `;
     const result = await pool.request().input("name", name).query(query);
     res.json({ success: true, data: result.recordset });
   } catch (error) {
@@ -1992,7 +1992,7 @@ const ContUpdPanelNABARD = async (req, res) => {
       throw new Error(`Database pool is not available for office ${office}.`);
 
     // Example: Detailed query on Building tables, adjust as needed
-    const query = `SELECT  [WorkId] as 'वर्क आयडी',[Arthsankalpiyyear] as 'अर्थसंकल्पीय वर्ष',[KamacheName] as 'कामाचे नाव',[Shera] as 'शेरा'  from BudgetMasterNabard   where ShakhaAbhyantaName=N'मे.ए.एम.कोठारी' or [UpabhyantaName]=N'मे.ए.एम.कोठारी' or ThekedaarName=N'मे.ए.एम.कोठारी'        `;
+    const query = `SELECT  [WorkId] as 'वर्क आयडी',[Arthsankalpiyyear] as 'अर्थसंकल्पीय वर्ष',[KamacheName] as 'कामाचे नाव',[Shera] as 'शेरा'  from BudgetMasterNabard   where ShakhaAbhyantaName=@name  or [UpabhyantaName]=@name  or ThekedaarName=@name  `;
     const result = await pool.request().input("name", name).query(query);
     res.json({ success: true, data: result.recordset });
   } catch (error) {
@@ -2021,7 +2021,7 @@ const ContUpdPanelROAD = async (req, res) => {
       throw new Error(`Database pool is not available for office ${office}.`);
 
     // Example: Detailed query on Building tables, adjust as needed
-    const query = `SELECT  [WorkId] as 'वर्क आयडी',[Arthsankalpiyyear] as 'अर्थसंकल्पीय वर्ष',[KamacheName] as 'कामाचे नाव',[Shera] as 'शेरा'  from BudgetMasterRoad   where ShakhaAbhyantaName=N'मे.ए.एम.कोठारी' or [UpabhyantaName]=N'मे.ए.एम.कोठारी' or ThekedaarName=N'मे.ए.एम.कोठारी'    `;
+    const query = `SELECT  [WorkId] as 'वर्क आयडी',[Arthsankalpiyyear] as 'अर्थसंकल्पीय वर्ष',[KamacheName] as 'कामाचे नाव',[Shera] as 'शेरा'  from BudgetMasterRoad   where ShakhaAbhyantaName=@name  or [UpabhyantaName]=@name  or ThekedaarName=@name    `;
     const result = await pool.request().input("name", name).query(query);
     res.json({ success: true, data: result.recordset });
   } catch (error) {
@@ -2036,6 +2036,37 @@ const ContUpdPanelROAD = async (req, res) => {
     });
   }
 };
+
+const ContUpdPanelAunty = async (req, res) => {
+  const { office, name } = req.body;
+  if (!office || !name) {
+    return res
+      .status(400)
+      .json({ success: false, message: "parameter is required" });
+  }
+  try {
+    const pool = await getPool(office);
+    if (!pool)
+      throw new Error(`Database pool is not available for office ${office}.`);
+
+    // Example: Detailed query on Building tables, adjust as needed
+    const query = `SELECT  [WorkId] as 'वर्क आयडी',[Arthsankalpiyyear] as 'अर्थसंकल्पीय वर्ष',[KamacheName] as 'कामाचे नाव',[Shera] as 'शेरा'  from BudgetMasterAunty   where ShakhaAbhyantaName=@name  or [UpabhyantaName]=@name  or ThekedaarName=@name   `;
+    const result = await pool.request().input("name", name).query(query);
+    res.json({ success: true, data: result.recordset });
+  } catch (error) {
+    console.error(
+      "Error getting contractorGraph details:",
+      error
+    );
+    res.status(500).json({
+      success: false,
+      message: "Error getting contractorGraph details",
+      error: error.message,
+    });
+  }
+};
+
+
 module.exports = {
   getBudgetCount,
   getUpvibhagCounts,
@@ -2091,5 +2122,6 @@ module.exports = {
   ContUpdPanelBuilding,
   ContUpdPanelCrf,
   ContUpdPanelNABARD,
-  ContUpdPanelROAD
+  ContUpdPanelROAD,
+  ContUpdPanelAunty
 };
