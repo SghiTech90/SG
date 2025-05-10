@@ -2180,32 +2180,43 @@ const ContUpdPhotoRoad = async (req, res) => {
 };
 const ContUpdPhotoAunty = async (req, res) => {
   const { office } = req.body;
+
   if (!office) {
-    return res
-      .status(400)
-      .json({ success: false, message: "parameter is required" });
+    return res.status(400).json({
+      success: false,
+      message: "Parameter 'office' is required",
+    });
   }
+
   try {
     const pool = await getPool(office);
-    if (!pool)
+    if (!pool) {
       throw new Error(`Database pool is not available for office ${office}.`);
+    }
 
-    // Example: Detailed query on Building tables, adjust as needed
-    const query = `Select [ImageId], [WorkId],[Image],[Description] from ImageGallary where WorkId='2212000400047' and Type='Aunty' order by ImageId desc`;
+    const query = `
+      SELECT [ImageId], [WorkId], [Image], [Description]
+      FROM ImageGallary
+      WHERE WorkId = '2212000400047' AND Type = 'Aunty'
+      ORDER BY ImageId DESC
+    `;
+
     const result = await pool.request().query(query);
-    res.json({ success: true, data: result.recordset });
+
+    return res.status(200).json({
+      success: true,
+      data: result.recordset,
+    });
   } catch (error) {
-    console.error(
-      "Error getting contractorGraph details:",
-      error
-    );
-    res.status(500).json({
+    console.error("Error fetching image data:", error);
+    return res.status(500).json({
       success: false,
-      message: "Error getting contractorGraph details",
+      message: "Error fetching image data",
       error: error.message,
     });
   }
 };
+
 
 
 module.exports = {
@@ -2265,9 +2276,9 @@ module.exports = {
   ContUpdPanelNABARD,
   ContUpdPanelROAD,
   ContUpdPanelAunty,
-    ContUpdPhotoAunty,
-ContUpdPhotoRoad,
-ContUpdPhotoCrf,
-ContUpdPhotoNabard,
-ContUpdPhotoBuilding
+  ContUpdPhotoAunty,
+  ContUpdPhotoRoad,
+  ContUpdPhotoCrf,
+  ContUpdPhotoNabard,
+  ContUpdPhotoBuilding
 };
