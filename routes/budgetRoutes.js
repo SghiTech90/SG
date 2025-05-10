@@ -52,7 +52,8 @@ const {
   DENABARDUpdatePanelApi,
   DERoadUpdatePanelApi,
   DEAuntyUpdatePanelApi,
-  ContUpdPanelBuilding
+  ContUpdPanelBuilding,
+  ContUpdPanelCrf
 } = require("../controllers/budgetController");
 
 // Route to get budget count
