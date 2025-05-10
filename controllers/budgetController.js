@@ -2065,6 +2065,147 @@ const ContUpdPanelAunty = async (req, res) => {
     });
   }
 };
+const ContUpdPhotoBuilding = async (req, res) => {
+  const { office } = req.body;
+  if (!office) {
+    return res
+      .status(400)
+      .json({ success: false, message: "parameter is required" });
+  }
+  try {
+    const pool = await getPool(office);
+    if (!pool)
+      throw new Error(`Database pool is not available for office ${office}.`);
+
+    // Example: Detailed query on Building tables, adjust as needed
+    const query = `Select [ImageId], [WorkId],[Image],[Description] from ImageGallary where WorkId='220348400046.00' and Type='Building' order by ImageId desc `;
+    const result = await pool.request().query(query);
+    res.json({ success: true, data: result.recordset });
+  } catch (error) {
+    console.error(
+      "Error getting contractorGraph details:",
+      error
+    );
+    res.status(500).json({
+      success: false,
+      message: "Error getting contractorGraph details",
+      error: error.message,
+    });
+  }
+};
+const ContUpdPhotoCrf = async (req, res) => {
+  const { office } = req.body;
+  if (!office) {
+    return res
+      .status(400)
+      .json({ success: false, message: "parameter is required" });
+  }
+  try {
+    const pool = await getPool(office);
+    if (!pool)
+      throw new Error(`Database pool is not available for office ${office}.`);
+
+    // Example: Detailed query on Building tables, adjust as needed
+    const query = `Select [ImageId], [WorkId],[Image],[Description] from ImageGallary where WorkId='2212000400047' and Type='CRF' order by ImageId desc
+ `;
+    const result = await pool.request().query(query);
+    res.json({ success: true, data: result.recordset });
+  } catch (error) {
+    console.error(
+      "Error getting contractorGraph details:",
+      error
+    );
+    res.status(500).json({
+      success: false,
+      message: "Error getting contractorGraph details",
+      error: error.message,
+    });
+  }
+};
+const ContUpdPhotoNabard = async (req, res) => {
+  const { office } = req.body;
+  if (!office) {
+    return res
+      .status(400)
+      .json({ success: false, message: "parameter is required" });
+  }
+  try {
+    const pool = await getPool(office);
+    if (!pool)
+      throw new Error(`Database pool is not available for office ${office}.`);
+
+    // Example: Detailed query on Building tables, adjust as needed
+    const query = `Select [ImageId], [WorkId],[Image],[Description] from ImageGallary where WorkId='2212000400047' and Type='Nabard' order by ImageId desc  `;
+    const result = await pool.request().query(query);
+    res.json({ success: true, data: result.recordset });
+  } catch (error) {
+    console.error(
+      "Error getting contractorGraph details:",
+      error
+    );
+    res.status(500).json({
+      success: false,
+      message: "Error getting contractorGraph details",
+      error: error.message,
+    });
+  }
+};
+const ContUpdPhotoRoad = async (req, res) => {
+  const { office } = req.body;
+  if (!office) {
+    return res
+      .status(400)
+      .json({ success: false, message: "parameter is required" });
+  }
+  try {
+    const pool = await getPool(office);
+    if (!pool)
+      throw new Error(`Database pool is not available for office ${office}.`);
+
+    // Example: Detailed query on Building tables, adjust as needed
+    const query = `Select [ImageId], [WorkId],[Image],[Description] from ImageGallary where WorkId='2212000400047' and Type='Road' order by ImageId desc   `;
+    const result = await pool.request().query(query);
+    res.json({ success: true, data: result.recordset });
+  } catch (error) {
+    console.error(
+      "Error getting contractorGraph details:",
+      error
+    );
+    res.status(500).json({
+      success: false,
+      message: "Error getting contractorGraph details",
+      error: error.message,
+    });
+  }
+};
+const ContUpdPhotoAunty = async (req, res) => {
+  const { office } = req.body;
+  if (!office) {
+    return res
+      .status(400)
+      .json({ success: false, message: "parameter is required" });
+  }
+  try {
+    const pool = await getPool(office);
+    if (!pool)
+      throw new Error(`Database pool is not available for office ${office}.`);
+
+    // Example: Detailed query on Building tables, adjust as needed
+    const query = `Select [ImageId], [WorkId],[Image],[Description] from ImageGallary where WorkId='2212000400047' and Type='Aunty' order by ImageId desc`;
+    const result = await pool.request().query(query);
+    res.json({ success: true, data: result.recordset });
+  } catch (error) {
+    console.error(
+      "Error getting contractorGraph details:",
+      error
+    );
+    res.status(500).json({
+      success: false,
+      message: "Error getting contractorGraph details",
+      error: error.message,
+    });
+  }
+};
 
 
 module.exports = {
@@ -2123,5 +2264,10 @@ module.exports = {
   ContUpdPanelCrf,
   ContUpdPanelNABARD,
   ContUpdPanelROAD,
-  ContUpdPanelAunty
+  ContUpdPanelAunty,
+    ContUpdPhotoAunty,
+ContUpdPhotoRoad,
+ContUpdPhotoCrf,
+ContUpdPhotoNabard,
+ContUpdPhotoBuilding
 };

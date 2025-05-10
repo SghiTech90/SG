@@ -56,7 +56,12 @@ const {
   ContUpdPanelCrf,
   ContUpdPanelNABARD,
   ContUpdPanelROAD,
-  ContUpdPanelAunty
+  ContUpdPanelAunty,
+    ContUpdPhotoAunty,
+ContUpdPhotoRoad,
+ContUpdPhotoCrf,
+ContUpdPhotoNabard,
+ContUpdPhotoBuilding
 } = require("../controllers/budgetController");
 
 // Route to get budget count
@@ -141,5 +146,11 @@ router.post("/ContUpdPanelCRF", ContUpdPanelCrf);
 router.post("/ContUpdPanelROAD", ContUpdPanelROAD);
 router.post("/ContUpdPanelAunty", ContUpdPanelAunty);
 
+//--Contractor -- upload photo -- click photo in the grid --queries for that
+router.post("/ContUpdPhotoBuilding", ContUpdPhotoBuilding);
+router.post("/ContUpdPhotoNABARD", ContUpdPhotoNabard);
+router.post("/ContUpdPhotoCRF", ContUpdPhotoCrf);
+router.post("/ContUpdPhotoROAD", ContUpdPhotoRoad);
+router.post("/ContUpdPhotoAunty", ContUpdPhotoAunty);
 
 module.exports = router;
