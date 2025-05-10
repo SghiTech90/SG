@@ -31,6 +31,8 @@ router.post("/login", login); // Requires userId, password, office
 router.post("/verify-otp", verifyOTP); // Requires userId, otp. Office context from otpStore.
 router.post("/resend-otp", resendOTP); // Requires userId, office
 router.post("/profile", profile); // Requires userId, office
+
+//MPR ALL HEAD REPORTS
 router.post("/buildingMPRreport", buildingMPRreport); // Requires year, office
 router.post("/CrfMPRreport", CrfMPRreport); // Requires year, office
 router.post("/contractor-projects", getContractorProjects); // Requires contractorName, office

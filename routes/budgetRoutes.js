@@ -51,7 +51,8 @@ const {
   DECRFUpdatePanelApi,
   DENABARDUpdatePanelApi,
   DERoadUpdatePanelApi,
-  DEAuntyUpdatePanelApi
+  DEAuntyUpdatePanelApi,
+  ContUpdPanelBuilding
 } = require("../controllers/budgetController");
 
 // Route to get budget count
@@ -90,7 +91,6 @@ router.post("/BudgetMasterRoad", BudgetMasterRoad);
 
 
 //contractor post for abstract report
-
 router.post("/Cont2515", Cont2515);
 router.post("/ContAnnuity", ContAnnuity);
 router.post("/ContBuilding", ContBuilding);
@@ -128,5 +128,9 @@ router.post("/DECRFUpdatePanelApi", DECRFUpdatePanelApi);
 router.post("/DENABARDUpdatePanelApi", DENABARDUpdatePanelApi);
 router.post("/DERoadUpdatePanelApi", DERoadUpdatePanelApi);
 router.post("/DEAuntyUpdatePanelApi", DEAuntyUpdatePanelApi);
+
+
+router.post("/ContUpdPanelBuilding", ContUpdPanelBuilding);
+
 
 module.exports = router;

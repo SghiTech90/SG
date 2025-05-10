@@ -16,7 +16,6 @@ const {
 } = require("../controllers/allHeadController");
 
 // All routes are POST and require 'year' and 'office' in the body
-
 router.post("/buildingAllHEAD", buildingAllHEAD);
 router.post("/CrfMPRreportAllHEAD", CrfMPRreportAllHEAD);
 router.post("/DepositAllHead", DepositAllHead);
