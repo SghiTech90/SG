@@ -129,8 +129,13 @@ router.post("/DENABARDUpdatePanelApi", DENABARDUpdatePanelApi);
 router.post("/DERoadUpdatePanelApi", DERoadUpdatePanelApi);
 router.post("/DEAuntyUpdatePanelApi", DEAuntyUpdatePanelApi);
 
-
+//Contractor Update Panel Select Queries
+//--Contractor = मे.ए.एम.कोठारी // ShakhaAbhyantaName= श्री. पी एम घोडस्कर //  UpabhyantaName = श्री. पी एम घोडस्कर
 router.post("/ContUpdPanelBuilding", ContUpdPanelBuilding);
+router.post("/ContUpdPanelNABARD", ContNABARD);
+router.post("/ContUpdPanelCRF", ContUpdPanelCrf);
+router.post("/ContUpdPanelRoad", ContNABARD);
+router.post("/ContUpdPanelAnnuity", ContNABARD);
 
 
 module.exports = router;
