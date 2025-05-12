@@ -1963,7 +1963,20 @@ const ContUpdPanelCrf = async (req, res) => {
       throw new Error(`Database pool is not available for office ${office}.`);
 
     // Example: Detailed query on Building tables, adjust as needed
-    const query = `SELECT  [WorkId] as 'वर्क आयडी',[Arthsankalpiyyear] as 'अर्थसंकल्पीय वर्ष',[KamacheName] as 'कामाचे नाव',[Shera] as 'शेरा'  from BudgetMasterCRF   where ShakhaAbhyantaName=@name  or [UpabhyantaName]=@name  or ThekedaarName=@name `;
+    //const query = `SELECT  [WorkId] as 'वर्क आयडी',[Arthsankalpiyyear] as 'अर्थसंकल्पीय वर्ष',[KamacheName] as 'कामाचे नाव',[Shera] as 'शेरा'  from BudgetMasterCRF   where ShakhaAbhyantaName=@name  or [UpabhyantaName]=@name  or ThekedaarName=@name `;
+    const query = `SELECT  
+    bmc.[WorkId] AS 'वर्क आयडी',
+    bmc.[Arthsankalpiyyear] AS 'अर्थसंकल्पीय वर्ष',
+    bmc.[KamacheName] AS 'कामाचे नाव',
+    bmc.[Shera] AS 'शेरा'
+FROM BudgetMasterCRF bmc
+LEFT JOIN screateadmin sa 
+    ON bmc.SubDivision = sa.SubDivision 
+WHERE 
+    (bmc.ShakhaAbhyantaName = @name
+    OR bmc.[UpabhyantaName] = @name
+    OR bmc.ThekedaarName = @name)
+    OR sa.Post = @name;`
     const result = await pool.request().input("name", name).query(query);
     res.json({ success: true, data: result.recordset });
   } catch (error) {
