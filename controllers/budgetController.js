@@ -1976,7 +1976,7 @@ WHERE
     (bmc.ShakhaAbhyantaName = @name
     OR bmc.[UpabhyantaName] = @name
     OR bmc.ThekedaarName = @name)
-    OR sa.Post = @name;`
+    OR sa.Name = @name;`
     const result = await pool.request().input("name", name).query(query);
     res.json({ success: true, data: result.recordset });
   } catch (error) {
