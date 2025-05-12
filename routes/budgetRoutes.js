@@ -63,7 +63,12 @@ const {
   ContUpdPhotoNabard,
   ContUpdPhotoBuilding,
   uploadImage,
-  UpdateStatus
+  UpdateStatus,
+  EEUpdPanelAunty,
+  EEUpdPanelROAD,
+  EEUpdPanelCrf,
+  EEUpdPanelNABARD,
+  EEUpdPanelBuilding,
 } = require("../controllers/budgetController");
 
 // Route to get budget count
@@ -147,6 +152,14 @@ router.post("/ContUpdPanelNABARD", ContUpdPanelNABARD);
 router.post("/ContUpdPanelCRF", ContUpdPanelCrf);
 router.post("/ContUpdPanelROAD", ContUpdPanelROAD);
 router.post("/ContUpdPanelAunty", ContUpdPanelAunty);
+
+//EE Update Panel Select Queries
+//--EE = मे.ए.एम.कोठारी // ShakhaAbhyantaName= श्री. पी एम घोडस्कर //  UpabhyantaName = श्री. पी एम घोडस्कर
+router.post("/EEUpdPanelBuilding", EEUpdPanelBuilding);
+router.post("/EEUpdPanelNABARD", EEUpdPanelNABARD);
+router.post("/EEUpdPanelCRF", EEUpdPanelCrf);
+router.post("/EEUpdPanelROAD", EEUpdPanelROAD);
+router.post("/EEUpdPanelAunty", EEUpdPanelAunty);
 
 //--Contractor -- upload photo -- click photo in the grid --queries for that
 router.post("/ContUpdPhotoBuilding", ContUpdPhotoBuilding);

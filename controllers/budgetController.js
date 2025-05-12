@@ -1963,20 +1963,7 @@ const ContUpdPanelCrf = async (req, res) => {
       throw new Error(`Database pool is not available for office ${office}.`);
 
     // Example: Detailed query on Building tables, adjust as needed
-    //const query = `SELECT  [WorkId] as 'वर्क आयडी',[Arthsankalpiyyear] as 'अर्थसंकल्पीय वर्ष',[KamacheName] as 'कामाचे नाव',[Shera] as 'शेरा'  from BudgetMasterCRF   where ShakhaAbhyantaName=@name  or [UpabhyantaName]=@name  or ThekedaarName=@name `;
-    const query = `SELECT  
-    bmc.[WorkId] AS 'वर्क आयडी',
-    bmc.[Arthsankalpiyyear] AS 'अर्थसंकल्पीय वर्ष',
-    bmc.[KamacheName] AS 'कामाचे नाव',
-    bmc.[Shera] AS 'शेरा'
-FROM BudgetMasterCRF bmc
-LEFT JOIN screateadmin sa 
-    ON bmc.SubDivision = sa.SubDivision 
-WHERE 
-    (bmc.ShakhaAbhyantaName = @name
-    OR bmc.[UpabhyantaName] = @name
-    OR bmc.ThekedaarName = @name)
-    OR sa.Name = @name;`
+    const query = `SELECT  [WorkId] as 'वर्क आयडी',[Arthsankalpiyyear] as 'अर्थसंकल्पीय वर्ष',[KamacheName] as 'कामाचे नाव',[Shera] as 'शेरा'  from BudgetMasterCRF   where ShakhaAbhyantaName=@name  or [UpabhyantaName]=@name  or ThekedaarName=@name `;
     const result = await pool.request().input("name", name).query(query);
     res.json({ success: true, data: result.recordset });
   } catch (error) {
@@ -2316,6 +2303,155 @@ const UpdateStatus = async (req, res) => {
   }
 };
 
+const EEUpdPanelBuilding = async (req, res) => {
+  const { office, name } = req.body;
+  if (!office || !name) {
+    return res
+      .status(400)
+      .json({ success: false, message: "parameter is required" });
+  }
+  try {
+    const pool = await getPool(office);
+    if (!pool)
+      throw new Error(`Database pool is not available for office ${office}.`);
+
+    // Example: Detailed query on Building tables, adjust as needed
+    const query = `
+SELECT  [WorkId] as 'वर्क आयडी',[Arthsankalpiyyear] as 'अर्थसंकल्पीय वर्ष',[KamacheName] as 'कामाचे नाव',[Shera] as 'शेरा'  from BudgetMasterBuilding  `;
+    const result = await pool.request().input("name", name).query(query);
+    res.json({ success: true, data: result.recordset });
+  } catch (error) {
+    console.error(
+      "Error getting contractorGraph details:",
+      error
+    );
+    res.status(500).json({
+      success: false,
+      message: "Error getting contractorGraph details",
+      error: error.message,
+    });
+  }
+};
+
+const EEUpdPanelCrf = async (req, res) => {
+  const { office, name } = req.body;
+  if (!office || !name) {
+    return res
+      .status(400)
+      .json({ success: false, message: "parameter is required" });
+  }
+  try {
+    const pool = await getPool(office);
+    if (!pool)
+      throw new Error(`Database pool is not available for office ${office}.`);
+
+    // Example: Detailed query on Building tables, adjust as needed
+    const query = `
+SELECT  [WorkId] as 'वर्क आयडी',[Arthsankalpiyyear] as 'अर्थसंकल्पीय वर्ष',[KamacheName] as 'कामाचे नाव',[Shera] as 'शेरा'  from BudgetMasterCRF  `;
+    const result = await pool.request().input("name", name).query(query);
+    res.json({ success: true, data: result.recordset });
+  } catch (error) {
+    console.error(
+      "Error getting contractorGraph details:",
+      error
+    );
+    res.status(500).json({
+      success: false,
+      message: "Error getting contractorGraph details",
+      error: error.message,
+    });
+  }
+};
+
+const EEUpdPanelROAD = async (req, res) => {
+  const { office, name } = req.body;
+  if (!office || !name) {
+    return res
+      .status(400)
+      .json({ success: false, message: "parameter is required" });
+  }
+  try {
+    const pool = await getPool(office);
+    if (!pool)
+      throw new Error(`Database pool is not available for office ${office}.`);
+
+    // Example: Detailed query on Building tables, adjust as needed
+    const query = `
+SELECT  [WorkId] as 'वर्क आयडी',[Arthsankalpiyyear] as 'अर्थसंकल्पीय वर्ष',[KamacheName] as 'कामाचे नाव',[Shera] as 'शेरा'  from BudgetMasterRoad  `;
+    const result = await pool.request().input("name", name).query(query);
+    res.json({ success: true, data: result.recordset });
+  } catch (error) {
+    console.error(
+      "Error getting contractorGraph details:",
+      error
+    );
+    res.status(500).json({
+      success: false,
+      message: "Error getting contractorGraph details",
+      error: error.message,
+    });
+  }
+};
+
+const EEUpdPanelAunty = async (req, res) => {
+  const { office, name } = req.body;
+  if (!office || !name) {
+    return res
+      .status(400)
+      .json({ success: false, message: "parameter is required" });
+  }
+  try {
+    const pool = await getPool(office);
+    if (!pool)
+      throw new Error(`Database pool is not available for office ${office}.`);
+
+    // Example: Detailed query on Building tables, adjust as needed
+    const query = `
+SELECT  [WorkId] as 'वर्क आयडी',[Arthsankalpiyyear] as 'अर्थसंकल्पीय वर्ष',[KamacheName] as 'कामाचे नाव',[Shera] as 'शेरा'  from BudgetMasterAunty  `;
+    const result = await pool.request().input("name", name).query(query);
+    res.json({ success: true, data: result.recordset });
+  } catch (error) {
+    console.error(
+      "Error getting contractorGraph details:",
+      error
+    );
+    res.status(500).json({
+      success: false,
+      message: "Error getting contractorGraph details",
+      error: error.message,
+    });
+  }
+};
+
+const EEUpdPanelNABARD = async (req, res) => {
+  const { office, name } = req.body;
+  if (!office || !name) {
+    return res
+      .status(400)
+      .json({ success: false, message: "parameter is required" });
+  }
+  try {
+    const pool = await getPool(office);
+    if (!pool)
+      throw new Error(`Database pool is not available for office ${office}.`);
+
+    // Example: Detailed query on Building tables, adjust as needed
+    const query = `
+SELECT  [WorkId] as 'वर्क आयडी',[Arthsankalpiyyear] as 'अर्थसंकल्पीय वर्ष',[KamacheName] as 'कामाचे नाव',[Shera] as 'शेरा'  from BudgetMasterNABARD  `;
+    const result = await pool.request().input("name", name).query(query);
+    res.json({ success: true, data: result.recordset });
+  } catch (error) {
+    console.error(
+      "Error getting contractorGraph details:",
+      error
+    );
+    res.status(500).json({
+      success: false,
+      message: "Error getting contractorGraph details",
+      error: error.message,
+    });
+  }
+};
 
 module.exports = {
   getBudgetCount,
@@ -2380,5 +2516,10 @@ module.exports = {
   ContUpdPhotoNabard,
   ContUpdPhotoBuilding,
   uploadImage,
-  UpdateStatus
+  UpdateStatus,
+  EEUpdPanelAunty,
+  EEUpdPanelROAD,
+  EEUpdPanelCrf,
+  EEUpdPanelNABARD,
+  EEUpdPanelBuilding,
 };
