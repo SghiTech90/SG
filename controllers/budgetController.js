@@ -2261,7 +2261,7 @@ const uploadImage = async (req, res) => {
 };
 
 
-const UpdateStatus = async (req, res) => {
+const UpdateStatusBuilding = async (req, res) => {
   const { office, workID, status } = req.body;
 
   if (!office || !workID || status === undefined) {
@@ -2516,7 +2516,7 @@ module.exports = {
   ContUpdPhotoNabard,
   ContUpdPhotoBuilding,
   uploadImage,
-  UpdateStatus,
+  UpdateStatusBuilding,
   EEUpdPanelAunty,
   EEUpdPanelROAD,
   EEUpdPanelCrf,
