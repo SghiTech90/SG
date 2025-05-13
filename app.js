@@ -44,18 +44,18 @@ app.get("/", (req, res) => {
 });
 
 const apiEndpoints = [
-  'https://sghitech.up.railway.app/api/budget/BudgetMasterNABARD',
-  'https://sghitech.up.railway.app/api/budget/BudgetMaster2515',
-  'https://sghitech.up.railway.app/api/budget/BudgetMasterMP',
-  'https://sghitech.up.railway.app/api/budget/BudgetMasterMLA',
-  'https://sghitech.up.railway.app/api/budget/BudgetMasterGAT_FBC',
-  'https://sghitech.up.railway.app/api/budget/BudgetMasterGAT_D',
-  'https://sghitech.up.railway.app/api/budget/BudgetMasterGAT_A',
-  'https://sghitech.up.railway.app/api/budget/BudgetMasterDPDC',
-  'https://sghitech.up.railway.app/api/budget/BudgetMasterDepositFund',
-  'https://sghitech.up.railway.app/api/budget/BudgetMasterCRF',
-  'https://sghitech.up.railway.app/api/budget/BudgetMasterBuilding',
-  'https://sghitech.up.railway.app/api/budget/BudgetMasterAunty'
+  'https://Sghitech.up.railway.app/api/budget/BudgetMasterNABARD',
+  'https://Sghitech.up.railway.app/api/budget/BudgetMaster2515',
+  'https://Sghitech.up.railway.app/api/budget/BudgetMasterMP',
+  'https://Sghitech.up.railway.app/api/budget/BudgetMasterMLA',
+  'https://Sghitech.up.railway.app/api/budget/BudgetMasterGAT_FBC',
+  'https://Sghitech.up.railway.app/api/budget/BudgetMasterGAT_D',
+  'https://Sghitech.up.railway.app/api/budget/BudgetMasterGAT_A',
+  'https://Sghitech.up.railway.app/api/budget/BudgetMasterDPDC',
+  'https://Sghitech.up.railway.app/api/budget/BudgetMasterDepositFund',
+  'https://Sghitech.up.railway.app/api/budget/BudgetMasterCRF',
+  'https://Sghitech.up.railway.app/api/budget/BudgetMasterBuilding',
+  'https://Sghitech.up.railway.app/api/budget/BudgetMasterAunty'
 ];
 
 app.post('/aggregate', async (req, res) => {
