@@ -14,10 +14,8 @@ const getUpcomingDueDates = async (req, res) => {
       throw new Error(`Database pool is not available for office ${office}.`);
 
     const query = `
-            SELECT WorkID, KamacheName, KamPurnDate 
-            FROM BudgetMasterBuilding -- Add other relevant tables with UNION ALL if needed
-            WHERE KamPurnDate BETWEEN GETDATE() AND DATEADD(day, 20, GETDATE())
-            ORDER BY KamPurnDate;
+            select KamPurnDate,WorkId,KamacheName from SendSms_tbl where convert(date,KamPurnDate,105) 
+between CONVERT(date,GETDATE(),105) and convert(date,dateadd(day,20,GETDATE()),105)
         `; // Note: This query might need refinement based on exact tables and date logic
     const result = await pool.request().query(query);
     res.json({ success: true, data: result.recordset });
