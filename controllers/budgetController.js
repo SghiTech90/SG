@@ -2260,49 +2260,6 @@ const uploadImage = async (req, res) => {
   }
 };
 
-
-const UpdateStatusBuilding = async (req, res) => {
-  const { office, workID, status } = req.body;
-
-  if (!office || !workID || status === undefined) {
-    return res.status(400).json({
-      success: false,
-      message: "Parameters 'office', 'workID', and 'status' are required",
-    });
-  }
-
-  try {
-    const pool = await getPool(office);
-    if (!pool) {
-      throw new Error(`Database pool is not available for office ${office}.`);
-    }
-
-    const query = `
-      UPDATE [ImageGallary]
-      SET [Description] = @Status
-      WHERE [WorkId] = @WorkId AND [Type] = 'Building'
-    `;
-
-    const result = await pool
-      .request()
-      .input("WorkId", sql.NVarChar, workID)
-      .input("Status", sql.NVarChar, status)
-      .query(query);
-
-    return res.status(200).json({
-      success: true,
-      message: "Status updated successfully",
-    });
-  } catch (error) {
-    console.error("Error updating status:", error);
-    return res.status(500).json({
-      success: false,
-      message: "Error updating status",
-      error: error.message,
-    });
-  }
-};
-
 const EEUpdPanelBuilding = async (req, res) => {
   const { office, name } = req.body;
   if (!office || !name) {
@@ -2453,6 +2410,216 @@ SELECT  [WorkId] as 'वर्क आयडी',[Arthsankalpiyyear] as 'अर�
   }
 };
 
+const UpdateStatusBuilding = async (req, res) => {
+  const { office, workID, status } = req.body;
+
+  if (!office || !workID || status === undefined) {
+    return res.status(400).json({
+      success: false,
+      message: "Parameters 'office', 'workID', and 'status' are required",
+    });
+  }
+
+  try {
+    const pool = await getPool(office);
+    if (!pool) {
+      throw new Error(`Database pool is not available for office ${office}.`);
+    }
+
+    const query = `
+      UPDATE [ImageGallary]
+      SET [Description] = @Status
+      WHERE [WorkId] = @WorkId AND [Type] = 'Building'
+    `;
+
+    const result = await pool
+      .request()
+      .input("WorkId", sql.NVarChar, workID)
+      .input("Status", sql.NVarChar, status)
+      .query(query);
+
+    return res.status(200).json({
+      success: true,
+      message: "Status updated successfully",
+    });
+  } catch (error) {
+    console.error("Error updating status:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Error updating status",
+      error: error.message,
+    });
+  }
+};
+
+const UpdateStatusAunty = async (req, res) => {
+  const { office, workID, status } = req.body;
+
+  if (!office || !workID || status === undefined) {
+    return res.status(400).json({
+      success: false,
+      message: "Parameters 'office', 'workID', and 'status' are required",
+    });
+  }
+
+  try {
+    const pool = await getPool(office);
+    if (!pool) {
+      throw new Error(`Database pool is not available for office ${office}.`);
+    }
+
+    const query = `
+      UPDATE [ImageGallary]
+      SET [Description] = @Status
+      WHERE [WorkId] = @WorkId AND [Type] = 'Aunty'
+    `;
+
+    const result = await pool
+      .request()
+      .input("WorkId", sql.NVarChar, workID)
+      .input("Status", sql.NVarChar, status)
+      .query(query);
+
+    return res.status(200).json({
+      success: true,
+      message: "Status updated successfully",
+    });
+  } catch (error) {
+    console.error("Error updating status:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Error updating status",
+      error: error.message,
+    });
+  }
+};
+
+const UpdateStatusCrf = async (req, res) => {
+  const { office, workID, status } = req.body;
+
+  if (!office || !workID || status === undefined) {
+    return res.status(400).json({
+      success: false,
+      message: "Parameters 'office', 'workID', and 'status' are required",
+    });
+  }
+
+  try {
+    const pool = await getPool(office);
+    if (!pool) {
+      throw new Error(`Database pool is not available for office ${office}.`);
+    }
+
+    const query = `
+      UPDATE [ImageGallary]
+      SET [Description] = @Status
+      WHERE [WorkId] = @WorkId AND [Type] = 'Crf'
+    `;
+
+    const result = await pool
+      .request()
+      .input("WorkId", sql.NVarChar, workID)
+      .input("Status", sql.NVarChar, status)
+      .query(query);
+
+    return res.status(200).json({
+      success: true,
+      message: "Status updated successfully",
+    });
+  } catch (error) {
+    console.error("Error updating status:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Error updating status",
+      error: error.message,
+    });
+  }
+};
+
+const UpdateStatusRoad = async (req, res) => {
+  const { office, workID, status } = req.body;
+
+  if (!office || !workID || status === undefined) {
+    return res.status(400).json({
+      success: false,
+      message: "Parameters 'office', 'workID', and 'status' are required",
+    });
+  }
+
+  try {
+    const pool = await getPool(office);
+    if (!pool) {
+      throw new Error(`Database pool is not available for office ${office}.`);
+    }
+
+    const query = `
+      UPDATE [ImageGallary]
+      SET [Description] = @Status
+      WHERE [WorkId] = @WorkId AND [Type] = 'Road'
+    `;
+
+    const result = await pool
+      .request()
+      .input("WorkId", sql.NVarChar, workID)
+      .input("Status", sql.NVarChar, status)
+      .query(query);
+
+    return res.status(200).json({
+      success: true,
+      message: "Status updated successfully",
+    });
+  } catch (error) {
+    console.error("Error updating status:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Error updating status",
+      error: error.message,
+    });
+  }
+};
+
+const UpdateStatusNabard = async (req, res) => {
+  const { office, workID, status } = req.body;
+
+  if (!office || !workID || status === undefined) {
+    return res.status(400).json({
+      success: false,
+      message: "Parameters 'office', 'workID', and 'status' are required",
+    });
+  }
+
+  try {
+    const pool = await getPool(office);
+    if (!pool) {
+      throw new Error(`Database pool is not available for office ${office}.`);
+    }
+
+    const query = `
+      UPDATE [ImageGallary]
+      SET [Description] = @Status
+      WHERE [WorkId] = @WorkId AND [Type] = 'Nabard'
+    `;
+
+    const result = await pool
+      .request()
+      .input("WorkId", sql.NVarChar, workID)
+      .input("Status", sql.NVarChar, status)
+      .query(query);
+
+    return res.status(200).json({
+      success: true,
+      message: "Status updated successfully",
+    });
+  } catch (error) {
+    console.error("Error updating status:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Error updating status",
+      error: error.message,
+    });
+  }
+};
+
 module.exports = {
   getBudgetCount,
   getUpvibhagCounts,
@@ -2517,6 +2684,10 @@ module.exports = {
   ContUpdPhotoBuilding,
   uploadImage,
   UpdateStatusBuilding,
+  UpdateStatusAunty,
+  UpdateStatusRoad,
+  UpdateStatusNabard,
+  UpdateStatusCrf,
   EEUpdPanelAunty,
   EEUpdPanelROAD,
   EEUpdPanelCrf,

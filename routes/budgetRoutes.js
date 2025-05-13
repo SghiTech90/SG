@@ -64,6 +64,10 @@ const {
   ContUpdPhotoBuilding,
   uploadImage,
   UpdateStatusBuilding,
+  UpdateStatusAunty,
+  UpdateStatusRoad,
+  UpdateStatusNabard,
+  UpdateStatusCrf,
   EEUpdPanelAunty,
   EEUpdPanelROAD,
   EEUpdPanelCrf,
@@ -173,6 +177,11 @@ router.post("/uploadImage", uploadImage);
 
 //update status in correspondance to workID
 router.post("/UpdateStatusBuilding", UpdateStatusBuilding);
+router.post("/UpdateStatusAunty", UpdateStatusAunty);
+router.post("/UpdateStatusRoad", UpdateStatusRoad);
+router.post("/UpdateStatusNabard", UpdateStatusNabard);
+router.post("/UpdateStatusCrf", UpdateStatusCrf);
+
 
 
 module.exports = router;
