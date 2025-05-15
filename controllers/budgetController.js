@@ -2277,7 +2277,7 @@ const allImage = async (req, res) => {
     }
 
     const query = `
-      SELECT * from [ImageGallary]
+      SELECT Image, KamacheName, Longitude, Latitude from [ImageGallary]
     `;
 
     const result = await pool
