@@ -4,7 +4,6 @@ const {
   login,
   verifyOTP,
   resendOTP,
-  
   profile,
   buildingMPRreport,
   CrfMPRreport,

@@ -77,7 +77,7 @@ const login = async (req, res) => {
     }
     console.log("Database pool acquired.");
 
-    const query = `SELECT UserId, Password, Post, MobileNo FROM [dbo].[SCreateAdmin] WHERE UserId = @userId`;
+    const query = `SELECT UserId, Password, Post, MobileNo, Name FROM [dbo].[SCreateAdmin] WHERE UserId = @userId`;
     console.log("Executing login query...");
     const result = await pool
       .request()
