@@ -2241,12 +2241,12 @@ const uploadImage = async (req, res) => {
 
     await pool
       .request()
-      .input("WorkId", sql.Int, WorkId || 0)
-      .input("Type", sql.NVarChar, Type || '')
+      .input("WorkId", sql.NVarChar, WorkId)
+      .input("Type", sql.NVarChar, Type)
       .input("Data", sql.VarBinary(sql.MAX), Data)
       .input("Content", sql.NVarChar, Content)
       .input("Filename", sql.NVarChar, filename)
-      .input("Description", sql.NVarChar, Description || '')
+      .input("Description", sql.NVarChar, Description)
       .input("Longitude", sql.Float, Longitude)
       .input("Latitude", sql.Float, Latitude)
       .query(query);
@@ -2269,7 +2269,7 @@ const uploadImage = async (req, res) => {
 const allImage = async (req, res) => {
   const { office } = req.body;
 
-  if (!office ) {
+  if (!office) {
     return res.status(400).json({
       success: false,
       message: "office is required",
@@ -2283,26 +2283,37 @@ const allImage = async (req, res) => {
     }
 
     const query = `
-      SELECT Image, KamacheName, Longitude, Latitude from [ImageGallary]
+      SELECT Image, KamacheName, Longitude, Latitude, ContentType
+      FROM [ImageGallary]
     `;
 
-    const result = await pool
-      .request()
-      .query(query);
+    const result = await pool.request().query(query);
+
+    const images = result.recordset.map((row) => {
+      const base64Image = Buffer.from(row.Image).toString("base64");
+      const imageSrc = `data:${row.ContentType};base64,${base64Image}`;
+      return {
+        image: imageSrc,
+        KamacheName: row.KamacheName,
+        Longitude: row.Longitude,
+        Latitude: row.Latitude,
+      };
+    });
 
     return res.status(200).json({
       success: true,
-      data: result.recordset,
+      data: images,
     });
   } catch (error) {
-    console.error("Error uploading image:", error);
+    console.error("Error fetching images:", error);
     return res.status(500).json({
       success: false,
-      message: "Error uploading image",
+      message: "Error fetching images",
       error: error.message,
     });
   }
 };
+
 
 const EEUpdPanelBuilding = async (req, res) => {
   const { office, name } = req.body;
