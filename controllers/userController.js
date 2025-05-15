@@ -121,7 +121,7 @@ const login = async (req, res) => {
 
     await sendSMS(
       user.MobileNo,
-      `Your one time SBA,PWCA,GOM password login (OTP) is ${otp} Please use it to verify your mobile number with -Swapsoft`
+      `Your one time SBA,PWCA,GOM password login (OTP) is ${otp} Please use it to verify your mobile number with -Swapsoft`
     );
     console.log("SMS presumably sent.");
 
