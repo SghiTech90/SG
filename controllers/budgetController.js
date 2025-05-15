@@ -1045,7 +1045,7 @@ const ContNonResidentialBuilding2909 = async (req, res) => {
 
     // Example: Detailed query on Building tables, adjust as needed
     const query = `
-      SELECT a.[Sadyasthiti]as 'Work Status', Count(a.[Sadyasthiti])as'Total Work',sum(cast(a.[PrashaskiyAmt] as decimal(10,2))) as 'AA cost Rs in lakhs',sum(cast(a.[TrantrikAmt]as decimal(10,2)))as 'Technical Sanction Cost Rs in Lakh',sum(cast(b.[Tartud]as decimal(10,2))) as 'Total Provision Rs in Lakh',sum(cast(b.[AikunKharch]as decimal(10,2))) as 'Total Expense Rs in Lakh' FROM BudgetMasterNonResidentialBuilding  a full outer join NonResidentialBuildingProvision  b on a.workid=b.workid where a.[Sadyasthiti]!='' and ThekedaarName=@name and b.Arthsankalpiyyear='2023-2024' GROUP BY a.[Sadyasthiti`;
+SELECT a.[Sadyasthiti]as 'Work Status', Count(a.[Sadyasthiti])as'Total Work',sum(cast(a.[PrashaskiyAmt] as decimal(10,2))) as 'AA cost Rs in lakhs',sum(cast(a.[TrantrikAmt]as decimal(10,2)))as 'Technical Sanction Cost Rs in Lakh',sum(cast(b.[Tartud]as decimal(10,2))) as 'Total Provision Rs in Lakh',sum(cast(b.[AikunKharch]as decimal(10,2))) as 'Total Expense Rs in Lakh' FROM BudgetMasterNonResidentialBuilding  a full outer join NonResidentialBuildingProvision  b on a.workid=b.workid where a.[Sadyasthiti]!='' and ThekedaarName=@name and b.Arthsankalpiyyear='2025-2026' GROUP BY a.[Sadyasthiti]`;
     const result = await pool.request().input("name", name).query(query);
     res.json({ success: true, data: result.recordset });
   } catch (error) {
