@@ -2472,7 +2472,7 @@ const UpdateStatusAunty = async (req, res) => {
     }
 
     const query = `
-      update BudgetMasterAunty 
+    update BudgetMasterAunty 
 	  SET Shera = @Status
     WHERE [WorkId] = @WorkId
     `;
@@ -2598,7 +2598,7 @@ const UpdateStatusNabard = async (req, res) => {
     }
 
     const query = `
-      update BudgetMasterNabard
+      update BudgetMasterNABARD
 	  SET Shera = @Status
     WHERE [WorkId] = @WorkId
     `;
