@@ -2260,6 +2260,44 @@ const uploadImage = async (req, res) => {
   }
 };
 
+const allImage = async (req, res) => {
+  const { office } = req.body;
+
+  if (!office ) {
+    return res.status(400).json({
+      success: false,
+      message: "office is required",
+    });
+  }
+
+  try {
+    const pool = await getPool(office);
+    if (!pool) {
+      throw new Error(`Database pool is not available for office ${office}.`);
+    }
+
+    const query = `
+      SELECT * from [ImageGallary]
+    `;
+
+    const result = await pool
+      .request()
+      .query(query);
+
+    return res.status(200).json({
+      success: true,
+      message: "Image uploaded successfully",
+    });
+  } catch (error) {
+    console.error("Error uploading image:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Error uploading image",
+      error: error.message,
+    });
+  }
+};
+
 const EEUpdPanelBuilding = async (req, res) => {
   const { office, name } = req.body;
   if (!office || !name) {
@@ -2691,6 +2729,7 @@ module.exports = {
   UpdateStatusRoad,
   UpdateStatusNabard,
   UpdateStatusCrf,
+  allImage,
   EEUpdPanelAunty,
   EEUpdPanelROAD,
   EEUpdPanelCrf,

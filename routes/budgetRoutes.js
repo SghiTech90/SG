@@ -73,6 +73,7 @@ const {
   EEUpdPanelCrf,
   EEUpdPanelNABARD,
   EEUpdPanelBuilding,
+  allImage
 } = require("../controllers/budgetController");
 
 // Route to get budget count
@@ -174,6 +175,7 @@ router.post("/ContUpdPhotoAunty", ContUpdPhotoAunty);
 
 //Insert Image
 router.post("/uploadImage", uploadImage);
+router.post("/allImage", allImage);
 
 //update status in correspondance to workID
 router.post("/UpdateStatusBuilding", UpdateStatusBuilding);
