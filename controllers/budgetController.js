@@ -2286,7 +2286,7 @@ const allImage = async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      message: "Image uploaded successfully",
+      data: result.recordset,
     });
   } catch (error) {
     console.error("Error uploading image:", error);
