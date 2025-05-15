@@ -2426,11 +2426,14 @@ const UpdateStatusBuilding = async (req, res) => {
       throw new Error(`Database pool is not available for office ${office}.`);
     }
 
-    const query = `
-      UPDATE [ImageGallary]
-      SET [Description] = @Status
-      WHERE [WorkId] = @WorkId AND [Type] = 'Building'
-    `;
+    // const query = `
+    //   UPDATE [ImageGallary]
+    //   SET [Description] = @Status
+    //   WHERE [WorkId] = @WorkId AND [Type] = 'Building'
+    // `;
+    const query = `update BudgetMasterBuilding 
+	  SET Shera = @Status
+    WHERE [WorkId] = @WorkId`;
 
     const result = await pool
       .request()
