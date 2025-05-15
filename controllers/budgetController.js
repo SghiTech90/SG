@@ -2243,7 +2243,7 @@ const uploadImage = async (req, res) => {
       .request()
       .input("WorkId", sql.NVarChar, WorkId)
       .input("Type", sql.NVarChar, Type)
-  .input("Data", sql.VarBinary(sql.MAX), Buffer.from(Data.slice(2), 'hex')) 
+      .input("Data", sql.VarBinary(sql.MAX), Buffer.from(Data, 'base64'))      
       .input("Content", sql.NVarChar, Content)
       .input("Filename", sql.NVarChar, filename)
       .input("Description", sql.NVarChar, Description)
