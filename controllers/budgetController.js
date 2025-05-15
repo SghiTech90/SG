@@ -2472,9 +2472,9 @@ const UpdateStatusAunty = async (req, res) => {
     }
 
     const query = `
-      UPDATE [ImageGallary]
-      SET [Description] = @Status
-      WHERE [WorkId] = @WorkId AND [Type] = 'Aunty'
+      update BudgetMasterAunty 
+	  SET Shera = @Status
+    WHERE [WorkId] = @WorkId
     `;
 
     const result = await pool
@@ -2514,9 +2514,9 @@ const UpdateStatusCrf = async (req, res) => {
     }
 
     const query = `
-      UPDATE [ImageGallary]
-      SET [Description] = @Status
-      WHERE [WorkId] = @WorkId AND [Type] = 'Crf'
+      update BudgetMasterCRF 
+	  SET Shera = @Status
+    WHERE [WorkId] = @WorkId
     `;
 
     const result = await pool
@@ -2556,9 +2556,9 @@ const UpdateStatusRoad = async (req, res) => {
     }
 
     const query = `
-      UPDATE [ImageGallary]
-      SET [Description] = @Status
-      WHERE [WorkId] = @WorkId AND [Type] = 'Road'
+      update BudgetMasterRoad
+	  SET Shera = @Status
+    WHERE [WorkId] = @WorkId
     `;
 
     const result = await pool
@@ -2598,9 +2598,9 @@ const UpdateStatusNabard = async (req, res) => {
     }
 
     const query = `
-      UPDATE [ImageGallary]
-      SET [Description] = @Status
-      WHERE [WorkId] = @WorkId AND [Type] = 'Nabard'
+      update BudgetMasterNabard
+	  SET Shera = @Status
+    WHERE [WorkId] = @WorkId
     `;
 
     const result = await pool
