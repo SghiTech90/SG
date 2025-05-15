@@ -2218,9 +2218,9 @@ const ContUpdPhotoAunty = async (req, res) => {
 };
 
 const uploadImage = async (req, res) => {
-  const { office, Data, filename, Content, Longitude, Latitude } = req.body;
+  const { office, Data, filename, Content, Longitude, Latitude, WorkId, Type, Description } = req.body;
 
-  if (!office || !Data || !filename || !Content || !Longitude || !Latitude) {
+  if (!office || !Data || !filename || !Content || Longitude == null || Latitude == null) {
     return res.status(400).json({
       success: false,
       message: "Parameters 'office', 'Data', 'Latitude','Longitude', 'filename', and 'Content' are required",
@@ -2235,15 +2235,20 @@ const uploadImage = async (req, res) => {
 
     const query = `
       INSERT INTO [ImageGallary]
-      ([WorkId], [Type], [Image], [ContentType], [Filepath], [Description],[Longitude], [Latitude])
+      ([WorkId], [Type], [Image], [ContentType], [Filepath], [Description], [Longitude], [Latitude])
       VALUES (@WorkId, @Type, @Data, @Content, @Filename, @Description, @Longitude, @Latitude)
     `;
 
-    const result = await pool
+    await pool
       .request()
+      .input("WorkId", sql.Int, WorkId || 0)
+      .input("Type", sql.NVarChar, Type || '')
       .input("Data", sql.VarBinary(sql.MAX), Data)
       .input("Content", sql.NVarChar, Content)
       .input("Filename", sql.NVarChar, filename)
+      .input("Description", sql.NVarChar, Description || '')
+      .input("Longitude", sql.Float, Longitude)
+      .input("Latitude", sql.Float, Latitude)
       .query(query);
 
     return res.status(200).json({
@@ -2259,6 +2264,7 @@ const uploadImage = async (req, res) => {
     });
   }
 };
+
 
 const allImage = async (req, res) => {
   const { office } = req.body;
