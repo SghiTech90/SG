@@ -2330,7 +2330,7 @@ const EEUpdPanelBuilding = async (req, res) => {
     // Example: Detailed query on Building tables, adjust as needed
     const query = `
 SELECT  [WorkId] as 'वर्क आयडी',[Arthsankalpiyyear] as 'अर्थसंकल्पीय वर्ष',[KamacheName] as 'कामाचे नाव',[Shera] as 'शेरा'  from BudgetMasterBuilding  `;
-    const result = await pool.request().input("name", name).query(query);
+    const result = await pool.request().query(query);
     res.json({ success: true, data: result.recordset });
   } catch (error) {
     console.error(
@@ -2360,7 +2360,7 @@ const EEUpdPanelCrf = async (req, res) => {
     // Example: Detailed query on Building tables, adjust as needed
     const query = `
 SELECT  [WorkId] as 'वर्क आयडी',[Arthsankalpiyyear] as 'अर्थसंकल्पीय वर्ष',[KamacheName] as 'कामाचे नाव',[Shera] as 'शेरा'  from BudgetMasterCRF  `;
-    const result = await pool.request().input("name", name).query(query);
+    const result = await pool.request().query(query);
     res.json({ success: true, data: result.recordset });
   } catch (error) {
     console.error(
@@ -2390,7 +2390,7 @@ const EEUpdPanelROAD = async (req, res) => {
     // Example: Detailed query on Building tables, adjust as needed
     const query = `
 SELECT  [WorkId] as 'वर्क आयडी',[Arthsankalpiyyear] as 'अर्थसंकल्पीय वर्ष',[KamacheName] as 'कामाचे नाव',[Shera] as 'शेरा'  from BudgetMasterRoad  `;
-    const result = await pool.request().input("name", name).query(query);
+    const result = await pool.request().query(query);
     res.json({ success: true, data: result.recordset });
   } catch (error) {
     console.error(
@@ -2420,7 +2420,7 @@ const EEUpdPanelAunty = async (req, res) => {
     // Example: Detailed query on Building tables, adjust as needed
     const query = `
 SELECT  [WorkId] as 'वर्क आयडी',[Arthsankalpiyyear] as 'अर्थसंकल्पीय वर्ष',[KamacheName] as 'कामाचे नाव',[Shera] as 'शेरा'  from BudgetMasterAunty  `;
-    const result = await pool.request().input("name", name).query(query);
+    const result = await pool.request().query(query);
     res.json({ success: true, data: result.recordset });
   } catch (error) {
     console.error(
@@ -2450,7 +2450,7 @@ const EEUpdPanelNABARD = async (req, res) => {
     // Example: Detailed query on Building tables, adjust as needed
     const query = `
 SELECT  [WorkId] as 'वर्क आयडी',[Arthsankalpiyyear] as 'अर्थसंकल्पीय वर्ष',[KamacheName] as 'कामाचे नाव',[Shera] as 'शेरा'  from BudgetMasterNABARD  `;
-    const result = await pool.request().input("name", name).query(query);
+    const result = await pool.request().query(query);
     res.json({ success: true, data: result.recordset });
   } catch (error) {
     console.error(
