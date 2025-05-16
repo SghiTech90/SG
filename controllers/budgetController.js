@@ -2316,8 +2316,8 @@ const allImage = async (req, res) => {
 
 
 const EEUpdPanelBuilding = async (req, res) => {
-  const { office, name } = req.body;
-  if (!office || !name) {
+  const { office } = req.body;
+  if (!office) {
     return res
       .status(400)
       .json({ success: false, message: "parameter is required" });
@@ -2346,8 +2346,8 @@ SELECT  [WorkId] as 'वर्क आयडी',[Arthsankalpiyyear] as 'अर�
 };
 
 const EEUpdPanelCrf = async (req, res) => {
-  const { office, name } = req.body;
-  if (!office || !name) {
+  const { office} = req.body;
+  if (!office) {
     return res
       .status(400)
       .json({ success: false, message: "parameter is required" });
@@ -2376,8 +2376,8 @@ SELECT  [WorkId] as 'वर्क आयडी',[Arthsankalpiyyear] as 'अर�
 };
 
 const EEUpdPanelROAD = async (req, res) => {
-  const { office, name } = req.body;
-  if (!office || !name) {
+  const { office} = req.body;
+  if (!office) {
     return res
       .status(400)
       .json({ success: false, message: "parameter is required" });
@@ -2406,8 +2406,8 @@ SELECT  [WorkId] as 'वर्क आयडी',[Arthsankalpiyyear] as 'अर�
 };
 
 const EEUpdPanelAunty = async (req, res) => {
-  const { office, name } = req.body;
-  if (!office || !name) {
+  const { office} = req.body;
+  if (!office) {
     return res
       .status(400)
       .json({ success: false, message: "parameter is required" });
@@ -2436,8 +2436,8 @@ SELECT  [WorkId] as 'वर्क आयडी',[Arthsankalpiyyear] as 'अर�
 };
 
 const EEUpdPanelNABARD = async (req, res) => {
-  const { office, name } = req.body;
-  if (!office || !name) {
+  const { office} = req.body;
+  if (!office) {
     return res
       .status(400)
       .json({ success: false, message: "parameter is required" });
