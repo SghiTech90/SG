@@ -603,7 +603,7 @@ const BudgetMasterRoad = async (req, res) => {
   if (!office || !position) {
     return res
       .status(400)
-      .json({ success: false, message: "Office parameter is required" });
+      .json({ success: false, message: "Office and Positon parameter is required" });
   }
   try {
     const pool = await getPool(office);
