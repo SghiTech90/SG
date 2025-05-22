@@ -56,7 +56,8 @@ const apiEndpoints = [
   'https://Sghitech.up.railway.app/api/budget/BudgetMasterDepositFund',
   'https://Sghitech.up.railway.app/api/budget/BudgetMasterCRF',
   'https://Sghitech.up.railway.app/api/budget/BudgetMasterBuilding',
-  'https://Sghitech.up.railway.app/api/budget/BudgetMasterAunty'
+  'https://Sghitech.up.railway.app/api/budget/BudgetMasterAunty',
+  'https://Sghitech.up.railway.app/api/budget/BudgetMasterRoad'
 ];
 
 app.post('/aggregate', async (req, res) => {
