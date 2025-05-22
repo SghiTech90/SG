@@ -2330,7 +2330,16 @@ const EEUpdPanelBuilding = async (req, res) => {
 
     // Example: Detailed query on Building tables, adjust as needed
     const query = `
-SELECT  [WorkId] as 'वर्क आयडी',[Arthsankalpiyyear] as 'अर्थसंकल्पीय वर्ष',[KamacheName] as 'कामाचे नाव',[Shera] as 'शेरा'  from BudgetMasterBuilding  `;
+SELECT 
+    B.[WorkId] AS 'वर्क आयडी',
+    B.[Arthsankalpiyyear] AS 'अर्थसंकल्पीय वर्ष',
+    B.[KamacheName] AS 'कामाचे नाव',
+    B.[Shera] AS 'शेरा',
+    I.[Image] AS 'प्रतिमा'
+FROM 
+    BudgetMasterBuilding B
+LEFT JOIN 
+    ImageGallary I ON B.WorkId = I.WorkId `;
     const result = await pool.request().query(query);
     res.json({ success: true, data: result.recordset });
   } catch (error) {
@@ -2359,8 +2368,17 @@ const EEUpdPanelCrf = async (req, res) => {
       throw new Error(`Database pool is not available for office ${office}.`);
 
     // Example: Detailed query on Building tables, adjust as needed
-    const query = `
-SELECT  [WorkId] as 'वर्क आयडी',[Arthsankalpiyyear] as 'अर्थसंकल्पीय वर्ष',[KamacheName] as 'कामाचे नाव',[Shera] as 'शेरा'  from BudgetMasterCRF  `;
+    //const query = `SELECT  [WorkId] as 'वर्क आयडी',[Arthsankalpiyyear] as 'अर्थसंकल्पीय वर्ष',[KamacheName] as 'कामाचे नाव',[Shera] as 'शेरा'  from BudgetMasterCRF  `;
+const query = `SELECT 
+    B.[WorkId] AS 'वर्क आयडी',
+    B.[Arthsankalpiyyear] AS 'अर्थसंकल्पीय वर्ष',
+    B.[KamacheName] AS 'कामाचे नाव',
+    B.[Shera] AS 'शेरा',
+    I.[Image] AS 'प्रतिमा'
+FROM 
+    BudgetMasterCRF B
+LEFT JOIN 
+    ImageGallary I ON B.WorkId = I.WorkId`
     const result = await pool.request().query(query);
     res.json({ success: true, data: result.recordset });
   } catch (error) {
@@ -2389,8 +2407,17 @@ const EEUpdPanelROAD = async (req, res) => {
       throw new Error(`Database pool is not available for office ${office}.`);
 
     // Example: Detailed query on Building tables, adjust as needed
-    const query = `
-SELECT  [WorkId] as 'वर्क आयडी',[Arthsankalpiyyear] as 'अर्थसंकल्पीय वर्ष',[KamacheName] as 'कामाचे नाव',[Shera] as 'शेरा'  from BudgetMasterRoad  `;
+    //const query = `SELECT  [WorkId] as 'वर्क आयडी',[Arthsankalpiyyear] as 'अर्थसंकल्पीय वर्ष',[KamacheName] as 'कामाचे नाव',[Shera] as 'शेरा'  from BudgetMasterRoad  `;
+const query = `SELECT 
+    B.[WorkId] AS 'वर्क आयडी',
+    B.[Arthsankalpiyyear] AS 'अर्थसंकल्पीय वर्ष',
+    B.[KamacheName] AS 'कामाचे नाव',
+    B.[Shera] AS 'शेरा',
+    I.[Image] AS 'प्रतिमा'
+FROM 
+    BudgetMasterRoad B
+LEFT JOIN 
+    ImageGallary I ON B.WorkId = I.WorkId`
     const result = await pool.request().query(query);
     res.json({ success: true, data: result.recordset });
   } catch (error) {
@@ -2419,8 +2446,17 @@ const EEUpdPanelAunty = async (req, res) => {
       throw new Error(`Database pool is not available for office ${office}.`);
 
     // Example: Detailed query on Building tables, adjust as needed
-    const query = `
-SELECT  [WorkId] as 'वर्क आयडी',[Arthsankalpiyyear] as 'अर्थसंकल्पीय वर्ष',[KamacheName] as 'कामाचे नाव',[Shera] as 'शेरा'  from BudgetMasterAunty  `;
+    //const query = `SELECT  [WorkId] as 'वर्क आयडी',[Arthsankalpiyyear] as 'अर्थसंकल्पीय वर्ष',[KamacheName] as 'कामाचे नाव',[Shera] as 'शेरा'  from BudgetMasterAunty  `;
+const query = `SELECT 
+    B.[WorkId] AS 'वर्क आयडी',
+    B.[Arthsankalpiyyear] AS 'अर्थसंकल्पीय वर्ष',
+    B.[KamacheName] AS 'कामाचे नाव',
+    B.[Shera] AS 'शेरा',
+    I.[Image] AS 'प्रतिमा'
+FROM 
+    BudgetMasterAunty B
+LEFT JOIN 
+    ImageGallary I ON B.WorkId = I.WorkId`;
     const result = await pool.request().query(query);
     res.json({ success: true, data: result.recordset });
   } catch (error) {
@@ -2449,8 +2485,17 @@ const EEUpdPanelNABARD = async (req, res) => {
       throw new Error(`Database pool is not available for office ${office}.`);
 
     // Example: Detailed query on Building tables, adjust as needed
-    const query = `
-SELECT  [WorkId] as 'वर्क आयडी',[Arthsankalpiyyear] as 'अर्थसंकल्पीय वर्ष',[KamacheName] as 'कामाचे नाव',[Shera] as 'शेरा'  from BudgetMasterNABARD  `;
+    //const query = `SELECT  [WorkId] as 'वर्क आयडी',[Arthsankalpiyyear] as 'अर्थसंकल्पीय वर्ष',[KamacheName] as 'कामाचे नाव',[Shera] as 'शेरा'  from BudgetMasterNABARD  `;
+const query = `SELECT 
+    B.[WorkId] AS 'वर्क आयडी',
+    B.[Arthsankalpiyyear] AS 'अर्थसंकल्पीय वर्ष',
+    B.[KamacheName] AS 'कामाचे नाव',
+    B.[Shera] AS 'शेरा',
+    I.[Image] AS 'प्रतिमा'
+FROM 
+    BudgetMasterNABARD B
+LEFT JOIN 
+    ImageGallary I ON B.WorkId = I.WorkId`;
     const result = await pool.request().query(query);
     res.json({ success: true, data: result.recordset });
   } catch (error) {
