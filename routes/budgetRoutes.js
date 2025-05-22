@@ -74,7 +74,7 @@ const {
   EEUpdPanelNABARD,
   EEUpdPanelBuilding,
   allImage,
-  ChartCount
+  CircleChartCount
 } = require("../controllers/budgetController");
 
 // Route to get budget count
@@ -186,7 +186,7 @@ router.post("/UpdateStatusNabard", UpdateStatusNabard);
 router.post("/UpdateStatusCrf", UpdateStatusCrf);
 
 //Circle
-router.post("/ChartCount", ChartCount);
+router.post("/CircleChartCount", CircleChartCount);
 
 
 module.exports = router;

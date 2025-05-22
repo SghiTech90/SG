@@ -2681,7 +2681,7 @@ const UpdateStatusNabard = async (req, res) => {
 
 //CIRCLE
 
-const ChartCount = async (req, res) => {
+const CircleChartCount = async (req, res) => {
   const { office } = req.body;
   if (!office) {
     return res
@@ -2782,5 +2782,5 @@ module.exports = {
   EEUpdPanelCrf,
   EEUpdPanelNABARD,
   EEUpdPanelBuilding,
-  ChartCount
+  CircleChartCount
 };
