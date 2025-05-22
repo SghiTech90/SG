@@ -73,7 +73,8 @@ const {
   EEUpdPanelCrf,
   EEUpdPanelNABARD,
   EEUpdPanelBuilding,
-  allImage
+  allImage,
+  ChartCount
 } = require("../controllers/budgetController");
 
 // Route to get budget count
@@ -184,6 +185,8 @@ router.post("/UpdateStatusRoad", UpdateStatusRoad);
 router.post("/UpdateStatusNabard", UpdateStatusNabard);
 router.post("/UpdateStatusCrf", UpdateStatusCrf);
 
+//Circle
+router.post("/ChartCount", ChartCount);
 
 
 module.exports = router;

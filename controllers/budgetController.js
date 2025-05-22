@@ -2678,6 +2678,36 @@ const UpdateStatusNabard = async (req, res) => {
   }
 };
 
+
+//CIRCLE
+
+const ChartCount = async (req, res) => {
+  const { office } = req.body;
+  if (!office) {
+    return res
+      .status(400)
+      .json({ success: false, message: "Office parameter is required" });
+  }
+  try {
+    const pool = await getPool(office);
+    if (!pool)
+      throw new Error(`Database pool is not available for office ${office}.`);
+
+    // Example: Query one provision table, adjust if needed
+    const query = `select (select  count(type) from BudgetMasterBuilding )as Building,(select  count(type)from  BudgetMasterCRF ) as CRF,(select  count(type) from BudgetMasterAunty )as Annuity,(select  count(type) from BudgetMasterDepositFund )as Deposit, (select  count(type)from  BudgetMasterDPDC ) as DPDC,(select  count(type)from  BudgetMasterGAT_A ) as Gat_A,(select  count(type)from  BudgetMasterGAT_D ) as Gat_D,(select  count(type)from  BudgetMasterGAT_FBC ) as Gat_BCF,(select  count(type)from  BudgetMasterMLA ) as MLA,(select  count(type)from  BudgetMasterMP ) as MP,(select  count(type)from  BudgetMasterNABARD ) as Nabard,(select  count(type)from  BudgetMasterRoad where[type]='Road') as Road,(select  count(type)from  BudgetMasterNonResidentialBuilding ) as '2059',(select  count(type)from  BudgetMasterResidentialBuilding ) as '2216' ,(select count(type)from [BudgetMaster2515]) as '2515'
+`;
+    const result = await pool.request().query(query);
+    res.json({ success: true, data: result.recordset });
+  } catch (error) {
+    console.error("Error getting budgetcount from circle", error);
+    res.status(500).json({
+      success: false,
+      message: "Error getting budget count from circle",
+      error: error.message,
+    });
+  }
+};
+
 module.exports = {
   getBudgetCount,
   getUpvibhagCounts,
@@ -2752,4 +2782,5 @@ module.exports = {
   EEUpdPanelCrf,
   EEUpdPanelNABARD,
   EEUpdPanelBuilding,
+  ChartCount
 };
