@@ -21,8 +21,6 @@ app.use(express.urlencoded({ limit: '100mb', extended: true }));
 
 console.log("Database connection initialization initiated in db.js");
 
-
-
 app.use("/api/user", userRoutes);
 app.use("/api/allhead", allHeadRoutes);
 app.use("/api/budget", budgetRoutes);
