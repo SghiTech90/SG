@@ -2754,6 +2754,140 @@ const CircleChartCount = async (req, res) => {
   }
 };
 
+const CirclePieChartCount = async (req, res) => {
+  const { office } = req.body;
+  if (!office) {
+    return res
+      .status(400)
+      .json({ success: false, message: "Office parameter is required" });
+  }
+  try {
+    const pool = await getPool(office);
+    if (!pool)
+      throw new Error(`Database pool is not available for office ${office}.`);
+
+    // Example: Query one provision table, adjust if needed
+    const query = `SELECT 'Building' AS Head, COUNT()as'Count' FROM BudgetMasterBuilding UNION SELECT 'CRF' AS Head, COUNT()as'Count' FROM BudgetMasterCRF UNION SELECT 'Annuity' AS Head, COUNT()as'Count' FROM BudgetMasterAunty UNION SELECT 'Deposit' AS Head, COUNT()as'Count' FROM BudgetMasterDepositFund UNION SELECT 'DPDC' AS Head, COUNT()as'Count' FROM BudgetMasterDPDC UNION SELECT 'Gat_A' AS Head, COUNT()as'Count' FROM BudgetMasterGAT_A UNION SELECT 'Gat_D' AS Head, COUNT()as'Count' FROM BudgetMasterGAT_D UNION SELECT 'Gat_BCF' AS Head, COUNT()as'Count' FROM BudgetMasterGAT_FBC  UNION SELECT 'MLA' AS Head, COUNT()as'Count' FROM BudgetMasterMLA  UNION SELECT 'MP' AS Head, COUNT()as'Count' FROM BudgetMasterMP UNION SELECT 'Nabard' AS Head, COUNT()as'Count' FROM BudgetMasterNABARD UNION SELECT 'NRB' AS Head, COUNT()as'Count' FROM BudgetMasterNonResidentialBuilding UNION SELECT 'RB' AS Head, COUNT()as'Count' FROM BudgetMasterResidentialBuilding UNION SELECT '2515' AS Head, COUNT()as'Count' FROM [BudgetMaster2515] 
+UNION SELECT 'Road' AS Head, COUNT(*)as'Count' FROM BudgetMasterRoad where[type]='Road'
+`;
+    const result = await pool.request().query(query);
+    res.json({ success: true, data: result.recordset });
+  } catch (error) {
+    console.error("Error getting budgetcount from circle", error);
+    res.status(500).json({
+      success: false,
+      message: "Error getting budget count from circle",
+      error: error.message,
+    });
+  }
+};
+
+const CircleNotification = async (req, res) => {
+  const { office } = req.body;
+  if (!office) {
+    return res
+      .status(400)
+      .json({ success: false, message: "Office parameter is required" });
+  }
+  try {
+    const pool = await getPool(office);
+    if (!pool)
+      throw new Error(`Database pool is not available for office ${office}.`);
+
+    // Example: Query one provision table, adjust if needed
+    const query = `select  Count (*) as nCount from SendSms_tbl where convert(date,KamPurnDate,105) between CONVERT(date,GETDATE(),105) and convert(date,dateadd(day,00,GETDATE()),105)
+select  Count (*) as nCount from SendSms_tbl where convert(date,KamPurnDate,105) between CONVERT(date,GETDATE(),105) and convert(date,dateadd(day,07,GETDATE()),105)
+select  Count (*) as nCount from SendSms_tbl where convert(date,KamPurnDate,105) between CONVERT(date,GETDATE(),105) and convert(date,dateadd(day,15,GETDATE()),105)
+select  Count (*) as nCount from SendSms_tbl where convert(date,KamPurnDate,105) between CONVERT(date,GETDATE(),105) and convert(date,dateadd(day,30,GETDATE()),105)
+`;
+    const result = await pool.request().query(query);
+    res.json({ success: true, data: result.recordset });
+  } catch (error) {
+    console.error("Error getting budgetcount from circle", error);
+    res.status(500).json({
+      success: false,
+      message: "Error getting budget count from circle",
+      error: error.message,
+    });
+  }
+};
+
+const CircleNotificationBtn = async (req, res) => {
+  const { office } = req.body;
+  if (!office) {
+    return res
+      .status(400)
+      .json({ success: false, message: "Office parameter is required" });
+  }
+  try {
+    const pool = await getPool(office);
+    if (!pool)
+      throw new Error(`Database pool is not available for office ${office}.`);
+
+    // Example: Query one provision table, adjust if needed
+    const query = `select ShakhaAbhyantaName +''+ ShakhaAbhiyantMobile as Shakhaabhiyanta,UpabhyantaName+''+UpAbhiyantaMobile as Upabhiyanta,ThekedaarName+''+ThekedarMobile as Thekedar ,kampurndate,workid,kamachename,subdivision from sendsms_tbl where convert(date,KamPurnDate,105) between CONVERT(date,GETDATE(),105) and convert(date,dateadd(day,00,GETDATE()),105)
+select ShakhaAbhyantaName +''+ ShakhaAbhiyantMobile as Shakhaabhiyanta,UpabhyantaName+''+UpAbhiyantaMobile as Upabhiyanta,ThekedaarName+''+ThekedarMobile as Thekedar ,kampurndate,workid,kamachename,subdivision from sendsms_tbl where convert(date,KamPurnDate,105) between CONVERT(date,GETDATE(),105) and convert(date,dateadd(day,15,GETDATE()),105)
+select ShakhaAbhyantaName +''+ ShakhaAbhiyantMobile as Shakhaabhiyanta,UpabhyantaName+''+UpAbhiyantaMobile as Upabhiyanta,ThekedaarName+''+ThekedarMobile as Thekedar ,kampurndate,workid,kamachename,subdivision from sendsms_tbl where convert(date,KamPurnDate,105) between CONVERT(date,GETDATE(),105) and convert(date,dateadd(day,30,GETDATE()),105)
+select ShakhaAbhyantaName +''+ ShakhaAbhiyantMobile as Shakhaabhiyanta,UpabhyantaName+''+UpAbhiyantaMobile as Upabhiyanta,ThekedaarName+''+ThekedarMobile as Thekedar ,kampurndate,workid,kamachename,subdivision from sendsms_tbl where convert(date,KamPurnDate,105) between CONVERT(date,GETDATE(),105) and convert(date,dateadd(day,07,GETDATE()),105)
+`;
+    const result = await pool.request().query(query);
+    res.json({ success: true, data: result.recordset });
+  } catch (error) {
+    console.error("Error getting budgetcount from circle", error);
+    res.status(500).json({
+      success: false,
+      message: "Error getting budget count from circle",
+      error: error.message,
+    });
+  }
+};
+
+const getBuilding = getBudgetData("BudgetMasterBuilding");
+const getResidentialBuilding = getBudgetData("BudgetMasterResidentialBuilding");
+const getNonResidentialBuilding = getBudgetData("BudgetMasterNonResidentialBuilding");
+const getCRF = getBudgetData("BudgetMasterCRF");
+const getDepositFund = getBudgetData("BudgetMasterDepositFund");
+const getDPDC = getBudgetData("BudgetMasterDPDC");
+const getAunty = getBudgetData("BudgetMasterAunty");
+const getRoad = getBudgetData("BudgetMasterRoad");
+const getNABARD = getBudgetData("BudgetMasterNABARD");
+const getGATA = getBudgetData("BudgetMasterGAT_A");
+const getGATFBC = getBudgetData("BudgetMasterGAT_FBC");
+const getGATD = getBudgetData("BudgetMasterGAT_D");
+const getMLA = getBudgetData("BudgetMasterMLA");
+const get2515 = getBudgetData("BudgetMaster2515");
+
+const getBudgetData = (tableName) => {
+  return async (req, res) => {
+    const { office } = req.body;
+    if (!office) {
+      return res.status(400).json({
+        success: false,
+        message: "Office parameter is required",
+      });
+    }
+
+    try {
+      const pool = await getPool(office);
+      if (!pool)
+        throw new Error(`Database pool is not available for office ${office}.`);
+
+      const query = `SELECT WorkId, KamacheName FROM ${tableName}`;
+      const result = await pool.request().query(query);
+
+      res.json({ success: true, data: result.recordset });
+    } catch (error) {
+      console.error(`Error fetching data from ${tableName}:`, error);
+      res.status(500).json({
+        success: false,
+        message: `Error fetching data from ${tableName}`,
+        error: error.message,
+      });
+    }
+  };
+};
+
+
 module.exports = {
   getBudgetCount,
   getUpvibhagCounts,
@@ -2828,5 +2962,22 @@ module.exports = {
   EEUpdPanelCrf,
   EEUpdPanelNABARD,
   EEUpdPanelBuilding,
-  CircleChartCount
+  CircleChartCount,
+  CirclePieChartCount,
+  CircleNotification,
+  CircleNotificationBtn,
+    getBuilding,
+  getResidentialBuilding,
+  getNonResidentialBuilding,
+  getCRF,
+  getDepositFund,
+  getDPDC,
+  getAunty,
+  getRoad,
+  getNABARD,
+  getGATA,
+  getGATFBC,
+  getGATD,
+  getMLA,
+  get2515,
 };

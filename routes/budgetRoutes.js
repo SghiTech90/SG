@@ -74,7 +74,24 @@ const {
   EEUpdPanelNABARD,
   EEUpdPanelBuilding,
   allImage,
-  CircleChartCount
+  CircleChartCount,
+  CirclePieChartCount,
+  CircleNotification,
+  CircleNotificationBtn,
+    getBuilding,
+  getResidentialBuilding,
+  getNonResidentialBuilding,
+  getCRF,
+  getDepositFund,
+  getDPDC,
+  getAunty,
+  getRoad,
+  getNABARD,
+  getGATA,
+  getGATFBC,
+  getGATD,
+  getMLA,
+  get2515,
 } = require("../controllers/budgetController");
 
 // Route to get budget count
@@ -187,6 +204,25 @@ router.post("/UpdateStatusCrf", UpdateStatusCrf);
 
 //Circle
 router.post("/CircleChartCount", CircleChartCount);
+router.post("/CirclePieChartCount", CirclePieChartCount);
+router.post("/CircleNotification", CircleNotification);
+router.post("/CircleNotificationBtn", CircleNotificationBtn);
+router.post("/CirclegetBuilding", getBuilding);
+router.post("/CirclegetResidentialBuilding", getResidentialBuilding);
+router.post("/CirclegetNonResidentialBuilding", getNonResidentialBuilding);
+router.post("/CirclegetCRF", getCRF);
+router.post("/CirclegetDepositFund", getDepositFund);
+router.post("/CirclegetDPDC", getDPDC);
+router.post("/CirclegetAunty", getAunty);
+router.post("/CirclegetRoad", getRoad);
+router.post("/CirclegetNABARD", getNABARD);
+router.post("/CirclegetGATA", getGATA);
+router.post("/CirclegetGATFBC", getGATFBC);
+router.post("/CirclegetGATD", getGATD);
+router.post("/CirclegetMLA", getMLA);
+router.post("/Circleget2515", get2515);
+
+
 
 
 module.exports = router;
