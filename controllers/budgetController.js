@@ -2842,20 +2842,7 @@ select ShakhaAbhyantaName +''+ ShakhaAbhiyantMobile as Shakhaabhiyanta,Upabhyant
   }
 };
 
-const getBuilding = getBudgetData("BudgetMasterBuilding");
-const getResidentialBuilding = getBudgetData("BudgetMasterResidentialBuilding");
-const getNonResidentialBuilding = getBudgetData("BudgetMasterNonResidentialBuilding");
-const getCRF = getBudgetData("BudgetMasterCRF");
-const getDepositFund = getBudgetData("BudgetMasterDepositFund");
-const getDPDC = getBudgetData("BudgetMasterDPDC");
-const getAunty = getBudgetData("BudgetMasterAunty");
-const getRoad = getBudgetData("BudgetMasterRoad");
-const getNABARD = getBudgetData("BudgetMasterNABARD");
-const getGATA = getBudgetData("BudgetMasterGAT_A");
-const getGATFBC = getBudgetData("BudgetMasterGAT_FBC");
-const getGATD = getBudgetData("BudgetMasterGAT_D");
-const getMLA = getBudgetData("BudgetMasterMLA");
-const get2515 = getBudgetData("BudgetMaster2515");
+
 
 const getBudgetData = (tableName) => {
   return async (req, res) => {
@@ -2886,6 +2873,21 @@ const getBudgetData = (tableName) => {
     }
   };
 };
+
+const getBuilding = getBudgetData("BudgetMasterBuilding");
+const getResidentialBuilding = getBudgetData("BudgetMasterResidentialBuilding");
+const getNonResidentialBuilding = getBudgetData("BudgetMasterNonResidentialBuilding");
+const getCRF = getBudgetData("BudgetMasterCRF");
+const getDepositFund = getBudgetData("BudgetMasterDepositFund");
+const getDPDC = getBudgetData("BudgetMasterDPDC");
+const getAunty = getBudgetData("BudgetMasterAunty");
+const getRoad = getBudgetData("BudgetMasterRoad");
+const getNABARD = getBudgetData("BudgetMasterNABARD");
+const getGATA = getBudgetData("BudgetMasterGAT_A");
+const getGATFBC = getBudgetData("BudgetMasterGAT_FBC");
+const getGATD = getBudgetData("BudgetMasterGAT_D");
+const getMLA = getBudgetData("BudgetMasterMLA");
+const get2515 = getBudgetData("BudgetMaster2515");
 
 
 module.exports = {
