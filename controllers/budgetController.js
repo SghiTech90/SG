@@ -2796,7 +2796,8 @@ const CircleNotification = async (req, res) => {
       throw new Error(`Database pool is not available for office ${office}.`);
 
     // Example: Query one provision table, adjust if needed
-    const query = `select  Count (*) as nCount from SendSms_tbl where convert(date,KamPurnDate,105) between CONVERT(date,GETDATE(),105) and convert(date,dateadd(day,00,GETDATE()),105)
+    const query = `
+    select  Count (*) as nCount from SendSms_tbl where convert(date,KamPurnDate,105) between CONVERT(date,GETDATE(),105) and convert(date,dateadd(day,00,GETDATE()),105)
 select  Count (*) as nCount from SendSms_tbl where convert(date,KamPurnDate,105) between CONVERT(date,GETDATE(),105) and convert(date,dateadd(day,07,GETDATE()),105)
 select  Count (*) as nCount from SendSms_tbl where convert(date,KamPurnDate,105) between CONVERT(date,GETDATE(),105) and convert(date,dateadd(day,15,GETDATE()),105)
 select  Count (*) as nCount from SendSms_tbl where convert(date,KamPurnDate,105) between CONVERT(date,GETDATE(),105) and convert(date,dateadd(day,30,GETDATE()),105)
