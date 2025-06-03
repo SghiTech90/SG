@@ -2783,7 +2783,7 @@ UNION SELECT 'Road' AS Head, COUNT(*)as'Count' FROM BudgetMasterRoad where[type]
   }
 };
 
-const CircleNotification = async (req, res) => {
+const CircleNotificationToday = async (req, res) => {
   const { office } = req.body;
   if (!office) {
     return res
@@ -2798,8 +2798,89 @@ const CircleNotification = async (req, res) => {
     // Example: Query one provision table, adjust if needed
     const query = `
     select  Count (*) as nCount from SendSms_tbl where convert(date,KamPurnDate,105) between CONVERT(date,GETDATE(),105) and convert(date,dateadd(day,00,GETDATE()),105)
+`;
+    const result = await pool.request().query(query);
+    res.json({ success: true, data: result.recordset });
+  } catch (error) {
+    console.error("Error getting budgetcount from circle", error);
+    res.status(500).json({
+      success: false,
+      message: "Error getting budget count from circle",
+      error: error.message,
+    });
+  }
+};
+
+const CircleNotificationWeek = async (req, res) => {
+  const { office } = req.body;
+  if (!office) {
+    return res
+      .status(400)
+      .json({ success: false, message: "Office parameter is required" });
+  }
+  try {
+    const pool = await getPool(office);
+    if (!pool)
+      throw new Error(`Database pool is not available for office ${office}.`);
+
+    // Example: Query one provision table, adjust if needed
+    const query = `
 select  Count (*) as nCount from SendSms_tbl where convert(date,KamPurnDate,105) between CONVERT(date,GETDATE(),105) and convert(date,dateadd(day,07,GETDATE()),105)
+`;
+    const result = await pool.request().query(query);
+    res.json({ success: true, data: result.recordset });
+  } catch (error) {
+    console.error("Error getting budgetcount from circle", error);
+    res.status(500).json({
+      success: false,
+      message: "Error getting budget count from circle",
+      error: error.message,
+    });
+  }
+};
+
+const CircleNotificationHalfMonth = async (req, res) => {
+  const { office } = req.body;
+  if (!office) {
+    return res
+      .status(400)
+      .json({ success: false, message: "Office parameter is required" });
+  }
+  try {
+    const pool = await getPool(office);
+    if (!pool)
+      throw new Error(`Database pool is not available for office ${office}.`);
+
+    // Example: Query one provision table, adjust if needed
+    const query = `
 select  Count (*) as nCount from SendSms_tbl where convert(date,KamPurnDate,105) between CONVERT(date,GETDATE(),105) and convert(date,dateadd(day,15,GETDATE()),105)
+`;
+    const result = await pool.request().query(query);
+    res.json({ success: true, data: result.recordset });
+  } catch (error) {
+    console.error("Error getting budgetcount from circle", error);
+    res.status(500).json({
+      success: false,
+      message: "Error getting budget count from circle",
+      error: error.message,
+    });
+  }
+};
+
+const CircleNotificationMonth = async (req, res) => {
+  const { office } = req.body;
+  if (!office) {
+    return res
+      .status(400)
+      .json({ success: false, message: "Office parameter is required" });
+  }
+  try {
+    const pool = await getPool(office);
+    if (!pool)
+      throw new Error(`Database pool is not available for office ${office}.`);
+
+    // Example: Query one provision table, adjust if needed
+    const query = `
 select  Count (*) as nCount from SendSms_tbl where convert(date,KamPurnDate,105) between CONVERT(date,GETDATE(),105) and convert(date,dateadd(day,30,GETDATE()),105)
 `;
     const result = await pool.request().query(query);
@@ -2814,7 +2895,7 @@ select  Count (*) as nCount from SendSms_tbl where convert(date,KamPurnDate,105)
   }
 };
 
-const CircleNotificationBtn = async (req, res) => {
+const CircleNotificationBtnToday = async (req, res) => {
   const { office } = req.body;
   if (!office) {
     return res
@@ -2829,8 +2910,87 @@ const CircleNotificationBtn = async (req, res) => {
     // Example: Query one provision table, adjust if needed
     const query = `
     select ShakhaAbhyantaName +''+ ShakhaAbhiyantMobile as Shakhaabhiyanta,UpabhyantaName+''+UpAbhiyantaMobile as Upabhiyanta,ThekedaarName+''+ThekedarMobile as Thekedar ,kampurndate,workid,kamachename,subdivision from sendsms_tbl where convert(date,KamPurnDate,105) between CONVERT(date,GETDATE(),105) and convert(date,dateadd(day,00,GETDATE()),105)
+`;
+    const result = await pool.request().query(query);
+    res.json({ success: true, data: result.recordset });
+  } catch (error) {
+    console.error("Error getting budgetcount from circle", error);
+    res.status(500).json({
+      success: false,
+      message: "Error getting budget count from circle",
+      error: error.message,
+    });
+  }
+};
+
+const CircleNotificationBtnWeek = async (req, res) => {
+  const { office } = req.body;
+  if (!office) {
+    return res
+      .status(400)
+      .json({ success: false, message: "Office parameter is required" });
+  }
+  try {
+    const pool = await getPool(office);
+    if (!pool)
+      throw new Error(`Database pool is not available for office ${office}.`);
+
+    // Example: Query one provision table, adjust if needed
+    const query = `
 select ShakhaAbhyantaName +''+ ShakhaAbhiyantMobile as Shakhaabhiyanta,UpabhyantaName+''+UpAbhiyantaMobile as Upabhiyanta,ThekedaarName+''+ThekedarMobile as Thekedar ,kampurndate,workid,kamachename,subdivision from sendsms_tbl where convert(date,KamPurnDate,105) between CONVERT(date,GETDATE(),105) and convert(date,dateadd(day,15,GETDATE()),105)
+`;
+    const result = await pool.request().query(query);
+    res.json({ success: true, data: result.recordset });
+  } catch (error) {
+    console.error("Error getting budgetcount from circle", error);
+    res.status(500).json({
+      success: false,
+      message: "Error getting budget count from circle",
+      error: error.message,
+    });
+  }
+};
+const CircleNotificationBtnHalfMonth = async (req, res) => {
+  const { office } = req.body;
+  if (!office) {
+    return res
+      .status(400)
+      .json({ success: false, message: "Office parameter is required" });
+  }
+  try {
+    const pool = await getPool(office);
+    if (!pool)
+      throw new Error(`Database pool is not available for office ${office}.`);
+
+    // Example: Query one provision table, adjust if needed
+    const query = `
 select ShakhaAbhyantaName +''+ ShakhaAbhiyantMobile as Shakhaabhiyanta,UpabhyantaName+''+UpAbhiyantaMobile as Upabhiyanta,ThekedaarName+''+ThekedarMobile as Thekedar ,kampurndate,workid,kamachename,subdivision from sendsms_tbl where convert(date,KamPurnDate,105) between CONVERT(date,GETDATE(),105) and convert(date,dateadd(day,30,GETDATE()),105)
+`;
+    const result = await pool.request().query(query);
+    res.json({ success: true, data: result.recordset });
+  } catch (error) {
+    console.error("Error getting budgetcount from circle", error);
+    res.status(500).json({
+      success: false,
+      message: "Error getting budget count from circle",
+      error: error.message,
+    });
+  }
+};
+const CircleNotificationBtnMonth = async (req, res) => {
+  const { office } = req.body;
+  if (!office) {
+    return res
+      .status(400)
+      .json({ success: false, message: "Office parameter is required" });
+  }
+  try {
+    const pool = await getPool(office);
+    if (!pool)
+      throw new Error(`Database pool is not available for office ${office}.`);
+
+    // Example: Query one provision table, adjust if needed
+    const query = `
 select ShakhaAbhyantaName +''+ ShakhaAbhiyantMobile as Shakhaabhiyanta,UpabhyantaName+''+UpAbhiyantaMobile as Upabhiyanta,ThekedaarName+''+ThekedarMobile as Thekedar ,kampurndate,workid,kamachename,subdivision from sendsms_tbl where convert(date,KamPurnDate,105) between CONVERT(date,GETDATE(),105) and convert(date,dateadd(day,07,GETDATE()),105)
 `;
     const result = await pool.request().query(query);
@@ -2969,8 +3129,14 @@ module.exports = {
   EEUpdPanelBuilding,
   CircleChartCount,
   CirclePieChartCount,
-  CircleNotification,
-  CircleNotificationBtn,
+   CircleNotificationToday,
+  CircleNotificationWeek,
+  CircleNotificationHalfMonth,
+  CircleNotificationMonth,
+  CircleNotificationBtnToday,
+  CircleNotificationBtnWeek,
+  CircleNotificationBtnHalfMonth,
+  CircleNotificationBtnMonth,
     getBuilding,
   getResidentialBuilding,
   getNonResidentialBuilding,

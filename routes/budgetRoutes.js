@@ -76,8 +76,14 @@ const {
   allImage,
   CircleChartCount,
   CirclePieChartCount,
-  CircleNotification,
-  CircleNotificationBtn,
+     CircleNotificationToday,
+  CircleNotificationWeek,
+  CircleNotificationHalfMonth,
+  CircleNotificationMonth,
+    CircleNotificationBtnToday,
+  CircleNotificationBtnWeek,
+  CircleNotificationBtnHalfMonth,
+  CircleNotificationBtnMonth,
     getBuilding,
   getResidentialBuilding,
   getNonResidentialBuilding,
@@ -205,8 +211,14 @@ router.post("/UpdateStatusCrf", UpdateStatusCrf);
 //Circle
 router.post("/CircleChartCount", CircleChartCount);
 router.post("/CirclePieChartCount", CirclePieChartCount);
-router.post("/CircleNotification", CircleNotification);
-router.post("/CircleNotificationBtn", CircleNotificationBtn);
+router.post("/CircleNotificationToday", CircleNotificationToday);
+router.post("/CircleNotificationWeek", CircleNotificationWeek);
+router.post("/CircleNotificationHalfMonth", CircleNotificationHalfMonth);
+router.post("/CircleNotificationMonth", CircleNotificationMonth);
+router.post("/CircleNotificationBtnToday", CircleNotificationBtnToday);
+router.post("/CircleNotificationBtnWeek", CircleNotificationBtnWeek);
+router.post("/CircleNotificationBtnHalfMonth", CircleNotificationBtnHalfMonth);
+router.post("/CircleNotificationBtnMonth", CircleNotificationBtnMonth);
 router.post("/CirclegetBuilding", getBuilding);
 router.post("/CirclegetResidentialBuilding", getResidentialBuilding);
 router.post("/CirclegetNonResidentialBuilding", getNonResidentialBuilding);
@@ -221,8 +233,5 @@ router.post("/CirclegetGATFBC", getGATFBC);
 router.post("/CirclegetGATD", getGATD);
 router.post("/CirclegetMLA", getMLA);
 router.post("/Circleget2515", get2515);
-
-
-
 
 module.exports = router;
