@@ -2274,7 +2274,7 @@ JOIN (
 ON ig.WorkId = matchedWorks.WorkId;
     `;
 
-    const result = await pool.request().input("name", name).query(query);
+    const result = await pool.request().input("NAME", name).query(query);
 
     return res.status(200).json({
       success: true,
