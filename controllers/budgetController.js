@@ -2218,6 +2218,78 @@ const ContUpdPhotoAunty = async (req, res) => {
   }
 };
 
+const ShowImage = async (req, res) => {
+  const { office, name } = req.body;
+
+  if (!office) {
+    return res.status(400).json({
+      success: false,
+      message: "Parameter 'office' is required",
+    });
+  }
+
+  try {
+    const pool = await getPool(office);
+    if (!pool) {
+      throw new Error(`Database pool is not available for office ${office}.`);
+    }
+
+    const query = `
+      SELECT ig.WorkId, ig.Image
+FROM ImageGallary ig
+JOIN (
+    SELECT WorkId FROM BudgetMasterBuilding
+    WHERE ShakhaAbhyantaName = @NAME
+       OR UpAbhyantaName = @NAME
+       OR ThekedaarName = @NAME
+    
+    UNION
+    
+    SELECT WorkId FROM BudgetMasterRoad
+    WHERE ShakhaAbhyantaName = @NAME
+       OR UpAbhyantaName = @NAME
+       OR ThekedaarName = @NAME
+    
+    UNION
+
+	SELECT WorkId FROM BudgetMasterNABARD
+    WHERE ShakhaAbhyantaName = @NAME
+       OR UpAbhyantaName = @NAME
+       OR ThekedaarName = @NAME
+    
+    UNION
+
+	SELECT WorkId FROM BudgetMasterCRF
+    WHERE ShakhaAbhyantaName = @NAME
+       OR UpAbhyantaName = @NAME
+       OR ThekedaarName = @NAME
+    
+    UNION
+    
+    SELECT WorkId FROM BudgetMasterAunty
+    WHERE ShakhaAbhyantaName = @NAME
+       OR UpAbhyantaName = @NAME
+       OR ThekedaarName = @NAME
+) AS matchedWorks
+ON ig.WorkId = matchedWorks.WorkId;
+    `;
+
+    const result = await pool.request().input("name", name).query(query);
+
+    return res.status(200).json({
+      success: true,
+      data: result.recordset,
+    });
+  } catch (error) {
+    console.error("Error fetching image data:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Error fetching image data",
+      error: error.message,
+    });
+  }
+};
+
 const uploadImage = async (req, res) => {
   const { office, Data, filename, Content, Longitude, Latitude, WorkId, Type, Description } = req.body;
 
@@ -3115,6 +3187,7 @@ module.exports = {
   ContUpdPhotoCrf,
   ContUpdPhotoNabard,
   ContUpdPhotoBuilding,
+  ShowImage,
   uploadImage,
   UpdateStatusBuilding,
   UpdateStatusAunty,
@@ -3127,6 +3200,7 @@ module.exports = {
   EEUpdPanelCrf,
   EEUpdPanelNABARD,
   EEUpdPanelBuilding,
+
   CircleChartCount,
   CirclePieChartCount,
    CircleNotificationToday,

@@ -62,6 +62,7 @@ const {
   ContUpdPhotoCrf,
   ContUpdPhotoNabard,
   ContUpdPhotoBuilding,
+  ShowImage,
   uploadImage,
   UpdateStatusBuilding,
   UpdateStatusAunty,
@@ -200,6 +201,7 @@ router.post("/ContUpdPhotoAunty", ContUpdPhotoAunty);
 //Insert Image
 router.post("/uploadImage", uploadImage);
 router.post("/allImage", allImage);
+router.post("/ShowImage", ShowImage);
 
 //update status in correspondance to workID
 router.post("/UpdateStatusBuilding", UpdateStatusBuilding);
@@ -235,3 +237,4 @@ router.post("/CirclegetMLA", getMLA);
 router.post("/Circleget2515", get2515);
 
 module.exports = router;
+
