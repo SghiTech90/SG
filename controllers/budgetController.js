@@ -2276,9 +2276,14 @@ ON ig.WorkId = matchedWorks.WorkId;
 
     const result = await pool.request().input("NAME", name).query(query);
 
+    const dataWithBase64 = result.recordset.map((row) => ({
+      WorkId: row.WorkId,
+      Image: row.Image ? row.Image.toString("base64") : null,
+    }));
+
     return res.status(200).json({
       success: true,
-      data: result.recordset,
+      data: dataWithBase64,
     });
   } catch (error) {
     console.error("Error fetching image data:", error);
