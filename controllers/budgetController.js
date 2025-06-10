@@ -3070,7 +3070,7 @@ const CircleNotificationBtnMonth = async (req, res) => {
 
     // Example: Query one provision table, adjust if needed
     const query = `
-select ShakhaAbhyantaName +''+ ShakhaAbhiyantMobile as Shakhaabhiyanta,UpabhyantaName+''+UpAbhiyantaMobile as Upabhiyanta,ThekedaarName+''+ThekedarMobile as Thekedar ,kampurndate,workid,kamachename,subdivision from sendsms_tbl where convert(date,KamPurnDate,105) between CONVERT(date,GETDATE(),105) and convert(date,dateadd(day,30,GETDATE()),105)
+select ShakhaAbhyantaName,ShakhaAbhiyantMobile,UpabhyantaName,UpAbhiyantaMobile,ThekedaarName,ThekedarMobile,kampurndate,workid,kamachename,subdivision from sendsms_tbl where convert(date,KamPurnDate,105) between CONVERT(date,GETDATE(),105) and convert(date,dateadd(day,30,GETDATE()),105)
 `;
     const result = await pool.request().query(query);
     res.json({ success: true, data: result.recordset });
