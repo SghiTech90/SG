@@ -2434,7 +2434,7 @@ LEFT JOIN
 };
 
 const EEUpdPanelCrf = async (req, res) => {
-  const { office} = req.body;
+  const { office } = req.body;
   if (!office) {
     return res
       .status(400)
@@ -2445,37 +2445,38 @@ const EEUpdPanelCrf = async (req, res) => {
     if (!pool)
       throw new Error(`Database pool is not available for office ${office}.`);
 
-    // Example: Detailed query on Building tables, adjust as needed
-    //const query = `SELECT  [WorkId] as 'वर्क आयडी',[Arthsankalpiyyear] as 'अर्थसंकल्पीय वर्ष',[KamacheName] as 'कामाचे नाव',[Shera] as 'शेरा'  from BudgetMasterCRF  `;
-const query = `SELECT 
-    B.[WorkId] AS 'वर्क आयडी',
-    B.[Arthsankalpiyyear] AS 'अर्थसंकल्पीय वर्ष',
-    B.[KamacheName] AS 'कामाचे नाव',
-    B.[Shera] AS 'शेरा',
-    I.[Image] AS 'प्रतिमा'
-FROM 
-    BudgetMasterCRF B
-LEFT JOIN 
-    ImageGallary I ON B.WorkId = I.WorkId`
+    const query = `
+      SELECT 
+        B.[WorkId] AS WorkId,
+        B.[Arthsankalpiyyear] AS Arthsankalpiyyear,
+        B.[KamacheName] AS KamacheName,
+        B.[Shera] AS Shera,
+        I.[Image] AS Image,
+        I.[ContentType] AS ContentType
+      FROM 
+        BudgetMasterCRF B
+      LEFT JOIN 
+        ImageGallary I ON B.WorkId = I.WorkId`;
+
     const result = await pool.request().query(query);
 
-     const images = result.recordset.map((row) => {
-      const base64Image = Buffer.from(row.Image).toString("base64");
-      const imageSrc = `data:${row.ContentType};base64,${base64Image}`;
+    const images = result.recordset.map((row) => {
+      const base64Image = row.Image
+        ? `data:${row.ContentType};base64,${Buffer.from(row.Image).toString("base64")}`
+        : null;
+
       return {
-        image: imageSrc,
+        image: base64Image,
         WorkId: row.WorkId,
         Arthsankalpiyyear: row.Arthsankalpiyyear,
         KamacheName: row.KamacheName,
         Shera: row.Shera,
       };
     });
+
     res.json({ success: true, data: images });
   } catch (error) {
-    console.error(
-      "Error getting contractorGraph details:",
-      error
-    );
+    console.error("Error getting contractorGraph details:", error);
     res.status(500).json({
       success: false,
       message: "Error getting contractorGraph details",
@@ -2483,6 +2484,7 @@ LEFT JOIN
     });
   }
 };
+
 
 const EEUpdPanelROAD = async (req, res) => {
   const { office} = req.body;
