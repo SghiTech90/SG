@@ -2458,7 +2458,19 @@ FROM
 LEFT JOIN 
     ImageGallary I ON B.WorkId = I.WorkId`
     const result = await pool.request().query(query);
-    res.json({ success: true, data: result.recordset });
+
+     const images = result.recordset.map((row) => {
+      const base64Image = Buffer.from(row.Image).toString("base64");
+      const imageSrc = `data:${row.ContentType};base64,${base64Image}`;
+      return {
+        image: imageSrc,
+        WorkId: row.WorkId,
+        Arthsankalpiyyear: row.Arthsankalpiyyear,
+        KamacheName: row.KamacheName,
+        Shera: row.Shera,
+      };
+    });
+    res.json({ success: true, data: images });
   } catch (error) {
     console.error(
       "Error getting contractorGraph details:",
