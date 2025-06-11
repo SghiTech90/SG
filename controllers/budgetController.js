@@ -2460,21 +2460,21 @@ const EEUpdPanelCrf = async (req, res) => {
 
     const result = await pool.request().query(query);
 
-    const images = result.recordset.map((row) => {
-      const base64Image = row.Image
-        ? `data:${row.ContentType};base64,${Buffer.from(row.Image).toString("base64")}`
-        : null;
+    // const images = result.recordset.map((row) => {
+    //   const base64Image = row.Image
+    //     ? `data:${row.ContentType};base64,${Buffer.from(row.Image).toString("base64")}`
+    //     : null;
 
-      return {
-        image: base64Image,
-        WorkId: row.WorkId,
-        Arthsankalpiyyear: row.Arthsankalpiyyear,
-        KamacheName: row.KamacheName,
-        Shera: row.Shera,
-      };
-    });
+    //   return {
+    //     image: base64Image,
+    //     WorkId: row.WorkId,
+    //     Arthsankalpiyyear: row.Arthsankalpiyyear,
+    //     KamacheName: row.KamacheName,
+    //     Shera: row.Shera,
+    //   };
+    // });
 
-    res.json({ success: true, data: images });
+    res.json({ success: true, data: result.recordset });
   } catch (error) {
     console.error("Error getting contractorGraph details:", error);
     res.status(500).json({
