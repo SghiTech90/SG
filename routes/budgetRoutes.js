@@ -85,6 +85,7 @@ const {
   CircleNotificationBtnWeek,
   CircleNotificationBtnHalfMonth,
   CircleNotificationBtnMonth,
+  getTotalNotificationCount,
     getBuilding,
   getResidentialBuilding,
   getNonResidentialBuilding,
