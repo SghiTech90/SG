@@ -3098,16 +3098,31 @@ select ShakhaAbhyantaName,ShakhaAbhiyantMobile,UpabhyantaName,UpAbhiyantaMobile,
   }
 };
 
-const getTotalNotificationCount = async (req, res) => {
+const getCircleNotificationTotal = async (req, res) => {
+  const { office } = req.body;
+  if (!office) {
+    return res.status(400).json({
+      success: false,
+      message: "Office parameter is required",
+    });
+  }
+
   try {
+    const pool = await getPool(office);
+    if (!pool) {
+      throw new Error(`Database pool is not available for office ${office}.`);
+    }
+
     const urls = [
       "https://Sghitech.up.railway.app/api/budget/CircleNotificationToday",
       "https://Sghitech.up.railway.app/api/budget/CircleNotificationWeek",
       "https://Sghitech.up.railway.app/api/budget/CircleNotificationHalfMonth",
-      "https://Sghitech.up.railway.app/api/budget/CircleNotificationMonth"
+      "https://Sghitech.up.railway.app/api/budget/CircleNotificationMonth",
     ];
 
-    const responses = await Promise.all(urls.map(url => axios.get(url)));
+    const responses = await Promise.all(urls.map(url =>
+      axios.post(url, { office }) // use POST with office in body
+    ));
 
     const totalCount = responses.reduce((sum, response) => {
       if (response.data.success && Array.isArray(response.data.data)) {
@@ -3116,16 +3131,13 @@ const getTotalNotificationCount = async (req, res) => {
       return sum;
     }, 0);
 
-    res.status(200).json({
-      success: true,
-      totalCount,
-    });
-
+    return res.json({ success: true, totalCount });
   } catch (error) {
-    console.error('Error fetching counts:', error.message);
-    res.status(500).json({
+    console.error("Error calculating total CircleNotification count:", error.message);
+    return res.status(500).json({
       success: false,
-      message: 'Failed to fetch notification counts',
+      message: "Error calculating total CircleNotification count",
+      error: error.message,
     });
   }
 };
@@ -3264,7 +3276,7 @@ module.exports = {
   CircleNotificationBtnWeek,
   CircleNotificationBtnHalfMonth,
   CircleNotificationBtnMonth,
-  getTotalNotificationCount,
+  getCircleNotificationTotal,
     getBuilding,
   getResidentialBuilding,
   getNonResidentialBuilding,
