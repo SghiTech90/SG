@@ -3098,6 +3098,38 @@ select ShakhaAbhyantaName,ShakhaAbhiyantMobile,UpabhyantaName,UpAbhiyantaMobile,
   }
 };
 
+const getTotalNotificationCount = async (req, res) => {
+  try {
+    const urls = [
+      "https://Sghitech.up.railway.app/api/budget/CircleNotificationToday",
+      "https://Sghitech.up.railway.app/api/budget/CircleNotificationWeek",
+      "https://Sghitech.up.railway.app/api/budget/CircleNotificationHalfMonth",
+      "https://Sghitech.up.railway.app/api/budget/CircleNotificationMonth"
+    ];
+
+    const responses = await Promise.all(urls.map(url => axios.get(url)));
+
+    const totalCount = responses.reduce((sum, response) => {
+      if (response.data.success && Array.isArray(response.data.data)) {
+        return sum + (response.data.data[0]?.nCount || 0);
+      }
+      return sum;
+    }, 0);
+
+    res.status(200).json({
+      success: true,
+      totalCount,
+    });
+
+  } catch (error) {
+    console.error('Error fetching counts:', error.message);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch notification counts',
+    });
+  }
+};
+
 
 
 const getBudgetData = (tableName) => {
@@ -3232,6 +3264,7 @@ module.exports = {
   CircleNotificationBtnWeek,
   CircleNotificationBtnHalfMonth,
   CircleNotificationBtnMonth,
+  getTotalNotificationCount,
     getBuilding,
   getResidentialBuilding,
   getNonResidentialBuilding,
