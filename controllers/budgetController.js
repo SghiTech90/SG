@@ -1,6 +1,48 @@
 const { getPool, sql } = require("../config/db");
 const axios = require("axios");
 
+// Load environment variables for SMS credentials
+require("dotenv").config();
+
+// WishbySMS credentials pulled from environment variables
+const wishbyApiKey = process.env.WISHBY_API_KEY;
+const wishbySenderId = process.env.WISHBY_SENDER_ID;
+const dltTemplateIdDayUpdate = process.env.DLT_ID_DAY_UPDATE; // e.g. 1707174246372891167
+
+// Generic helper to actually send an SMS via WishbySMS
+const sendSMS = async (mobileNo, message) => {
+  try {
+    if (!wishbyApiKey || !wishbySenderId) {
+      throw new Error("WishbySMS credentials are missing in environment variables.");
+    }
+
+    let phoneNumber = mobileNo.startsWith("91") ? mobileNo : "91" + mobileNo;
+    const encodedMessage = encodeURIComponent(message);
+
+    let apiUrl = `https://login.wishbysms.com/api/sendhttp.php?authkey=${wishbyApiKey}&mobiles=${phoneNumber}&message=${encodedMessage}&sender=${wishbySenderId}&route=4&country=91`;
+
+    if (dltTemplateIdDayUpdate) {
+      apiUrl += `&DLT_TE_ID=${dltTemplateIdDayUpdate}`;
+    }
+
+    const response = await axios.get(apiUrl);
+    return { success: true, response: response.data };
+  } catch (error) {
+    console.error("Error sending SMS:", error.message || error);
+    return { success: false, error: error.message || "Unknown error" };
+  }
+};
+
+// Utility to dispatch bulk SMS and return detailed status for each attempt
+const sendBulkSMS = async (messagesArray) => {
+  const results = [];
+  for (const msgObj of messagesArray) {
+    const smsResult = await sendSMS(msgObj.mobile, msgObj.message);
+    results.push({ ...msgObj, smsResult });
+  }
+  return results;
+};
+
 // Helper function to get budget counts from a specific table
 const getTableBudgetCount = async (pool, tableName) => {
   const query = `SELECT COUNT(*) as count FROM ${tableName}`;
@@ -613,7 +655,7 @@ const BudgetMasterRoad = async (req, res) => {
 
     // Example: Detailed query on Building tables, adjust as needed
     const query = `
-    SELECT a.[Sadyasthiti]as 'Work Status', Count(a.[Sadyasthiti])as'Total Work',sum(cast(a.[PrashaskiyAmt] as decimal(10,2))) as 'Estimated Cost',sum(cast(a.[TrantrikAmt]as decimal(10,2)))as 'T.S Cost',sum(cast(b.[Tartud]as decimal(10,2))) as 'Budget Provision 2025-2026',sum(cast(b.[AikunKharch]as decimal(10,2))) as 'Expenditure 2025-2026' FROM BudgetMasterRoad a full outer join RoadProvision  b on a.workid=b.workid where a.[Sadyasthiti]IS NOT NULL and b.Arthsankalpiyyear='2025-2026'   GROUP BY a.[Sadyasthiti] order by case a.[Sadyasthiti] when N'पूर्ण' then 1 when N'Completed' then 1 when N'Incomplete' then 2 when N'अपूर्ण' then 2 when N'प्रगतीत' then 3 when N'Inprogress' then 3 when N'Processing' then 3 when N'Current' then 3 when N'चालू' then 3  when N'Tender Stage' then 4 when N'निविदा स्तर' then 4 when N'Estimated Stage' then 5 when N'अंदाजपत्रकिय स्थर' then 5 when N'अंदाजपत्रकीय स्तर' then 5 when N'Not Started' then 6 when N'सुरु न झालेली' then 6 when N'सुरू करणे' then 7 when N'' then 8 end`;
+    SELECT a.[Sadyasthiti]as 'Work Status', Count(a.[Sadyasthiti])as'Total Work',sum(cast(a.[PrashaskiyAmt] as decimal(10,2))) as 'Estimated Cost',sum(cast(a.[TrantrikAmt]as decimal(10,2)))as 'T.S Cost',sum(cast(b.[Tartud]as decimal(10,2))) as 'Budget Provision 2025-2026',sum(cast(b.[AikunKharch]as decimal(10,2))) as 'Expenditure 2025-2026' FROM BudgetMasterRoad a full outer join RoadProvision  b on a.workid=b.workid where a.[Sadyasthiti]IS NOT NULL and b.Arthsankalpiyyear='2025-2026'   GROUP BY a.[Sadyasthiti] order by case a.[Sadyasthiti] when N'पूर्ण' then 1 when N'Completed' then 1 when N'Incomplete' then 2 when N'अपूर्ण' then 2 when N'प्रगतीत' then 3 when N'Inprogress' then 3 when N'Processing' then 3 when N'Current' then 3 when N'चालू' then 3  when N'Tender Stage' then 4 when N'निविदा स्तर' then 4 when N'Estimated Stage' then 5 when N'अंदाजपत्रकिय स्थर' then 5 when N'अंदाजपत्रकीय स्तर' then 5 when N'Not Started' then 6 when N'सुरु न झालेली' then 6 when N'सुरू करणे' then 7 when N'' then 8 end`;
     const result = await pool.request().query(query);
     res.json({ success: true, data: result.recordset });
   } catch (error) {
@@ -640,7 +682,7 @@ const BudgetMasterNABARD = async (req, res) => {
 
     // Example: Detailed query on Building tables, adjust as needed
     const query = `
-      SELECT a.[Sadyasthiti]as 'Work Status', Count(a.[Sadyasthiti])as'Total Work',sum(cast(a.[PrashaskiyAmt] as decimal(10,2))) as 'Estimated Cost',sum(cast(a.[TrantrikAmt]as decimal(10,2)))as 'T.S Cost',sum(cast(b.[Tartud]as decimal(10,2))) as 'Budget Provision 2023-2024',sum(cast(b.[AikunKharch]as decimal(10,2))) as 'Expenditure 2023-2024' FROM BudgetMasterNABARD a full outer join NABARDProvision  b on a.workid=b.workid and b.Arthsankalpiyyear='2023-2024' where a.[Sadyasthiti]IS NOT NULL    GROUP BY a.[Sadyasthiti] order by case a.[Sadyasthiti] when N'पूर्ण' then 1 when N'Completed' then 1 when N'Incomplete' then 2 when N'अपूर्ण' then 2 when N'प्रगतीत' then 3 when N'Inprogress' then 3 when N'Processing' then 3 when N'Current' then 3 when N'चालू' then 3  when N'Tender Stage' then 4 when N'निविदा स्तर' then 4 when N'Estimated Stage' then 5 when N'अंदाजपत्रकिय स्थर' then 5 when N'अंदाजपत्रकीय स्तर' then 5 when N'Not Started' then 6 when N'सुरु न झालेली' then 6 when N'सुरू करणे' then 7 when N'' then 8 end`;
+      SELECT a.[Sadyasthiti]as 'Work Status', Count(a.[Sadyasthiti])as'Total Work',sum(cast(a.[PrashaskiyAmt] as decimal(10,2))) as 'Estimated Cost',sum(cast(a.[TrantrikAmt]as decimal(10,2)))as 'T.S Cost',sum(cast(b.[Tartud]as decimal(10,2))) as 'Budget Provision 2023-2024',sum(cast(b.[AikunKharch]as decimal(10,2))) as 'Expenditure 2023-2024' FROM BudgetMasterNABARD a full outer join NABARDProvision  b on a.workid=b.workid and b.Arthsankalpiyyear='2023-2024' where a.[Sadyasthiti]IS NOT NULL    GROUP BY a.[Sadyasthiti] order by case a.[Sadyasthiti] when N'पूर्ण' then 1 when N'Completed' then 1 when N'Incomplete' then 2 when N'अपूर्ण' then 2 when N'प्रगतीत' then 3 when N'Inprogress' then 3 when N'Processing' then 3 when N'Current' then 3 when N'चालू' then 3  when N'Tender Stage' then 4 when N'निविदा स्तर' then 4 when N'Estimated Stage' then 5 when N'अंदाजपत्रकिय स्थर' then 5 when N'अंदाजपत्रकीय स्तर' then 5 when N'Not Started' then 6 when N'सुरु न झालेली' then 6 when N'सुरू करणे' then 7 when N'' then 8 end`;
     const result = await pool.request().query(query);
     res.json({ success: true, data: result.recordset });
   } catch (error) {
@@ -1047,7 +1089,7 @@ const ContNonResidentialBuilding2909 = async (req, res) => {
 
     // Example: Detailed query on Building tables, adjust as needed
     const query = `
-SELECT a.[Sadyasthiti]as 'Work Status', Count(a.[Sadyasthiti])as'Total Work',sum(cast(a.[PrashaskiyAmt] as decimal(10,2))) as 'AA cost Rs in lakhs',sum(cast(a.[TrantrikAmt]as decimal(10,2)))as 'Technical Sanction Cost Rs in Lakh',sum(cast(b.[Tartud]as decimal(10,2))) as 'Total Provision Rs in Lakh',sum(cast(b.[AikunKharch]as decimal(10,2))) as 'Total Expense Rs in Lakh' FROM BudgetMasterNonResidentialBuilding  a full outer join NonResidentialBuildingProvision  b on a.workid=b.workid where a.[Sadyasthiti]!='' and ThekedaarName=@name and b.Arthsankalpiyyear='2025-2026' GROUP BY a.[Sadyasthiti]`;
+SELECT a.[Sadyasthiti]as 'Work Status', Count(a.[Sadyasthiti])as'Total Work',sum(cast(a.[PrashaskiyAmt] as decimal(10,2))) as 'AA cost Rs in lakhs',sum(cast(a.[TrantrikAmt]as decimal(10,2)))as 'Technical Sanction Cost Rs in Lakh',sum(cast(b.[Tartud]as decimal(10,2))) as 'Total Provision Rs in Lakh',sum(cast(b.[AikunKharch]as decimal(10,2))) as 'Total Expense Rs in Lakh' FROM BudgetMasterNonResidentialBuilding  a full outer join NonResidentialBuildingProvision  b on a.workid=b.workid where a.[Sadyasthiti]!='' and ThekedaarName=@name and b.Arthsankalpiyyear='2025-2026' GROUP BY a.[Sadyasthiti]`;
     const result = await pool.request().input("name", name).query(query);
     res.json({ success: true, data: result.recordset });
   } catch (error) {
@@ -2989,24 +3031,108 @@ select  Count (*) as nCount from SendSms_tbl where convert(date,KamPurnDate,105)
   }
 };
 
+
+//helper function to get database pool
+async function fetchNotifications(pool, dayRange) {
+  const query = `
+    SELECT 
+      ShakhaAbhyantaName,
+      ShakhaAbhiyantMobile,
+      UpabhyantaName,
+      UpAbhiyantaMobile,
+      ThekedaarName,
+      ThekedarMobile,
+      kampurndate,
+      workid,
+      kamachename,
+      subdivision 
+    FROM sendsms_tbl 
+    WHERE CONVERT(date, KamPurnDate, 105) 
+      BETWEEN CONVERT(date, GETDATE(), 105) 
+      AND CONVERT(date, DATEADD(day, ${dayRange}, GETDATE()), 105)
+  `;
+
+  const result = await pool.request().query(query);
+  const currentDate = new Date();
+
+  return result.recordset.map(record => {
+    const completionDate = new Date(record.kampurndate);
+    const timeDiff = completionDate - currentDate;
+    const remainingDays = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+
+    const message = `Dear Contractor, Reminder for your ongoing work. Work ID (${record.workid}), Completion Date (${record.kampurndate}). Remaining Days: ${remainingDays}. Ensure timely completion. SBA, PWCA, GOM-Swapsoft`;
+
+    return {
+      contractor: record.ThekedaarName,
+      mobile: record.ThekedarMobile,
+      message,
+      remainingDays,
+      workId: record.workid,
+      completionDate: record.kampurndate,
+      kamachename: record.kamachename,
+      subdivision: record.subdivision
+    };
+  });
+}
+
+
 const CircleNotificationBtnToday = async (req, res) => {
   const { office } = req.body;
+
   if (!office) {
     return res
       .status(400)
       .json({ success: false, message: "Office parameter is required" });
   }
+
   try {
     const pool = await getPool(office);
     if (!pool)
       throw new Error(`Database pool is not available for office ${office}.`);
 
-    // Example: Query one provision table, adjust if needed
     const query = `
-    select ShakhaAbhyantaName,ShakhaAbhiyantMobile,UpabhyantaName,UpAbhiyantaMobile,ThekedaarName,ThekedarMobile,kampurndate,workid,kamachename,subdivision from sendsms_tbl where convert(date,KamPurnDate,105) between CONVERT(date,GETDATE(),105) and convert(date,dateadd(day,00,GETDATE()),105)
-`;
+      SELECT 
+        ShakhaAbhyantaName,
+        ShakhaAbhiyantMobile,
+        UpabhyantaName,
+        UpAbhiyantaMobile,
+        ThekedaarName,
+        ThekedarMobile,
+        kampurndate,
+        workid,
+        kamachename,
+        subdivision 
+      FROM sendsms_tbl 
+      WHERE CONVERT(date, KamPurnDate, 105) 
+        BETWEEN CONVERT(date, GETDATE(), 105) 
+        AND CONVERT(date, DATEADD(day, 0, GETDATE()), 105)
+    `;
+
     const result = await pool.request().query(query);
-    res.json({ success: true, data: result.recordset });
+
+    const currentDate = new Date();
+
+    const messages = result.recordset.map(record => {
+      const completionDate = new Date(record.kampurndate);
+      const timeDiff = completionDate - currentDate;
+      const remainingDays = Math.ceil(timeDiff / (1000 * 60 * 60 * 24)); // Will be 0 for today's date
+
+      const message = `Dear Contractor, Reminder for your ongoing work. Work ID ${record.workid}, Completion Date ${record.kampurndate}. Remaining Days: ${remainingDays}. Ensure timely completion. SBA, PWCA, GOM-Swapsoft`;
+
+      return {
+        contractor: record.ThekedaarName,
+        mobile: record.ThekedarMobile,
+        message,
+        remainingDays,
+        workId: record.workid,
+        completionDate: record.kampurndate,
+      };
+    });
+
+    // Dispatch SMS to all numbers and capture the delivery status
+    const smsResults = await sendBulkSMS(messages);
+
+    res.json({ success: true, data: smsResults });
   } catch (error) {
     console.error("Error getting budgetcount from circle", error);
     res.status(500).json({
@@ -3016,6 +3142,7 @@ const CircleNotificationBtnToday = async (req, res) => {
     });
   }
 };
+
 
 const CircleNotificationBtnWeek = async (req, res) => {
   const { office } = req.body;
@@ -3024,17 +3151,55 @@ const CircleNotificationBtnWeek = async (req, res) => {
       .status(400)
       .json({ success: false, message: "Office parameter is required" });
   }
+
   try {
     const pool = await getPool(office);
     if (!pool)
       throw new Error(`Database pool is not available for office ${office}.`);
 
-    // Example: Query one provision table, adjust if needed
     const query = `
-select ShakhaAbhyantaName,ShakhaAbhiyantMobile,UpabhyantaName,UpAbhiyantaMobile,ThekedaarName,ThekedarMobile,kampurndate,workid,kamachename,subdivision from sendsms_tbl where convert(date,KamPurnDate,105) between CONVERT(date,GETDATE(),105) and convert(date,dateadd(day,07,GETDATE()),105)
-`;
+      SELECT 
+        ShakhaAbhyantaName,
+        ShakhaAbhiyantMobile,
+        UpabhyantaName,
+        UpAbhiyantaMobile,
+        ThekedaarName,
+        ThekedarMobile,
+        kampurndate,
+        workid,
+        kamachename,
+        subdivision 
+      FROM sendsms_tbl 
+      WHERE CONVERT(date, KamPurnDate, 105) 
+        BETWEEN CONVERT(date, GETDATE(), 105) 
+        AND CONVERT(date, DATEADD(day, 7, GETDATE()), 105)
+    `;
+
     const result = await pool.request().query(query);
-    res.json({ success: true, data: result.recordset });
+
+    const currentDate = new Date();
+
+    const messages = result.recordset.map(record => {
+      const completionDate = new Date(record.kampurndate);
+      const timeDiff = completionDate - currentDate;
+      const remainingDays = Math.ceil(timeDiff / (1000 * 60 * 60 * 24)); // Convert ms to days
+
+      const message = `Dear Contractor, Reminder for your ongoing work. Work ID (${record.workid}), Completion Date (${record.kampurndate}). Remaining Days: ${remainingDays}. Ensure timely completion. SBA, PWCA, GOM-Swapsoft`;
+
+      return {
+        contractor: record.ThekedaarName,
+        mobile: record.ThekedarMobile,
+        message,
+        remainingDays,
+        workId: record.workid,
+        completionDate: record.kampurndate,
+      };
+    });
+
+    // Dispatch SMS to all numbers and capture the delivery status
+    const smsResults = await sendBulkSMS(messages);
+
+    res.json({ success: true, data: smsResults });
   } catch (error) {
     console.error("Error getting budgetcount from circle", error);
     res.status(500).json({
@@ -3044,60 +3209,68 @@ select ShakhaAbhyantaName,ShakhaAbhiyantMobile,UpabhyantaName,UpAbhiyantaMobile,
     });
   }
 };
+
+
 const CircleNotificationBtnHalfMonth = async (req, res) => {
   const { office } = req.body;
+
   if (!office) {
-    return res
-      .status(400)
-      .json({ success: false, message: "Office parameter is required" });
+    return res.status(400).json({
+      success: false,
+      message: "Office parameter is required"
+    });
   }
+
   try {
     const pool = await getPool(office);
-    if (!pool)
-      throw new Error(`Database pool is not available for office ${office}.`);
+    if (!pool) throw new Error(`Database pool is not available for office ${office}.`);
 
-    // Example: Query one provision table, adjust if needed
-    const query = `
-select ShakhaAbhyantaName,ShakhaAbhiyantMobile,UpabhyantaName,UpAbhiyantaMobile,ThekedaarName,ThekedarMobile,kampurndate,workid,kamachename,subdivision from sendsms_tbl where convert(date,KamPurnDate,105) between CONVERT(date,GETDATE(),105) and convert(date,dateadd(day,15,GETDATE()),105)
-`;
-    const result = await pool.request().query(query);
-    res.json({ success: true, data: result.recordset });
+    const messages = await fetchNotifications(pool, 15); // 15 days ahead
+
+    // Dispatch SMS to all numbers and capture the delivery status
+    const smsResults = await sendBulkSMS(messages);
+
+    res.json({ success: true, data: smsResults });
   } catch (error) {
-    console.error("Error getting budgetcount from circle", error);
+    console.error("Error getting notifications (Half Month)", error);
     res.status(500).json({
       success: false,
-      message: "Error getting budget count from circle",
+      message: "Error getting half-month notification data",
       error: error.message,
     });
   }
 };
+
 const CircleNotificationBtnMonth = async (req, res) => {
   const { office } = req.body;
+
   if (!office) {
-    return res
-      .status(400)
-      .json({ success: false, message: "Office parameter is required" });
+    return res.status(400).json({
+      success: false,
+      message: "Office parameter is required"
+    });
   }
+
   try {
     const pool = await getPool(office);
-    if (!pool)
-      throw new Error(`Database pool is not available for office ${office}.`);
+    if (!pool) throw new Error(`Database pool is not available for office ${office}.`);
 
-    // Example: Query one provision table, adjust if needed
-    const query = `
-select ShakhaAbhyantaName,ShakhaAbhiyantMobile,UpabhyantaName,UpAbhiyantaMobile,ThekedaarName,ThekedarMobile,kampurndate,workid,kamachename,subdivision from sendsms_tbl where convert(date,KamPurnDate,105) between CONVERT(date,GETDATE(),105) and convert(date,dateadd(day,30,GETDATE()),105)
-`;
-    const result = await pool.request().query(query);
-    res.json({ success: true, data: result.recordset });
+    const messages = await fetchNotifications(pool, 30); // 30 days ahead
+
+    // Dispatch SMS to all numbers and capture the delivery status
+    const smsResults = await sendBulkSMS(messages);
+
+    res.json({ success: true, data: smsResults });
   } catch (error) {
-    console.error("Error getting budgetcount from circle", error);
+    console.error("Error getting notifications (Month)", error);
     res.status(500).json({
       success: false,
-      message: "Error getting budget count from circle",
+      message: "Error getting monthly notification data",
       error: error.message,
     });
   }
 };
+
 
 const getCircleNotificationTotal = async (req, res) => {
   const { office } = req.body;
