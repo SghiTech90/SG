@@ -249,7 +249,7 @@ const getBudgetSummaryByYear = async (req, res) => {
             JOIN BuildingProvision p ON m.WorkID = p.WorkID
             WHERE p.Arthsankalpiyyear = @year
             GROUP BY m.LekhaShirshName
-            ORDER BY m.LekhaShirshName;
+            ORDER BY m.LekhaShirshName
         `;
     const result = await pool
       .request()
@@ -286,7 +286,7 @@ const getBudgetDetailsByYearAndHead = async (req, res) => {
             FROM BudgetMasterBuilding m
             JOIN BuildingProvision p ON m.WorkID = p.WorkID
             WHERE p.Arthsankalpiyyear = @year AND m.LekhaShirshName = @headName
-            ORDER BY m.WorkID;
+            ORDER BY m.WorkID
         `;
     const result = await pool
       .request()
