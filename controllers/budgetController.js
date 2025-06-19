@@ -1,46 +1,31 @@
 const { getPool, sql } = require("../config/db");
 const axios = require("axios");
-
-// Load environment variables for SMS credentials
 require("dotenv").config();
 
-// WishbySMS credentials pulled from environment variables
 const wishbyApiKey = process.env.WISHBY_API_KEY;
 const wishbySenderId = process.env.WISHBY_SENDER_ID;
-const dltTemplateIdDayUpdate = process.env.DLT_ID_DAY_UPDATE; // e.g. 1707174246372891167
+const DLT_TEMPLATE_ID_DAY_UPDATE = process.env.DLT_ID_DAY_UPDATE || "1707174246372891167";
 
-// Generic helper to actually send an SMS via WishbySMS
+// Utility to send SMS via WishbySMS gateway
 const sendSMS = async (mobileNo, message) => {
   try {
-    if (!wishbyApiKey || !wishbySenderId) {
-      throw new Error("WishbySMS credentials are missing in environment variables.");
-    }
+    if (!mobileNo) return { success: false, error: "Invalid mobile number" };
 
-    let phoneNumber = mobileNo.startsWith("91") ? mobileNo : "91" + mobileNo;
+    const phoneNumber = mobileNo.startsWith("91") ? mobileNo : "91" + mobileNo;
     const encodedMessage = encodeURIComponent(message);
 
     let apiUrl = `https://login.wishbysms.com/api/sendhttp.php?authkey=${wishbyApiKey}&mobiles=${phoneNumber}&message=${encodedMessage}&sender=${wishbySenderId}&route=4&country=91`;
 
-    if (dltTemplateIdDayUpdate) {
-      apiUrl += `&DLT_TE_ID=${dltTemplateIdDayUpdate}`;
+    if (DLT_TEMPLATE_ID_DAY_UPDATE) {
+      apiUrl += `&DLT_TE_ID=${DLT_TEMPLATE_ID_DAY_UPDATE}`;
     }
 
     const response = await axios.get(apiUrl);
     return { success: true, response: response.data };
   } catch (error) {
-    console.error("Error sending SMS:", error.message || error);
-    return { success: false, error: error.message || "Unknown error" };
+    console.error("Error sending SMS:", error.message);
+    return { success: false, error: error.message };
   }
-};
-
-// Utility to dispatch bulk SMS and return detailed status for each attempt
-const sendBulkSMS = async (messagesArray) => {
-  const results = [];
-  for (const msgObj of messagesArray) {
-    const smsResult = await sendSMS(msgObj.mobile, msgObj.message);
-    results.push({ ...msgObj, smsResult });
-  }
-  return results;
 };
 
 // Helper function to get budget counts from a specific table
@@ -3049,30 +3034,49 @@ async function fetchNotifications(pool, dayRange) {
     FROM sendsms_tbl 
     WHERE CONVERT(date, KamPurnDate, 105) 
       BETWEEN CONVERT(date, GETDATE(), 105) 
-      AND CONVERT(date, DATEADD(day, ${dayRange}, GETDATE()), 105)
-  `;
+      AND CONVERT(date, DATEADD(day, ${dayRange}, GETDATE()), 105)`;
 
   const result = await pool.request().query(query);
   const currentDate = new Date();
+  const notifications = [];
 
-  return result.recordset.map(record => {
-    const completionDate = new Date(record.kampurndate);
-    const timeDiff = completionDate - currentDate;
-    const remainingDays = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+  for (const record of result.recordset) {
+    const completionDate = toDate(record.kampurndate);
+    const remainingDays = completionDate
+      ? Math.ceil((completionDate - currentDate) / (1000 * 60 * 60 * 24))
+      : null;
 
-    const message = `Dear Contractor, Reminder for your ongoing work. Work ID (${record.workid}), Completion Date (${record.kampurndate}). Remaining Days: ${remainingDays}. Ensure timely completion. SBA, PWCA, GOM-Swapsoft`;
+    const messageText = `Dear Contractor, Reminder for your ongoing work. Work ID (${record.workid}), Completion Date (${completionDate ? completionDate.toLocaleDateString("en-GB") : record.kampurndate}). Remaining Days: ${remainingDays ?? "NA"}. Ensure timely completion. SBA, PWCA, GOM-Swapsoft`;
 
-    return {
+    const mobileNumbers = [
+      record.ShakhaAbhiyantMobile,
+      record.UpAbhiyantaMobile,
+      record.ThekedarMobile,
+    ].filter(Boolean);
+
+    // Send SMS concurrently, ignore individual failures
+    await Promise.allSettled(
+      mobileNumbers.map((num) => sendSMS(num.toString(), messageText))
+    );
+
+    notifications.push({
       contractor: record.ThekedaarName,
-      mobile: record.ThekedarMobile,
-      message,
+      contractorMobile: record.ThekedarMobile,
+      shakhaAbhyanta: record.ShakhaAbhyantaName,
+      shakhaAbhyantaMobile: record.ShakhaAbhiyantMobile,
+      upabhyanta: record.UpabhyantaName,
+      upabhyantaMobile: record.UpAbhiyantaMobile,
+      mobiles: mobileNumbers,
+      message: messageText,
       remainingDays,
       workId: record.workid,
       completionDate: record.kampurndate,
       kamachename: record.kamachename,
-      subdivision: record.subdivision
-    };
-  });
+      subdivision: record.subdivision,
+    });
+  }
+
+  return notifications;
 }
 
 
@@ -3080,64 +3084,20 @@ const CircleNotificationBtnToday = async (req, res) => {
   const { office } = req.body;
 
   if (!office) {
-    return res
-      .status(400)
-      .json({ success: false, message: "Office parameter is required" });
+    return res.status(400).json({ success: false, message: "Office parameter is required" });
   }
 
   try {
     const pool = await getPool(office);
-    if (!pool)
-      throw new Error(`Database pool is not available for office ${office}.`);
+    if (!pool) throw new Error(`Database pool is not available for office ${office}.`);
 
-    const query = `
-      SELECT 
-        ShakhaAbhyantaName,
-        ShakhaAbhiyantMobile,
-        UpabhyantaName,
-        UpAbhiyantaMobile,
-        ThekedaarName,
-        ThekedarMobile,
-        kampurndate,
-        workid,
-        kamachename,
-        subdivision 
-      FROM sendsms_tbl 
-      WHERE CONVERT(date, KamPurnDate, 105) 
-        BETWEEN CONVERT(date, GETDATE(), 105) 
-        AND CONVERT(date, DATEADD(day, 0, GETDATE()), 105)
-    `;
-
-    const result = await pool.request().query(query);
-
-    const currentDate = new Date();
-
-    const messages = result.recordset.map(record => {
-      const completionDate = new Date(record.kampurndate);
-      const timeDiff = completionDate - currentDate;
-      const remainingDays = Math.ceil(timeDiff / (1000 * 60 * 60 * 24)); // Will be 0 for today's date
-
-      const message = `Dear Contractor, Reminder for your ongoing work. Work ID ${record.workid}, Completion Date ${record.kampurndate}. Remaining Days: ${remainingDays}. Ensure timely completion. SBA, PWCA, GOM-Swapsoft`;
-
-      return {
-        contractor: record.ThekedaarName,
-        mobile: record.ThekedarMobile,
-        message,
-        remainingDays,
-        workId: record.workid,
-        completionDate: record.kampurndate,
-      };
-    });
-
-    // Dispatch SMS to all numbers and capture the delivery status
-    const smsResults = await sendBulkSMS(messages);
-
-    res.json({ success: true, data: smsResults });
+    const messages = await fetchNotifications(pool, 0); // Same-day reminders
+    res.json({ success: true, data: messages });
   } catch (error) {
-    console.error("Error getting budgetcount from circle", error);
+    console.error("Error sending today's notifications:", error);
     res.status(500).json({
       success: false,
-      message: "Error getting budget count from circle",
+      message: "Error sending today's notifications",
       error: error.message,
     });
   }
@@ -3146,65 +3106,22 @@ const CircleNotificationBtnToday = async (req, res) => {
 
 const CircleNotificationBtnWeek = async (req, res) => {
   const { office } = req.body;
+
   if (!office) {
-    return res
-      .status(400)
-      .json({ success: false, message: "Office parameter is required" });
+    return res.status(400).json({ success: false, message: "Office parameter is required" });
   }
 
   try {
     const pool = await getPool(office);
-    if (!pool)
-      throw new Error(`Database pool is not available for office ${office}.`);
+    if (!pool) throw new Error(`Database pool is not available for office ${office}.`);
 
-    const query = `
-      SELECT 
-        ShakhaAbhyantaName,
-        ShakhaAbhiyantMobile,
-        UpabhyantaName,
-        UpAbhiyantaMobile,
-        ThekedaarName,
-        ThekedarMobile,
-        kampurndate,
-        workid,
-        kamachename,
-        subdivision 
-      FROM sendsms_tbl 
-      WHERE CONVERT(date, KamPurnDate, 105) 
-        BETWEEN CONVERT(date, GETDATE(), 105) 
-        AND CONVERT(date, DATEADD(day, 7, GETDATE()), 105)
-    `;
-
-    const result = await pool.request().query(query);
-
-    const currentDate = new Date();
-
-    const messages = result.recordset.map(record => {
-      const completionDate = new Date(record.kampurndate);
-      const timeDiff = completionDate - currentDate;
-      const remainingDays = Math.ceil(timeDiff / (1000 * 60 * 60 * 24)); // Convert ms to days
-
-      const message = `Dear Contractor, Reminder for your ongoing work. Work ID (${record.workid}), Completion Date (${record.kampurndate}). Remaining Days: ${remainingDays}. Ensure timely completion. SBA, PWCA, GOM-Swapsoft`;
-
-      return {
-        contractor: record.ThekedaarName,
-        mobile: record.ThekedarMobile,
-        message,
-        remainingDays,
-        workId: record.workid,
-        completionDate: record.kampurndate,
-      };
-    });
-
-    // Dispatch SMS to all numbers and capture the delivery status
-    const smsResults = await sendBulkSMS(messages);
-
-    res.json({ success: true, data: smsResults });
+    const messages = await fetchNotifications(pool, 7); // Next 7 days
+    res.json({ success: true, data: messages });
   } catch (error) {
-    console.error("Error getting budgetcount from circle", error);
+    console.error("Error sending weekly notifications:", error);
     res.status(500).json({
       success: false,
-      message: "Error getting budget count from circle",
+      message: "Error sending weekly notifications",
       error: error.message,
     });
   }
@@ -3227,10 +3144,7 @@ const CircleNotificationBtnHalfMonth = async (req, res) => {
 
     const messages = await fetchNotifications(pool, 15); // 15 days ahead
 
-    // Dispatch SMS to all numbers and capture the delivery status
-    const smsResults = await sendBulkSMS(messages);
-
-    res.json({ success: true, data: smsResults });
+    res.json({ success: true, data: messages });
   } catch (error) {
     console.error("Error getting notifications (Half Month)", error);
     res.status(500).json({
@@ -3257,10 +3171,7 @@ const CircleNotificationBtnMonth = async (req, res) => {
 
     const messages = await fetchNotifications(pool, 30); // 30 days ahead
 
-    // Dispatch SMS to all numbers and capture the delivery status
-    const smsResults = await sendBulkSMS(messages);
-
-    res.json({ success: true, data: smsResults });
+    res.json({ success: true, data: messages });
   } catch (error) {
     console.error("Error getting notifications (Month)", error);
     res.status(500).json({
@@ -3363,6 +3274,33 @@ const getGATD = getBudgetData("BudgetMasterGAT_D");
 const getMLA = getBudgetData("BudgetMasterMLA");
 const get2515 = getBudgetData("BudgetMaster2515");
 
+const toDate = (value) => {
+  if (!value) return null;
+
+  if (value instanceof Date) return value;
+
+  if (typeof value === "number") return new Date(value); // timestamp
+
+  if (typeof value === "string") {
+    const trimmed = value.trim();
+    if (!trimmed) return null;
+
+    // Attempt native parser (handles ISO, RFC, etc.)
+    const parsedNative = new Date(trimmed);
+    if (!isNaN(parsedNative)) return parsedNative;
+
+    // Attempt dd/mm/yyyy or dd-mm-yyyy formats
+    const parts = trimmed.split(/[\/\-]/);
+    if (parts.length === 3) {
+      const [dd, mm, yyyy] = parts.map(Number);
+      if (!isNaN(dd) && !isNaN(mm) && !isNaN(yyyy)) {
+        return new Date(yyyy, mm - 1, dd);
+      }
+    }
+  }
+
+  return null; // unable to parse
+};
 
 module.exports = {
   getBudgetCount,
