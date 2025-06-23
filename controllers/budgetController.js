@@ -286,7 +286,7 @@ const getBudgetDetailsByYearAndHead = async (req, res) => {
             FROM BudgetMasterBuilding m
             JOIN BuildingProvision p ON m.WorkID = p.WorkID
             WHERE p.Arthsankalpiyyear = @year AND m.LekhaShirshName = @headName
-            ORDER BY m.WorkID
+            ORDER BY m.WorkID;
         `;
     const result = await pool
       .request()
@@ -3038,21 +3038,10 @@ async function fetchNotifications(pool, dayRange) {
 
   const result = await pool.request().query(query);
   const currentDate = new Date();
-
   const notifications = [];
 
-  // Helper function to parse DD.MM.YYYY or DD/MM/YYYY to Date
-  function parseCustomDate(dateStr) {
-    if (!dateStr) return null;
-    const parts = dateStr.includes(".") ? dateStr.split(".") : dateStr.split("/");
-    if (parts.length !== 3) return null;
-    const [day, month, year] = parts.map(Number);
-    const parsedDate = new Date(year, month - 1, day);
-    return isNaN(parsedDate.getTime()) ? null : parsedDate;
-  }
-
   for (const record of result.recordset) {
-    const completionDate = parseCustomDate(record.kampurndate);
+    const completionDate = toDate(record.kampurndate);
     const remainingDays = completionDate
       ? Math.ceil((completionDate - currentDate) / (1000 * 60 * 60 * 24))
       : null;
@@ -3063,19 +3052,17 @@ async function fetchNotifications(pool, dayRange) {
       record.ShakhaAbhiyantMobile,
       record.UpAbhiyantaMobile,
       record.ThekedarMobile,
-    ].filter((num) => num && num !== "0");
+    ].filter(Boolean);
 
+    // Send SMS concurrently, ignore individual failures
     await Promise.allSettled(
       mobileNumbers.map((num) => sendSMS(num.toString(), messageText))
     );
 
     notifications.push({
       contractor: record.ThekedaarName,
-      contractorMobile: record.ThekedarMobile,
       shakhaAbhyanta: record.ShakhaAbhyantaName,
-      shakhaAbhyantaMobile: record.ShakhaAbhiyantMobile,
       upabhyanta: record.UpabhyantaName,
-      upabhyantaMobile: record.UpAbhiyantaMobile,
       mobiles: mobileNumbers,
       message: messageText,
       remainingDays,
@@ -3088,7 +3075,6 @@ async function fetchNotifications(pool, dayRange) {
 
   return notifications;
 }
-
 
 
 const CircleNotificationBtnToday = async (req, res) => {
@@ -3285,33 +3271,6 @@ const getGATD = getBudgetData("BudgetMasterGAT_D");
 const getMLA = getBudgetData("BudgetMasterMLA");
 const get2515 = getBudgetData("BudgetMaster2515");
 
-const toDate = (value) => {
-  if (!value) return null;
-
-  if (value instanceof Date) return value;
-
-  if (typeof value === "number") return new Date(value); // timestamp
-
-  if (typeof value === "string") {
-    const trimmed = value.trim();
-    if (!trimmed) return null;
-
-    // Attempt native parser (handles ISO, RFC, etc.)
-    const parsedNative = new Date(trimmed);
-    if (!isNaN(parsedNative)) return parsedNative;
-
-    // Attempt dd/mm/yyyy or dd-mm-yyyy formats
-    const parts = trimmed.split(/[\/\-]/);
-    if (parts.length === 3) {
-      const [dd, mm, yyyy] = parts.map(Number);
-      if (!isNaN(dd) && !isNaN(mm) && !isNaN(yyyy)) {
-        return new Date(yyyy, mm - 1, dd);
-      }
-    }
-  }
-
-  return null; // unable to parse
-};
 
 module.exports = {
   getBudgetCount,
