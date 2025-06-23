@@ -3038,13 +3038,19 @@ async function fetchNotifications(pool, dayRange) {
 
   const result = await pool.request().query(query);
   const currentDate = new Date();
+  console.log(currentDate);
+  
   const notifications = [];
 
   for (const record of result.recordset) {
     const completionDate = toDate(record.kampurndate);
+    console.log(completionDate);
+    
     const remainingDays = completionDate
       ? Math.ceil((completionDate - currentDate) / (1000 * 60 * 60 * 24))
       : null;
+    console.log(remainingDays);
+      
 
     const messageText = `Dear Contractor, Reminder for your ongoing work. Work ID (${record.workid}), Completion Date (${completionDate ? completionDate.toLocaleDateString("en-GB") : record.kampurndate}). Remaining Days: ${remainingDays ?? "NA"}. Ensure timely completion. SBA, PWCA, GOM-Swapsoft`;
 
