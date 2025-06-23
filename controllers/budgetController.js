@@ -3038,19 +3038,24 @@ async function fetchNotifications(pool, dayRange) {
 
   const result = await pool.request().query(query);
   const currentDate = new Date();
-  console.log(currentDate);
-  
+
   const notifications = [];
 
+  // Helper function to parse DD.MM.YYYY or DD/MM/YYYY to Date
+  function parseCustomDate(dateStr) {
+    if (!dateStr) return null;
+    const parts = dateStr.includes(".") ? dateStr.split(".") : dateStr.split("/");
+    if (parts.length !== 3) return null;
+    const [day, month, year] = parts.map(Number);
+    const parsedDate = new Date(year, month - 1, day);
+    return isNaN(parsedDate.getTime()) ? null : parsedDate;
+  }
+
   for (const record of result.recordset) {
-    const completionDate = toDate(record.kampurndate);
-    console.log(completionDate);
-    
+    const completionDate = parseCustomDate(record.kampurndate);
     const remainingDays = completionDate
       ? Math.ceil((completionDate - currentDate) / (1000 * 60 * 60 * 24))
       : null;
-    console.log(remainingDays);
-      
 
     const messageText = `Dear Contractor, Reminder for your ongoing work. Work ID (${record.workid}), Completion Date (${completionDate ? completionDate.toLocaleDateString("en-GB") : record.kampurndate}). Remaining Days: ${remainingDays ?? "NA"}. Ensure timely completion. SBA, PWCA, GOM-Swapsoft`;
 
@@ -3058,9 +3063,8 @@ async function fetchNotifications(pool, dayRange) {
       record.ShakhaAbhiyantMobile,
       record.UpAbhiyantaMobile,
       record.ThekedarMobile,
-    ].filter(Boolean);
+    ].filter((num) => num && num !== "0");
 
-    // Send SMS concurrently, ignore individual failures
     await Promise.allSettled(
       mobileNumbers.map((num) => sendSMS(num.toString(), messageText))
     );
@@ -3084,6 +3088,7 @@ async function fetchNotifications(pool, dayRange) {
 
   return notifications;
 }
+
 
 
 const CircleNotificationBtnToday = async (req, res) => {
