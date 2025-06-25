@@ -3040,6 +3040,11 @@ async function fetchNotifications(pool, dayRange) {
   const currentDate = new Date();
   const notifications = [];
 
+  function toDate(str) {
+  const [day, month, year] = str.split("/");
+  return new Date(`${year}-${month}-${day}`);
+}
+
   for (const record of result.recordset) {
     const completionDate = toDate(record.kampurndate);
     const remainingDays = completionDate
