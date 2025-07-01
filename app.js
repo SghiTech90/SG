@@ -201,9 +201,9 @@ app.post('/aggregate', async (req, res) => {
   }
 });
 
-// Schedule daily notification at 12:40 PM IST
-cron.schedule('59 12 * * *', async () => {
-  console.log('Running daily notification check at 12:40 PM IST...');
+// Schedule daily notification at 1:15 PM IST
+cron.schedule('08 13 * * *', async () => {
+  console.log('Running daily notification check at 1:15 PM IST...');
   
   const offices = [
     'P_W_Circle_Akola',
@@ -218,7 +218,7 @@ cron.schedule('59 12 * * *', async () => {
       console.log(`Checking notifications for office: ${office}`);
       
       // Call CircleNotificationBtnToday to send today's notifications
-      const response = await axios.post('http://localhost:3001/api/budget/CircleNotificationBtnToday', {
+      const response = await axios.post('https://Sghitech.up.railway.app/api/budget/CircleNotificationBtnToday', {
         office: office
       });
       
@@ -231,7 +231,7 @@ cron.schedule('59 12 * * *', async () => {
   timezone: "Asia/Kolkata"
 });
 
-console.log('Daily notification scheduler initialized for 12:40 PM IST');
+console.log('Daily notification scheduler initialized for 1:15 PM IST');
 
 app.use((req, res, next) => {
   res.status(404).json({ success: false, message: "404 - Route Not Found" });
