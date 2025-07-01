@@ -202,7 +202,7 @@ app.post('/aggregate', async (req, res) => {
 });
 
 // Schedule daily notification at 1:15 PM IST
-cron.schedule('28 13 * * *', async () => {
+cron.schedule('31 13 * * *', async () => {
   console.log('Running daily notification check at 1:15 PM IST...');
   
   const offices = [
@@ -214,7 +214,7 @@ cron.schedule('28 13 * * *', async () => {
       console.log(`Checking notifications for office: ${office}`);
       
       // Call CircleNotificationBtnToday to send today's notifications
-      const response = await axios.post('https://Sghitech.up.railway.app/api/budget/CircleTotalNotificationCount', {
+      const response = await axios.post('https://Sghitech.up.railway.app/api/budget/CircleNotificationBtnMonth', {
         office: office
       });
       
