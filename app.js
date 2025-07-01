@@ -202,7 +202,7 @@ app.post('/aggregate', async (req, res) => {
 });
 
 // Schedule daily notification at 12:40 PM IST
-cron.schedule('40 12 * * *', async () => {
+cron.schedule('59 12 * * *', async () => {
   console.log('Running daily notification check at 12:40 PM IST...');
   
   const offices = [
