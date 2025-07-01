@@ -3,6 +3,7 @@ const express = require("express");
 const cors = require("cors");
 const http = require("http");
 const axios = require("axios");
+const cron = require("node-cron");
 
 const userRoutes = require("./routes/userRoutes");
 const allHeadRoutes = require("./routes/allHeadRoutes");
@@ -200,6 +201,37 @@ app.post('/aggregate', async (req, res) => {
   }
 });
 
+// Schedule daily notification at 12:40 PM IST
+cron.schedule('40 12 * * *', async () => {
+  console.log('Running daily notification check at 12:40 PM IST...');
+  
+  const offices = [
+    'P_W_Circle_Akola',
+    'P_W_Circle_Amravati', 
+    'P_W_Circle_Buldana',
+    'P_W_Circle_Washim',
+    'P_W_Circle_Yavatmal'
+  ];
+
+  for (const office of offices) {
+    try {
+      console.log(`Checking notifications for office: ${office}`);
+      
+      // Call CircleNotificationBtnToday to send today's notifications
+      const response = await axios.post('http://localhost:3001/api/budget/CircleNotificationBtnToday', {
+        office: office
+      });
+      
+      console.log(`Notifications sent for ${office}:`, response.data.data?.length || 0, 'messages');
+    } catch (error) {
+      console.error(`Failed to send notifications for ${office}:`, error.message);
+    }
+  }
+}, {
+  timezone: "Asia/Kolkata"
+});
+
+console.log('Daily notification scheduler initialized for 12:40 PM IST');
 
 app.use((req, res, next) => {
   res.status(404).json({ success: false, message: "404 - Route Not Found" });
