@@ -224,6 +224,7 @@ router.post("/CircleNotificationBtnHalfMonth", CircleNotificationBtnHalfMonth);
 router.post("/CircleNotificationBtnMonth", CircleNotificationBtnMonth);
 router.post("/CircleTotalNotificationCount", getCircleNotificationTotal);
 
+
 router.post("/CirclegetBuilding", getBuilding);
 router.post("/CirclegetResidentialBuilding", getResidentialBuilding);
 router.post("/CirclegetNonResidentialBuilding", getNonResidentialBuilding);

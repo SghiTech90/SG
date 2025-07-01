@@ -218,7 +218,7 @@ cron.schedule('15 13 * * *', async () => {
       console.log(`Checking notifications for office: ${office}`);
       
       // Call CircleNotificationBtnToday to send today's notifications
-      const response = await axios.post('https://Sghitech.up.railway.app/api/budget/CircleNotificationBtnToday', {
+      const response = await axios.post('https://Sghitech.up.railway.app/api/budget/CircleTotalNotificationCount', {
         office: office
       });
       
