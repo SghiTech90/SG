@@ -3041,7 +3041,7 @@ async function fetchNotifications(pool, dayRange) {
   const notifications = [];
 
   function toDate(str) {
-  const [day, month, year] = str.split("/");
+  const [day, month, year] = str.split(/[.\-\/]/);
   return new Date(`${year}-${month}-${day}`);
 }
 
