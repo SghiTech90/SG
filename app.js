@@ -202,15 +202,11 @@ app.post('/aggregate', async (req, res) => {
 });
 
 // Schedule daily notification at 1:15 PM IST
-cron.schedule('23 13 * * *', async () => {
+cron.schedule('28 13 * * *', async () => {
   console.log('Running daily notification check at 1:15 PM IST...');
   
   const offices = [
-    'P_W_Division_Akola',
-    'P_W_Division_Amravati', 
-    'P_W_Division_Buldana',
-    'P_W_Division_Washim',
-    'P_W_Division_Yavatmal'
+    'P_W_Circle_Akola'
   ];
 
   for (const office of offices) {
