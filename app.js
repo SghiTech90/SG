@@ -206,11 +206,11 @@ cron.schedule('08 13 * * *', async () => {
   console.log('Running daily notification check at 1:15 PM IST...');
   
   const offices = [
-    'P_W_Circle_Akola',
-    'P_W_Circle_Amravati', 
-    'P_W_Circle_Buldana',
-    'P_W_Circle_Washim',
-    'P_W_Circle_Yavatmal'
+    'P_W_Division_Akola',
+    'P_W_Division_Amravati', 
+    'P_W_Division_Buldana',
+    'P_W_Division_Washim',
+    'P_W_Division_Yavatmal'
   ];
 
   for (const office of offices) {
